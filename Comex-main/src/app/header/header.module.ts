@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { HeaderComponentes } from './header.component';
+
 import {MatMenuModule} from '@angular/material/menu';
 
 @NgModule({
@@ -16,12 +16,6 @@ import {MatMenuModule} from '@angular/material/menu';
     MatInputModule,
     MatMenuModule,
     MatSelectModule
-  ],
-  declarations: [
-    HeaderComponentes
-  ],
-  exports: [
-    HeaderComponentes
   ]
 })
 export class HeaderModule { }
