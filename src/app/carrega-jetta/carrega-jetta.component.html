@@ -8,7 +8,6 @@
           <div class="progress-bar" [style.width]="getProgressWidth()"></div>
         </div>
         <table>
-
           <tr>
             <th class="blue-text">
               <a class="blue-text">Descrição da Roterização</a>
@@ -17,7 +16,6 @@
               <a class="blue-text">Data da Roterização</a>
             </th>
           </tr>
-
           <tr *ngFor="let item of items">
             <td>{{ item.description }}</td>
             <td>{{ item.date | date:'dd/MM/yyyy' }}</td>

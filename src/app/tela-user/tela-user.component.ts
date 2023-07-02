@@ -34,7 +34,7 @@ export class TelaUserComponent implements OnInit {
   todosSelecionados: boolean = false;
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
-  query: string = 'Pipeline_Inbound';
+  query: string = 'Itens_Jetta';
 
 
   constructor(private dynamoDBService: ApiService) { }
@@ -233,9 +233,8 @@ export class TelaUserComponent implements OnInit {
 
   filterItems() {
     const searchText = this.searchText.toLowerCase();
-    this.calculateTotalDemurrage();
     this.itemsFiltrados = this.items.filter(item => {
-      const process = item.Process ? item.Process.toLowerCase() : '';
+      const transportType = item.transportType ? item.transportType.toLowerCase() : '';
       const invoice = item.Invoice ? item.Invoice.toLowerCase() : '';
       const container = item.Container ? item.Container.toLowerCase() : '';
       const step = item.Step ? item.Step.toLowerCase() : '';
@@ -245,7 +244,7 @@ export class TelaUserComponent implements OnInit {
 
       // Implemente a lógica de filtragem com base no seu HTML
       // Por exemplo, se seus itens tiverem uma propriedade 'Process':
-      return process.includes(searchText)
+      return transportType.includes(searchText)
         || invoice.includes(searchText)
         || container.includes(searchText)
         || step.includes(searchText)

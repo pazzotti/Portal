@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AtualizarComponent } from './atualizar/atualizar.component';
 import { TelaUserComponent } from './tela-user/tela-user.component';
-import { TelaUserComponentTransport } from './tela-user-transport/tela-user-transport.component';
+import { MilkRunSulComponent } from './milk_run_sul/milk_run_sul.component';
 import { Contrato_EADIComponent } from './contrato-eadi/contrato-eadi.component';
 import { Contrato_RedexComponent } from './contrato-redex/contrato-redex.component';
 import { ContratoTransportadoraComponent } from './contrato-transportadora/contrato-transportadora.component';
@@ -19,7 +19,7 @@ const routes: Routes = [
   {path:'',component:TelaUserComponent},
   {path:'atualiza',component:AtualizarComponent},
   {path:'userScreen',component:TelaUserComponent},
-  {path:'userScreenTransport',component:TelaUserComponentTransport},
+  {path:'milk_sul',component:MilkRunSulComponent},
   {path:'contrato_EADI',component:Contrato_EADIComponent},
   {path:'contrato_Redex',component:Contrato_RedexComponent},
   {path:'contrato_Transportadora',component:ContratoTransportadoraComponent},

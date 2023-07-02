@@ -7,15 +7,17 @@ import { AppModule } from '../app.module';
 import { DevolverVazioFormDialogComponent } from '../app/home/devolver_vazio/devolver-vazio-form-dialog.component';
 import { ContainerReuseFormDialogComponent } from '../app/home/container_reuse/container-reuse-form-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 
 
 @Component({
-  selector: 'app-tela-user-transport',
-  templateUrl: './tela-user-transport.component.html',
-  styleUrls: ['./tela-user-transport.component.css']
+  selector: 'app-milk_run_sul',
+  templateUrl: './milk_run_sul.component.html',
+  styleUrls: ['./milk_run_sul.component.css']
 })
-export class TelaUserComponentTransport implements OnInit {
+export class MilkRunSulComponent implements OnInit {
   items: any[] = [];
   sortColumn: string = '';
   sortNumber: number = 0;
@@ -29,21 +31,42 @@ export class TelaUserComponentTransport implements OnInit {
   private searchTextSubject = new Subject<string>();
   private searchTextSubscription!: Subscription;
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
-  query: string = 'Pipeline_Inbound';
+  urlSalva: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
+  query: string = 'Itens_Jetta';
+  query2: string = 'Porta_Rastreando_JSL';
   data: any;
+  editMode!: boolean[];
 
 
-  constructor(private dynamoDBService: ApiService, public dialog: MatDialog) { }
+  constructor(private dynamoDBService: ApiService, public dialog: MatDialog, private http: HttpClient) {
+    this.editMode = [];
+  }
 
   ngOnInit() {
     this.searchTextSubscription = this.searchTextSubject.pipe(debounceTime(300)).subscribe(() => {
       this.filterItems();
     });
     this.getItemsFromDynamoDB();
-    this.calcularSomaDemurrage();
+  }
+
+  toggleEditMode(index: number): void {
+    this.editMode[index] = !this.editMode[index];
   }
 
 
+  getFornecedorKeyByIndex(item: any, index: number): string {
+    const fornecedorKeys = this.getKeysByPrefix(item, 'Fornecedor');
+    return fornecedorKeys[index - 1];
+  }
+
+  getDestinoKeyByIndex(item: any, index: number): string {
+    const destinoKeys = this.getKeysByPrefix(item, 'Destino');
+    return destinoKeys[index - 1];
+  }
+
+  getKeysByPrefix(obj: any, prefix: string): string[] {
+    return Object.keys(obj).filter(key => key.startsWith(prefix));
+  }
 
   devolverVazio(item: Array<any>, url: string, table: string): void {
     const dialogRef = this.dialog.open(DevolverVazioFormDialogComponent, {
@@ -271,6 +294,32 @@ export class TelaUserComponentTransport implements OnInit {
   onSearchTextChanged() {
     this.searchTextSubject.next(this.searchText);
   }
+
+  salvar(item: any): void {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    const body = [{
+      ...item, // Mantém as chaves existentes
+      'Transport Type': item['Transport Type'],
+      'Plate': item['Plate'],
+      'Fornecedor 1': item['Fornecedor 1'],
+      'Janela 1': item['Janela 1'],
+      'Destino 1': item['Destino 1'],
+      'JanelaDestino 1': item['JanelaDestino 1'],
+      'tableName': this.query
+      // Adicione outros campos conforme necessário
+    }];
+
+    this.dynamoDBService.salvar(body, this.query2, this.urlSalva).subscribe(response => {
+      // Atualiza o item no banco de dados com sucesso
+    }, error => {
+      console.log(error);
+      // Lidar com o erro ao atualizar o item no banco de dados
+    });
+  }
+
 
 }
 

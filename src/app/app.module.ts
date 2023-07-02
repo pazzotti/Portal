@@ -22,7 +22,7 @@ import { ContratoTransportadoraComponent } from './contrato-transportadora/contr
 import { Locais_OrigemComponent } from './locais-origem/locais-origem.component';
 import { Locais_DestinoComponent } from './locais-destino/locais-destino.component';
 import { FormularioLocaisComponent } from './formulario_locais/formulario_locais';
-import { TelaUserComponentTransport } from './tela-user-transport/tela-user-transport.component';
+import { MilkRunSulComponent } from './milk_run_sul/milk_run_sul.component';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { CarrierComponent } from './carriers/carriers.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -55,7 +55,7 @@ import { CommonModule, DatePipe } from '@angular/common';
     Locais_OrigemComponent,
     Locais_DestinoComponent,
     FormularioLocaisComponent,
-    TelaUserComponentTransport,
+    MilkRunSulComponent,
     CarrierComponent,
     ContratoTerminalFormDialogComponent,
     DevolverVazioFormDialogComponent,

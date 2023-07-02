@@ -46,9 +46,6 @@ export class CarregaJettaComponent implements OnInit {
 
   }
 
-
-
-
   ngOnInit() {
     this.searchTextSubscription = this.searchTextSubject.pipe(debounceTime(300)).subscribe(() => {
       this.filterItems();
@@ -72,19 +69,40 @@ export class CarregaJettaComponent implements OnInit {
         weightLoaded: string;
         totalCost: string;
         TripSuppliers: { fornecedor: string; janela?: string }[];
+        Destination: { destino: string; janelaDestino?: string }[];
+        TotalDistance: string;
+
       }[];
     } = {
       vehicle: [],
     };
-
+    let destination = '';
+    let janelaDestino = ""; // Variável para armazenar a janela
     for (let i = 0; i < this.items.length; i++) {
       const currentItem = this.items[i];
       this.IDJetta = currentItem._id;
       for (let j = 0; j < currentItem.routes.length; j++) {
         const currentRoute = currentItem.routes[j];
+
         for (let k = 0; k < currentRoute.result.transports.length; k++) {
           const currentTransport = currentRoute.result.transports[k];
+          const totalDistance = currentRoute.result.route.distanceKm;
           const fornecedores: { fornecedor: string; janela?: string }[] = [];
+          const destinos: { destino: string; janelaDestino?: string }[] = [];
+          for (let o = 0; o < currentTransport.destinations.length; o++) {
+              destination = currentTransport.destinations[o].name;
+              for (let n = 0; n < currentRoute.result.route.schedule.length; n++) {
+                if (currentRoute.result.route.schedule[n].name === destination) {
+                  janelaDestino = currentRoute.result.route.schedule[n].arrivalTime;
+                  break; // Interrompe o loop assim que encontrar a janela
+                }
+              }
+
+
+
+            destinos.push({ destino: destination, janelaDestino: janelaDestino });
+
+          }
           for (let l = 0; l < currentTransport.waypoints.length; l++) {
             const waypoint = currentTransport.waypoints[l];
             let janela = ""; // Variável para armazenar a janela
@@ -94,7 +112,9 @@ export class CarregaJettaComponent implements OnInit {
                 break; // Interrompe o loop assim que encontrar a janela
               }
             }
+
             fornecedores.push({ fornecedor: waypoint.name, janela: janela });
+
           }
           trip_Json.vehicle.push({
             TransportType: currentTransport.descricao,
@@ -103,6 +123,8 @@ export class CarregaJettaComponent implements OnInit {
             weightLoaded: currentRoute.result.weightLoaded,
             totalCost: currentTransport.totalCost,
             TripSuppliers: fornecedores,
+            Destination: destinos,
+            TotalDistance:totalDistance,
           });
         }
       }
@@ -117,7 +139,8 @@ export class CarregaJettaComponent implements OnInit {
         'Plate': vehicle.Plate,
         'Cubage': vehicle.cubage,
         'Weight Loaded': vehicle.weightLoaded,
-        'Total Cost': vehicle.totalCost
+        'Total Cost': vehicle.totalCost,
+        'Total Distance': vehicle.TotalDistance
       };
 
       // Adiciona as informações dos fornecedores e janelas ao objeto da linha de dados
@@ -127,6 +150,13 @@ export class CarregaJettaComponent implements OnInit {
 
         dataRow[fornecedorKey] = supplier.fornecedor;
         dataRow[janelaKey] = supplier.janela ?? '';
+      });
+      vehicle.Destination.forEach((destinos, index) => {
+        const destinoKey = `Destino ${index + 1}`;
+        const janelaDestinoKey = `JanelaDestino ${index + 1}`;
+
+        dataRow[destinoKey] = destinos.destino;
+        dataRow[janelaDestinoKey] = destinos.janelaDestino ?? '';
       });
 
       dataArray.push(dataRow);
@@ -159,6 +189,8 @@ export class CarregaJettaComponent implements OnInit {
       data['tableName'] = this.query2;
       const finalDate = this.formatarData(new Date());
       data['ID'] = this.IDJetta + index;
+      data['description'] = this.items[0].description;
+      data['date'] = this.items[0].date;
 
       const itemsDataString = JSON.stringify(data);
       const modifiedString = itemsDataString.replace(/\\"/g, '"');
