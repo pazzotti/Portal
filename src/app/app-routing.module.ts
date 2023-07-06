@@ -8,7 +8,7 @@ import { Contrato_EADIComponent } from './contrato-eadi/contrato-eadi.component'
 import { Contrato_RedexComponent } from './contrato-redex/contrato-redex.component';
 import { ContratoTransportadoraComponent } from './contrato-transportadora/contrato-transportadora.component';
 import { ContratoTerminalComponent } from './contrato-terminal/contrato-terminal.component';
-import { Locais_DestinoComponent } from './locais-destino/locais-destino.component';
+import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { Locais_OrigemComponent } from './locais-origem/locais-origem.component';
 import { CarrierComponent } from './carriers/carriers.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -24,7 +24,7 @@ const routes: Routes = [
   {path:'contrato_Redex',component:Contrato_RedexComponent},
   {path:'contrato_Transportadora',component:ContratoTransportadoraComponent},
   {path:'contrato_terminal',component:ContratoTerminalComponent},
-  {path:'locais_destino',component:Locais_DestinoComponent},
+  {path:'fornecedores',component:FornecedoresComponent},
   {path:'locais_origem',component:Locais_OrigemComponent},
   {path:'carrier',component:CarrierComponent},
   {path:'dashboard',component:DashboardComponent},

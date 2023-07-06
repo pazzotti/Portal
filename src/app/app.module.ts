@@ -11,7 +11,6 @@ import { LiveFormDialogComponent } from './app/home/live-form-dialog/live-form-d
 import { ContratoTerminalFormDialogComponent } from './app/home/contrato_terminal/contrato-terminal-form-dialog.component';
 import { ContratoTransportadoraFormDialogComponent } from './app/home/contrato_transportadora/contrato-transportadora-form-dialog.component';
 import { OrigemFormDialogComponent } from './app/home/locais-origem/origem-form-dialog.component';
-import { DestinoFormDialogComponent } from './app/home/locais-destino/destino-form-dialog.component';
 import { CarrierFormDialogComponent } from './app/home/carriers/carriers-form-dialog.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AtualizarComponent } from './atualizar/atualizar.component';
@@ -20,7 +19,7 @@ import { ContratoTerminalComponent } from './contrato-terminal/contrato-terminal
 import { Contrato_RedexComponent } from './contrato-redex/contrato-redex.component';
 import { ContratoTransportadoraComponent } from './contrato-transportadora/contrato-transportadora.component';
 import { Locais_OrigemComponent } from './locais-origem/locais-origem.component';
-import { Locais_DestinoComponent } from './locais-destino/locais-destino.component';
+import { FornecedoresFormDialogComponent } from './app/home/fornecedores/fornecedores-form-dialog.component';
 import { FormularioLocaisComponent } from './formulario_locais/formulario_locais';
 import { MilkRunSulComponent } from './milk_run_sul/milk_run_sul.component';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
@@ -32,6 +31,13 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { CarregaJettaComponent } from './carrega-jetta/carrega-jetta.component';
 import { CommonModule, DatePipe } from '@angular/common';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { FornecedoresComponent } from './fornecedores/fornecedores.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+
 
 
 
@@ -41,10 +47,10 @@ import { CommonModule, DatePipe } from '@angular/common';
   declarations: [
     AppComponent,
     HomeComponent,
+    FornecedoresComponent,
     LiveFormDialogComponent,
     ContratoTransportadoraFormDialogComponent,
     OrigemFormDialogComponent,
-    DestinoFormDialogComponent,
     CarrierFormDialogComponent,
     AtualizarComponent,
     Contrato_EADIComponent,
@@ -53,7 +59,7 @@ import { CommonModule, DatePipe } from '@angular/common';
     Contrato_RedexComponent,
     ContratoTransportadoraComponent,
     Locais_OrigemComponent,
-    Locais_DestinoComponent,
+    FornecedoresFormDialogComponent,
     FormularioLocaisComponent,
     MilkRunSulComponent,
     CarrierComponent,
@@ -62,11 +68,10 @@ import { CommonModule, DatePipe } from '@angular/common';
     ContainerReuseFormDialogComponent,
     CarregaJettaComponent,
 
-
-
   ],
   imports: [
     BrowserModule,
+    MatFormFieldModule,
     AppRoutingModule,
     ReactiveFormsModule,
     BrowserModule,
@@ -78,7 +83,8 @@ import { CommonModule, DatePipe } from '@angular/common';
     MatDialogModule,
     BrowserAnimationsModule,
     BrowserAnimationsModule,
-    ProgressbarModule.forRoot()
+    ProgressbarModule.forRoot(),
+    BsDropdownModule.forRoot()
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

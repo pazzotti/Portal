@@ -1,22 +1,32 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/contratos/contratos.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DestinoFormDialogComponent } from '../app/home/locais-destino/destino-form-dialog.component';
+import { FornecedoresFormDialogComponent } from '../app/home/fornecedores/fornecedores-form-dialog.component';
 import { Observable, map, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { format } from 'date-fns';
 
 
 @Component({
-  selector: 'app-locais-destino',
-  templateUrl: './locais-destino.component.html',
-  styleUrls: ['./locais-destino.component.css']
+  selector: 'app-locais-fornecedores',
+  templateUrl: './fornecedores.component.html',
+  styleUrls: ['./fornecedores.component.css'],
+  styles: [`
+    .mat-dialog-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background-color: #fff;
+    }
+  `]
 })
 
-export class Locais_DestinoComponent {
+export class FornecedoresComponent {
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
-  query: string = 'Locais_Destino_Inbound';
+  query: string = 'Fornecedores_Karrara_Transport';
   data: any;
   base: number = 3;
   ID: number = Date.now();
@@ -31,24 +41,29 @@ export class Locais_DestinoComponent {
   dialogRef: any;
   items$!: Observable<any[]>;
   items: any[] = [];
-  constructor(public dialog: MatDialog, private dynamodbService: ApiService, private http: HttpClient, private cdr: ChangeDetectorRef) {
+  name!: string;
+  animal!: string;
+  constructor(
+    public dialog: MatDialog,
+    private dynamodbService: ApiService,
+    private http: HttpClient, private cdr: ChangeDetectorRef) {
 
   }
 
   editDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(DestinoFormDialogComponent, {
+    const dialogRef = this.dialog.open(FornecedoresFormDialogComponent, {
       data: {
         itemsData: item,
         url: url,
         query: table
       },
+      width: '850px', // Defina a largura desejada em pixels ou porcentagem
       height: '550px',
-      minWidth: '850px',
       position: {
-        top: '10vh',
+        top: '1vh',
         left: '30vw'
       },
-    });
+      });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -61,21 +76,19 @@ export class Locais_DestinoComponent {
   }
 
   openDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(DestinoFormDialogComponent, {
+    const dialogRef = this.dialog.open(FornecedoresFormDialogComponent, {
       data: {
         itemsData: [],
         url: url,
         query: table
       },
+      width: '850px', // Defina a largura desejada em pixels ou porcentagem
       height: '550px',
-      minWidth: '850px',
       position: {
-        top: '10vh',
+        top: '1vh',
         left: '30vw'
       },
-
-
-    });
+      });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -84,12 +97,29 @@ export class Locais_DestinoComponent {
         }, 200); // Ajuste o tempo de atraso conforme necessário
       }
       console.log('The dialog was closed');
-
     });
   }
 
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
   ngOnInit(): void {
     this.getItemsFromDynamoDB();
+    setTimeout(() => this.centerDialog(), 0);
+  }
+
+  centerDialog(): void {
+    const dialogRefElement = this.dialogRef?.containerInstance?.hostElement;
+    if (dialogRefElement) {
+      const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      const dialogWidth = dialogRefElement.clientWidth;
+      const dialogHeight = dialogRefElement.clientHeight;
+      const top = Math.max(0, (windowHeight - dialogHeight) / 2);
+      const left = Math.max(0, (windowWidth - dialogWidth) / 2);
+      dialogRefElement.style.top = `${top}px`;
+      dialogRefElement.style.left = `${left}px`;
+    }
   }
 
   getItemsFromDynamoDB(): void {

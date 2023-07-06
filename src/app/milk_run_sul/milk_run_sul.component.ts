@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 })
 export class MilkRunSulComponent implements OnInit {
   items: any[] = [];
+  fornecedores: any[] = [];
   sortColumn: string = '';
   sortNumber: number = 0;
   sortDirection: number = 1;
@@ -34,6 +35,7 @@ export class MilkRunSulComponent implements OnInit {
   urlSalva: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   query: string = 'Itens_Jetta';
   query2: string = 'Porta_Rastreando_JSL';
+  query3: string = 'Fornecedores_Karrara_Transport';
   data: any;
   editMode!: boolean[];
 
@@ -47,6 +49,30 @@ export class MilkRunSulComponent implements OnInit {
       this.filterItems();
     });
     this.getItemsFromDynamoDB();
+    this.getFornecedoresFromDynamoDB();
+
+    // Aguardar 1 segundo antes de chamar this.filtra()
+    setTimeout(() => {
+      this.filtra();
+    }, 1000);
+  }
+
+
+  filtra() {
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Fornecedor 1']);
+
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastrado1 = true;
+      } else {
+        item.cadastrado1 = false;
+      }
+    }
+    console.log(this.items);
+
   }
 
   toggleEditMode(index: number): void {
@@ -95,30 +121,31 @@ export class MilkRunSulComponent implements OnInit {
     });
   }
 
-  reutilizar(item: Array<any>, url: string, table: string): void {const dialogRef = this.dialog.open(ContainerReuseFormDialogComponent, {
-    data: {
-      itemsData: item,
-      url: url,
-      query: table
-    },
-    height: '350px',
-    minWidth: '750px',
-    position: {
-      top: '10vh',
-      left: '30vw'
-    },
+  reutilizar(item: Array<any>, url: string, table: string): void {
+    const dialogRef = this.dialog.open(ContainerReuseFormDialogComponent, {
+      data: {
+        itemsData: item,
+        url: url,
+        query: table
+      },
+      height: '350px',
+      minWidth: '750px',
+      position: {
+        top: '10vh',
+        left: '30vw'
+      },
 
 
-  });
+    });
 
-  dialogRef.afterClosed().subscribe((result: any) => {
-    if (result) {
-      setTimeout(() => {
-        this.getItemsFromDynamoDB();
-      }, 700); // Ajuste o tempo de atraso conforme necessário
-    }
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        setTimeout(() => {
+          this.getItemsFromDynamoDB();
+        }, 700); // Ajuste o tempo de atraso conforme necessário
+      }
 
-  });
+    });
   }
 
   ngOnDestroy() {
@@ -161,7 +188,7 @@ export class MilkRunSulComponent implements OnInit {
   }
 
   getItemsFromDynamoDB(): void {
-    const filtro = 'Scheduled';
+    const filtro = 'all';
     this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
@@ -169,6 +196,32 @@ export class MilkRunSulComponent implements OnInit {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
               this.items = items.map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
+  getFornecedoresFromDynamoDB(): void {
+    const filtro = 'all';
+    this.dynamoDBService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.fornecedores = items.map(item => ({ ...item, checked: false }));
               // Adiciona a chave 'checked' a cada item, com valor inicial como false
             } else {
               console.error('Invalid items data:', items);

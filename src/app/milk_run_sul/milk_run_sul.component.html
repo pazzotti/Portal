@@ -7,6 +7,7 @@
         <label for="filtroDataTermino">End date:</label>
         <input type="date" id="filtroDataTermino" name="filtroDataTermino" [(ngModel)]="filtroDataTermino">
         <button type="button" (click)="aplicarFiltroPorData()">Search</button>
+        <button type="button" (click)="filtra()">Filtra</button>
         <input type="text" name="searchText" [(ngModel)]="searchText" (input)="filterItems()" placeholder="Find"
           class="ultimo-input">
       </form>
@@ -42,22 +43,28 @@
               <td [attr.contenteditable]="editMode[i] ? true : null">{{ item["Plate"] }}</td>
               <td class="left-align auto-width">
                 <div class="button-container">
-                  <button *ngIf="item.hasOwnProperty('Fornecedor 1') && item['Fornecedor 1'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+                  <button *ngIf="item.hasOwnProperty('Fornecedor 1') && item['Fornecedor 1'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado1 === false, 'background-blue': item.cadastrado1 === true }"
+                    (click)="toggleEditMode(i)">
                     {{ item['Fornecedor 1'] }}
                     <br>
                     Janela - {{ item['Janela 1'] }}
                   </button>
-                  <button *ngIf="item.hasOwnProperty('Fornecedor 2') && item['Fornecedor 2'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+
+                  <button *ngIf="item.hasOwnProperty('Fornecedor 2') && item['Fornecedor 2'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado2 === false }" (click)="toggleEditMode(i)">
                     {{ item['Fornecedor 2'] }}
                     <br>
                     Janela - {{ item['Janela 2'] }}
                   </button>
-                  <button *ngIf="item.hasOwnProperty('Fornecedor 3') && item['Fornecedor 3'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+                  <button *ngIf="item.hasOwnProperty('Fornecedor 3') && item['Fornecedor 3'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado3 === false }" (click)="toggleEditMode(i)">
                     {{ item['Fornecedor 3'] }}
                     <br>
                     Janela - {{ item['Janela 3'] }}
                   </button>
-                  <button *ngIf="item.hasOwnProperty('Fornecedor 4') && item['Fornecedor 4'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+                  <button *ngIf="item.hasOwnProperty('Fornecedor 4') && item['Fornecedor 4'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado1 === false }" (click)="toggleEditMode(i)">
                     {{ item['Fornecedor 4'] }}
                     <br>
                     Janela - {{ item['Janela 4'] }}
@@ -67,22 +74,26 @@
               </td>
               <td class="left-align auto-width">
                 <div class="button-container">
-                  <button *ngIf="item.hasOwnProperty('Destino 1') && item['Destino 1'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+                  <button *ngIf="item.hasOwnProperty('Destino 1') && item['Destino 1'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado1 === false }" (click)="toggleEditMode(i)">
                     {{ item['Destino 1'] }}
                     <br>
                     Janela - {{ item['JanelaDestino 1'] }}
                   </button>
-                  <button *ngIf="item.hasOwnProperty('Destino 2') && item['Destino 2'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+                  <button *ngIf="item.hasOwnProperty('Destino 2') && item['Destino 2'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado1 === false }" (click)="toggleEditMode(i)">
                     {{ item['Destino 2'] }}
                     <br>
                     Janela - {{ item['JanelaDestino 2'] }}
                   </button>
-                  <button *ngIf="item.hasOwnProperty('Destino 3') && item['Destino 3'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+                  <button *ngIf="item.hasOwnProperty('Destino 3') && item['Destino 3'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado1 === false }" (click)="toggleEditMode(i)">
                     {{ item['Destino 3'] }}
                     <br>
                     Janela - {{ item['JanelaDestino 3'] }}
                   </button>
-                  <button *ngIf="item.hasOwnProperty('Destino 4') && item['Destino 4'] !== ''" style="background-color: rgb(12, 98, 179);" (click)="toggleEditMode(i)">
+                  <button *ngIf="item.hasOwnProperty('Destino 4') && item['Destino 4'] !== ''"
+                    [ngClass]="{'background-red': item.cadastrado1 === false }" (click)="toggleEditMode(i)">
                     {{ item['Destino 4'] }}
                     <br>
                     Janela - {{ item['JanelaDestino 4'] }}

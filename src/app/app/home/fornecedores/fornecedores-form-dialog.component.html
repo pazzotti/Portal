@@ -1,0 +1,27 @@
+<div class="container d-flex justify-content-center align-items-center absolute-container">
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+    <div class="brand-title">Add / Change Contract</div>
+  </nav>
+  <form class="inputs">
+    <table class="table table-dark">
+      <tr>
+        <td><label>Place</label></td>
+        <td><label>e-mail</label></td>
+        <td><label>Address</label></td>
+        <td><label>Latitude</label></td>
+        <td><label>Longitude</label></td>
+      </tr>
+      <tr>
+        <td><input type="string" name="liner" [(ngModel)]="data.itemsData.local"></td>
+        <td><input type="string" name="tripcost" [(ngModel)]="data.itemsData.contato"></td>
+        <td><input type="string" name="freetime" [(ngModel)]="data.itemsData.endereco"></td>
+        <td><input type="string" name="latitude" [(ngModel)]="data.itemsData.latitude"></td>
+        <td><input type="string" name="longitude" [(ngModel)]="data.itemsData.longitude"></td>
+      </tr>
+    </table>
+    <div>
+      <button class="btn btn-primary" type="button" (click)="salvar()">Save</button>
+      <button class="btn btn-primary" type="button" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</div>

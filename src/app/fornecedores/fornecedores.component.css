@@ -121,4 +121,37 @@ div {
     background-color: #424242;
     color: white;
   }
+  .custom-dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .mat-dialog-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .mat-dialog-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #fff;
+  }
+
+  .form-wrapper {
+    position: absolute;
+    top: 13%;
+    left: 1%;
+    right:1%;
+
+  }
+
+
+
 

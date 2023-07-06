@@ -2,8 +2,6 @@ body {
   background-color: rgb(211, 191, 191);
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @import '~remixicon/fonts/remixicon.css';
 

@@ -174,5 +174,12 @@ button {
   flex: 1;
   width: 100%;
 }
+.background-red {
+  background-color: red;
+}
+
+.background-blue {
+  background-color: rgb(37, 2, 100);
+}
 
 

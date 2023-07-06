@@ -5,11 +5,11 @@ import { ApiService } from 'src/app/services/contratos/contratos.service';
 import { format } from 'date-fns';
 
 @Component({
-  selector: 'app-destino-form-dialog',
-  templateUrl: './destino-form-dialog.component.html',
-  styleUrls: ['./destino-form-dialog.component.css']
+  selector: 'app-fornecedores-form-dialog',
+  templateUrl: './fornecedores-form-dialog.component.html',
+  styleUrls: ['./fornecedores-form-dialog.component.css']
 })
-export class DestinoFormDialogComponent {
+export class FornecedoresFormDialogComponent {
 
   base: number = 3;
   ID: number = Date.now();
@@ -19,12 +19,12 @@ export class DestinoFormDialogComponent {
   exponent: number = 22;
   dataSource: any;
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
-  query: string = 'Locais_Destino_Inbound';
+  query: string = 'Fornecedores_Karrara_Transport';
 
 
   constructor(
     private apiService: ApiService,
-    public dialogRef: MatDialogRef<DestinoFormDialogComponent>,
+    public dialogRef: MatDialogRef<FornecedoresFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
 
   ) { }
@@ -36,7 +36,7 @@ export class DestinoFormDialogComponent {
       const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
       console.log(formattedDate);
 
-      this.data.itemsData = {"ID" : formattedDate.toString(),"contato":this.data.itemsData.contato,"endereco":this.data.itemsData.endereco,"local":this.data.itemsData.local }
+      this.data.itemsData = {"ID" : formattedDate.toString(),"contato":this.data.itemsData.contato,"endereco":this.data.itemsData.endereco,"local":this.data.itemsData.local,"latitude":this.data.itemsData.latitude,"longitude":this.data.itemsData.longitude }
 
 
     }

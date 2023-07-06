@@ -1,23 +1,23 @@
-<nav>
+<nav class="main-nav">
   <a href="dashboard" routerLink="/dashboard">Karrara Transport</a>
   <div id="navbarNav">
-    <div>
+    <div class="menu-items">
       <a href="milk_sul" routerLink="/milk_sul">Milk Run Sul</a>
-      <a href="milk_sul" routerLink="/milk_sul">Milk Run SP</a>
-      <a href="milk_sul" routerLink="/milk_sul">Milk Run Argentina</a>
-      <a href="milk_sul" routerLink="/milk_sul">Interplantas</a>
-      <a href="milk_sul" routerLink="/milk_sul">Containers</a>
-      <a href="milk_sul" routerLink="/milk_sul">Frete Extra</a>
+      <a href="milk_sp" routerLink="/milk_sp">Milk Run SP</a>
+      <a href="milk_argentina" routerLink="/milk_argentina">Milk Run Argentina</a>
+      <a href="interplantas" routerLink="/interplantas">Interplantas</a>
+      <a href="containers" routerLink="/containers">Containers</a>
+      <a href="frete_extra" routerLink="/frete_extra">Frete Extra</a>
     </div>
-
   </div>
-  <a mat-button [matMenuTriggerFor]="menu"><i class="ri-tools-line"></i>Config</a>
-    <mat-menu #menu="matMenu" class="mat-menu-content">
-      <nav>
-        <a href="jetta" routerLink="/jetta">Sinc Jetta</a>
-      </nav>
+  <div class="dropdown">
+    <a class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" (click)="toggleMenu()" routerLink="/frete_extra">
+      <i class="ri-tools-line"></i>Config
+    </a>
 
-
-
-    </mat-menu>
+    <div class="dropdown-menu" *ngIf="isMenuOpen" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item custom-dropdown-item" href="jetta" routerLink="/jetta">Sinc Jetta</a>
+      <a class="dropdown-item custom-dropdown-item" href="fornecedores" routerLink="/fornecedores">Fornecedores</a>
+    </div>
+  </div>
 </nav>
