@@ -63,7 +63,6 @@ export class MilkRunSulComponent implements OnInit {
     for (const item of this.items) {
       // Verifica se 'fornecedor' está presente em this.fornecedores
       const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Fornecedor 1']);
-
       // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
       if (fornecedorEncontrado) {
         // Adiciona a chave 'cadastrado' com o valor true ao objeto item
@@ -72,7 +71,93 @@ export class MilkRunSulComponent implements OnInit {
         item.cadastrado1 = false;
       }
     }
-    console.log(this.items);
+
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Fornecedor 2']);
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastrado2 = true;
+      } else {
+        item.cadastrado2 = false;
+      }
+    }
+
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Fornecedor 3']);
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastrado3 = true;
+      } else {
+        item.cadastrado3 = false;
+      }
+    }
+
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Fornecedor 4']);
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastrado4 = true;
+      } else {
+        item.cadastrado4 = false;
+      }
+    }
+
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Destino 1']);
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastradoDestino1 = true;
+      } else {
+        item.cadastradoDestino1 = false;
+      }
+    }
+
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Destino 2']);
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastradoDestino2 = true;
+      } else {
+        item.cadastradoDestino2 = false;
+      }
+    }
+
+
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Destino 3']);
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastradoDestino3 = true;
+      } else {
+        item.cadastradoDestino3 = false;
+      }
+    }
+
+    for (const item of this.items) {
+      // Verifica se 'fornecedor' está presente em this.fornecedores
+      const fornecedorEncontrado = this.fornecedores.some(fornecedor => fornecedor['local'] === item['Destino 4']);
+      // Se fornecedorEncontrado for verdadeiro, significa que 'fornecedor' está presente
+      if (fornecedorEncontrado) {
+        // Adiciona a chave 'cadastrado' com o valor true ao objeto item
+        item.cadastradoDestino4 = true;
+      } else {
+        item.cadastradoDestino4 = false;
+      }
+    }
+
+
 
   }
 
@@ -171,8 +256,113 @@ export class MilkRunSulComponent implements OnInit {
           try {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
-              this.items = items.map(item => ({ ...item, checked: false }));
-              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+              this.items = items
+                .filter(item => item.description && item.description.toLowerCase().includes('sul'))
+                .map(item => {
+                  const date = new Date(item.date);
+                  let janela1Date = date;
+
+                  if (item['Janela 1']) {
+                    const janela1 = item['Janela 1'];
+                    const janela1Parts = janela1.split(':');
+                    const hours = parseInt(janela1Parts[0], 10);
+                    const minutes = parseInt(janela1Parts[1], 10);
+                    janela1Date = new Date(item.date);
+                    janela1Date.setHours(janela1Date.getHours() + hours);
+                    janela1Date.setMinutes(janela1Date.getMinutes() + minutes);
+                  }
+
+                  let janela2Date = date;
+
+                  if (item['Janela 2']) {
+                    const janela2 = item['Janela 2'];
+                    const janela2Parts = janela2.split(':');
+                    const hours = parseInt(janela2Parts[0], 10);
+                    const minutes = parseInt(janela2Parts[1], 10);
+                    janela2Date = new Date(date);
+                    janela2Date.setHours(janela2Date.getHours() + hours);
+                    janela2Date.setMinutes(janela2Date.getMinutes() + minutes);
+                  }
+
+                  let janela3Date = date;
+
+                  if (item['Janela 3']) {
+                    const janela3 = item['Janela 3'];
+                    const janela3Parts = janela3.split(':');
+                    const hours = parseInt(janela3Parts[0], 10);
+                    const minutes = parseInt(janela3Parts[1], 10);
+                    janela3Date = new Date(date);
+                    janela3Date.setHours(janela3Date.getHours() + hours);
+                    janela3Date.setMinutes(janela3Date.getMinutes() + minutes);
+                  }
+
+                  let janela4Date = date;
+
+                  if (item['Janela 4']) {
+                    const janela4 = item['Janela 4'];
+                    const janela4Parts = janela4.split(':');
+                    const hours = parseInt(janela4Parts[0], 10);
+                    const minutes = parseInt(janela4Parts[1], 10);
+                    janela4Date = new Date(date);
+                    janela4Date.setHours(janela4Date.getHours() + hours);
+                    janela4Date.setMinutes(janela4Date.getMinutes() + minutes);
+                  }
+
+                  let janelaDestino1Date = date;
+
+                  if (item['JanelaDestino 1']) {
+                    const janelaDestino1 = item['JanelaDestino 1'];
+                    const janelaDestino1Parts = janelaDestino1.split(':');
+                    const hours = parseInt(janelaDestino1Parts[0], 10);
+                    const minutes = parseInt(janelaDestino1Parts[1], 10);
+                    janelaDestino1Date = new Date(date);
+                    janelaDestino1Date.setHours(janelaDestino1Date.getHours() + hours);
+                    janelaDestino1Date.setMinutes(janelaDestino1Date.getMinutes() + minutes);
+                  }
+
+                  let janelaDestino2Date = date;
+
+                  if (item['JanelaDestino 2']) {
+                    const janelaDestino2 = item['JanelaDestino 2'];
+                    const janelaDestino2Parts = janelaDestino2.split(':');
+                    const hours = parseInt(janelaDestino2Parts[0], 10);
+                    const minutes = parseInt(janelaDestino2Parts[1], 10);
+                    janelaDestino2Date = new Date(date);
+                    janelaDestino2Date.setHours(janelaDestino2Date.getHours() + hours);
+                    janelaDestino2Date.setMinutes(janelaDestino2Date.getMinutes() + minutes);
+                  }
+
+                  let janelaDestino3Date = date;
+
+                  if (item['JanelaDestino 3']) {
+                    const janela2 = item['JanelaDestino 3'];
+                    const janela2Parts = janela2.split(':');
+                    const hours = parseInt(janela2Parts[0], 10);
+                    const minutes = parseInt(janela2Parts[1], 10);
+                    janela2Date = new Date(date);
+                    janela2Date.setHours(janela2Date.getHours() + hours);
+                    janela2Date.setMinutes(janela2Date.getMinutes() + minutes);
+                  }
+
+                  // Repita o mesmo padrão para as outras chaves...
+
+                  return {
+                    ...item,
+                    'Janela 1': janela1Date,
+                    'Janela 2': janela2Date,
+                    'Janela 3': janela3Date,
+                    'Janela 4': janela4Date,
+                    'JanelaDestino 1': janelaDestino1Date,
+                    'JanelaDestino 2': janelaDestino2Date,
+                    'JanelaDestino 3': janelaDestino3Date,
+                    // Adicione as outras chaves aqui...
+                    checked: false
+                  };
+                });
+              // Filtra os itens que possuem a chave 'description' com a palavra 'sul'
+              // (sem diferenciar maiúsculas de minúsculas), adiciona a chave 'checked' a cada item com valor inicial como false,
+              // converte a chave 'date' em um objeto de data utilizando o construtor 'Date',
+              // soma o valor das chaves 'Janela 1', 'Janela 2' e assim por diante à data do item e atualiza as respectivas chaves com os resultados
             } else {
               console.error('Invalid items data:', items);
             }
@@ -188,6 +378,8 @@ export class MilkRunSulComponent implements OnInit {
       }
     );
   }
+
+
 
   getFornecedoresFromDynamoDB(): void {
     const filtro = 'all';
