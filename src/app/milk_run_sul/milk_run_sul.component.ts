@@ -9,6 +9,7 @@ import { ContainerReuseFormDialogComponent } from '../app/home/container_reuse/c
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { FornecedoresFormDialogComponent } from '../app/home/fornecedores/fornecedores-form-dialog.component';
 
 
 
@@ -121,32 +122,7 @@ export class MilkRunSulComponent implements OnInit {
     });
   }
 
-  reutilizar(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(ContainerReuseFormDialogComponent, {
-      data: {
-        itemsData: item,
-        url: url,
-        query: table
-      },
-      height: '350px',
-      minWidth: '750px',
-      position: {
-        top: '10vh',
-        left: '30vw'
-      },
 
-
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 700); // Ajuste o tempo de atraso conforme necessário
-      }
-
-    });
-  }
 
   ngOnDestroy() {
     this.searchTextSubscription.unsubscribe();
@@ -239,6 +215,36 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
+  editDialog(item: string): void {
+
+const itemAlterado = { local: item };
+
+
+
+
+
+    const dialogRef = this.dialog.open(FornecedoresFormDialogComponent, {
+      data: {
+        itemsData: itemAlterado,
+
+      },
+      width: '850px', // Defina a largura desejada em pixels ou porcentagem
+      height: '550px',
+      position: {
+        top: '1vh',
+        left: '30vw'
+      },
+      });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        setTimeout(() => {
+          this.getItemsFromDynamoDB();
+        }, 200); // Ajuste o tempo de atraso conforme necessário
+      }
+      console.log('The dialog was closed');
+    });
+  }
 
 
   sortBy(column: string) {
