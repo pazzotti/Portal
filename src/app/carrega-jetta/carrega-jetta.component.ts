@@ -49,8 +49,6 @@ export class CarregaJettaComponent implements OnInit {
   ngOnInit() {
     this.getItemsFromJetta();
     this.geraJson();
-
-
   }
 
   ngOnDestroy() {
@@ -66,8 +64,9 @@ export class CarregaJettaComponent implements OnInit {
         weightLoaded: string;
         totalCost: string;
         TripSuppliers: { fornecedor: string; janela?: string }[];
-        Destination: { destino: string; janelaDestino?: string }[];
+        Destination: { destino: string; janelaDestino?: string ;passos:number}[];
         TotalDistance: string;
+        Passos:number;
 
       }[];
     } = {
@@ -75,29 +74,32 @@ export class CarregaJettaComponent implements OnInit {
     };
     let destination = '';
     let janelaDestino = ""; // Variável para armazenar a janela
+    let passos = 0; // Variável para armazenar a janela
+
     for (let i = 0; i < this.items.length; i++) {
       const currentItem = this.items[i];
       this.IDJetta = currentItem._id;
       for (let j = 0; j < currentItem.routes.length; j++) {
         const currentRoute = currentItem.routes[j];
-
+        passos = 0;
         for (let k = 0; k < currentRoute.result.transports.length; k++) {
           const currentTransport = currentRoute.result.transports[k];
           const totalDistance = currentRoute.result.route.distanceKm;
           const fornecedores: { fornecedor: string; janela?: string }[] = [];
-          const destinos: { destino: string; janelaDestino?: string }[] = [];
+          const destinos: { destino: string;  passos: number; janelaDestino?: string}[] = [];
           for (let o = 0; o < currentTransport.destinations.length; o++) {
-              destination = currentTransport.destinations[o].name;
-              for (let n = 0; n < currentRoute.result.route.schedule.length; n++) {
-                if (currentRoute.result.route.schedule[n].name === destination) {
-                  janelaDestino = currentRoute.result.route.schedule[n].arrivalTime;
-                  break; // Interrompe o loop assim que encontrar a janela
-                }
+            destination = currentTransport.destinations[o].name;
+            for (let n = 0; n < currentRoute.result.route.schedule.length; n++) {
+              if (currentRoute.result.route.schedule[n].name === destination) {
+                janelaDestino = currentRoute.result.route.schedule[n].arrivalTime;
+                break; // Interrompe o loop assim que encontrar a janela
               }
 
+            }
 
+            passos = passos + 1;
 
-            destinos.push({ destino: destination, janelaDestino: janelaDestino });
+            destinos.push({ destino: destination, janelaDestino: janelaDestino, passos: passos });
 
           }
           for (let l = 0; l < currentTransport.waypoints.length; l++) {
@@ -109,7 +111,7 @@ export class CarregaJettaComponent implements OnInit {
                 break; // Interrompe o loop assim que encontrar a janela
               }
             }
-
+            passos = passos + 1;
             fornecedores.push({ fornecedor: waypoint.name, janela: janela });
 
           }
@@ -121,7 +123,8 @@ export class CarregaJettaComponent implements OnInit {
             totalCost: currentTransport.totalCost,
             TripSuppliers: fornecedores,
             Destination: destinos,
-            TotalDistance:totalDistance,
+            Passos:passos,
+            TotalDistance: totalDistance,
           });
         }
       }
@@ -137,7 +140,8 @@ export class CarregaJettaComponent implements OnInit {
         'Cubage': vehicle.cubage,
         'Weight Loaded': vehicle.weightLoaded,
         'Total Cost': vehicle.totalCost,
-        'Total Distance': vehicle.TotalDistance
+        'Total Distance': vehicle.TotalDistance,
+        'Passos':vehicle.Passos.toString(),
       };
 
       // Adiciona as informações dos fornecedores e janelas ao objeto da linha de dados
@@ -152,8 +156,11 @@ export class CarregaJettaComponent implements OnInit {
         const destinoKey = `Destino ${index + 1}`;
         const janelaDestinoKey = `JanelaDestino ${index + 1}`;
 
+
         dataRow[destinoKey] = destinos.destino;
         dataRow[janelaDestinoKey] = destinos.janelaDestino ?? '';
+
+
       });
 
       dataArray.push(dataRow);

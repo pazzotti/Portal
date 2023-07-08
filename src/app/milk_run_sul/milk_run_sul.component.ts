@@ -55,7 +55,7 @@ export class MilkRunSulComponent implements OnInit {
     // Aguardar 1 segundo antes de chamar this.filtra()
     setTimeout(() => {
       this.filtra();
-    }, 1000);
+    }, 1500);
   }
 
 
@@ -179,36 +179,6 @@ export class MilkRunSulComponent implements OnInit {
   getKeysByPrefix(obj: any, prefix: string): string[] {
     return Object.keys(obj).filter(key => key.startsWith(prefix));
   }
-
-  devolverVazio(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(DevolverVazioFormDialogComponent, {
-      data: {
-        itemsData: item,
-        url: url,
-        query: table
-      },
-      height: '350px',
-      minWidth: '450px',
-      position: {
-        top: '10vh',
-        left: '30vw'
-      },
-
-
-    });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 700); // Ajuste o tempo de atraso conforme necessário
-      }
-
-    });
-  }
-
-
-
   ngOnDestroy() {
     this.searchTextSubscription.unsubscribe();
   }
@@ -257,7 +227,7 @@ export class MilkRunSulComponent implements OnInit {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
               this.items = items
-                .filter(item => item.description && item.description.toLowerCase().includes('sul'))
+                .filter(item => item.description && item.description.toLowerCase().includes('progra'))
                 .map(item => {
                   const date = new Date(item.date);
                   let janela1Date = date;
@@ -409,12 +379,7 @@ export class MilkRunSulComponent implements OnInit {
 
   editDialog(item: string): void {
 
-const itemAlterado = { local: item };
-
-
-
-
-
+    const itemAlterado = { local: item };
     const dialogRef = this.dialog.open(FornecedoresFormDialogComponent, {
       data: {
         itemsData: itemAlterado,
@@ -426,13 +391,13 @@ const itemAlterado = { local: item };
         top: '1vh',
         left: '30vw'
       },
-      });
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
+          this.ngOnInit();
+        }, 1200); // Ajuste o tempo de atraso conforme necessário
       }
       console.log('The dialog was closed');
     });
@@ -546,22 +511,54 @@ const itemAlterado = { local: item };
     this.searchTextSubject.next(this.searchText);
   }
 
-  salvar(item: any): void {
+  acaoDeClique(item: any, NomePasso: string, NomeBotao:string, NomeDestino:string) {
+    if (item[NomeBotao] === false) {
+      // Executa ação 1
+      this.editDialog(item[NomeDestino]);
+    } else {
+      // Executa ação 2
+      this.finalizaPasso(NomePasso, item);
+    }
+  }
+
+  finalizaPasso(Passo: string, item: any) {
+    this.salvar(Passo, item);
+
+
+    setTimeout(() => {
+      this.ngOnInit();
+    }, 1500);
+
+
+  }
+
+  salvar(Passo: String, item: any): void {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
+    let body = [];
+    if (Passo == 'Placa') {
+      body = [{
+        ...item, // Mantém as chaves existentes
+        "ID": item.ID,
+        "Plate": item.Plate,
 
-    const body = [{
-      ...item, // Mantém as chaves existentes
-      'Transport Type': item['Transport Type'],
-      'Plate': item['Plate'],
-      'Fornecedor 1': item['Fornecedor 1'],
-      'Janela 1': item['Janela 1'],
-      'Destino 1': item['Destino 1'],
-      'JanelaDestino 1': item['JanelaDestino 1'],
-      'tableName': this.query
-      // Adicione outros campos conforme necessário
-    }];
+        // Adicione outros campos conforme necessário
+      }];
+
+    } else {
+
+      body = [{
+        ...item, // Mantém as chaves existentes
+        "ID": item.ID,
+        [Passo.toString()]: 1,
+
+        // Adicione outros campos conforme necessário
+      }];
+
+
+    }
+
 
     this.dynamoDBService.salvar(body, this.query2, this.urlSalva).subscribe(response => {
       // Atualiza o item no banco de dados com sucesso
