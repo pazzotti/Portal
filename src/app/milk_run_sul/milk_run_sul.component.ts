@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { isToday } from 'date-fns';
 import { debounceTime } from 'rxjs/operators';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, interval } from 'rxjs';
 import { ApiService } from '../services/contratos/contratos.service';
 import { AppModule } from '../app.module';
 import { DevolverVazioFormDialogComponent } from '../app/home/devolver_vazio/devolver-vazio-form-dialog.component';
@@ -19,8 +19,11 @@ import { FornecedoresFormDialogComponent } from '../app/home/fornecedores/fornec
   styleUrls: ['./milk_run_sul.component.css']
 })
 export class MilkRunSulComponent implements OnInit {
+  subscription: Subscription | undefined;
   items: any[] = [];
+  itemsAntigo: any[] = [];
   fornecedores: any[] = [];
+  posicao: any[] = [];
   sortColumn: string = '';
   sortNumber: number = 0;
   sortDirection: number = 1;
@@ -39,6 +42,7 @@ export class MilkRunSulComponent implements OnInit {
   query3: string = 'Fornecedores_Karrara_Transport';
   data: any;
   editMode!: boolean[];
+  address!: string;
 
 
   constructor(private dynamoDBService: ApiService, public dialog: MatDialog, private http: HttpClient) {
@@ -46,17 +50,38 @@ export class MilkRunSulComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchTextSubscription = this.searchTextSubject.pipe(debounceTime(300)).subscribe(() => {
-      this.filterItems();
-    });
+
     this.getItemsFromDynamoDB();
     this.getFornecedoresFromDynamoDB();
+    this.getPosicaoFromDynamoDB();
+    setTimeout(() => {
+      this.armazenarLatitudeEmItems();
+    }, 1500);
 
     // Aguardar 1 segundo antes de chamar this.filtra()
     setTimeout(() => {
       this.filtra();
     }, 1500);
+
+
+    this.subscription = interval(3 * 60 * 1000).subscribe(() => {
+      // Chame a função que deseja executar a cada 3 minutos aqui
+      this.getItemsFromDynamoDB();
+      this.getFornecedoresFromDynamoDB();
+      this.getPosicaoFromDynamoDB();
+      setTimeout(() => {
+        this.armazenarLatitudeEmItems();
+      }, 1500);
+
+      // Aguardar 1 segundo antes de chamar this.filtra()
+      setTimeout(() => {
+        this.filtra();
+      }, 1500);
+    });
+
+
   }
+
 
 
   filtra() {
@@ -208,16 +233,6 @@ export class MilkRunSulComponent implements OnInit {
     }
   }
 
-  calcularSomaTrip(): number {
-    return this.itemsFiltrados.reduce((sum, item) => sum + Number(item.TripCost), 0);
-  }
-  calcularSomaHandling(): number {
-    return this.itemsFiltrados.reduce((sum, item) => sum + Number(item.Handling), 0);
-  }
-  calcularSomaDemurrage(): number {
-    return this.itemsFiltrados.reduce((sum, item) => sum + Number(item.Demurrage), 0);
-  }
-
   getItemsFromDynamoDB(): void {
     const filtro = 'all';
     this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro).subscribe(
@@ -228,93 +243,151 @@ export class MilkRunSulComponent implements OnInit {
             if (Array.isArray(items)) {
               this.items = items
                 .filter(item => item.description && item.description.toLowerCase().includes('progra'))
+                .filter(item => item.Finalizada !== true) // Novo filtro adicionado
                 .map(item => {
+
                   const date = new Date(item.date);
-                  let janela1Date = date;
+                  const janela1 = item['Janela 1'];
+                  let janela1Date = janela1;
 
-                  if (item['Janela 1']) {
-                    const janela1 = item['Janela 1'];
-                    const janela1Parts = janela1.split(':');
-                    const hours = parseInt(janela1Parts[0], 10);
-                    const minutes = parseInt(janela1Parts[1], 10);
-                    janela1Date = new Date(item.date);
-                    janela1Date.setHours(janela1Date.getHours() + hours);
-                    janela1Date.setMinutes(janela1Date.getMinutes() + minutes);
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janela1))) {
+
+                  } else {
+                    if (janela1 !== undefined) {
+                      const janela1Parts = janela1.split(':');
+                      const hours = parseInt(janela1Parts[0], 10);
+                      const minutes = parseInt(janela1Parts[1], 10);
+                      janela1Date = new Date(item.date);
+                      janela1Date.setHours(janela1Date.getHours() + hours);
+                      janela1Date.setMinutes(janela1Date.getMinutes() + minutes);
+                    }
+
                   }
 
-                  let janela2Date = date;
+                  const janela2 = item['Janela 2'];
+                  let janela2Date = janela2;
 
-                  if (item['Janela 2']) {
-                    const janela2 = item['Janela 2'];
-                    const janela2Parts = janela2.split(':');
-                    const hours = parseInt(janela2Parts[0], 10);
-                    const minutes = parseInt(janela2Parts[1], 10);
-                    janela2Date = new Date(date);
-                    janela2Date.setHours(janela2Date.getHours() + hours);
-                    janela2Date.setMinutes(janela2Date.getMinutes() + minutes);
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janela2))) {
+
+                  } else {
+                    if (janela2 !== undefined) {
+                      const janela2Parts = janela2.split(':');
+                      const hours = parseInt(janela2Parts[0], 10);
+                      const minutes = parseInt(janela2Parts[1], 10);
+                      janela2Date = new Date(item.date);
+                      janela2Date.setHours(janela2Date.getHours() + hours);
+                      janela2Date.setMinutes(janela2Date.getMinutes() + minutes);
+
+                    }
+
                   }
 
-                  let janela3Date = date;
+                  const janela3 = item['Janela 3'];
+                  let janela3Date = janela3;
 
-                  if (item['Janela 3']) {
-                    const janela3 = item['Janela 3'];
-                    const janela3Parts = janela3.split(':');
-                    const hours = parseInt(janela3Parts[0], 10);
-                    const minutes = parseInt(janela3Parts[1], 10);
-                    janela3Date = new Date(date);
-                    janela3Date.setHours(janela3Date.getHours() + hours);
-                    janela3Date.setMinutes(janela3Date.getMinutes() + minutes);
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janela3))) {
+
+                  } else {
+                    if (janela3 !== undefined) {
+                      const janela3Parts = janela3.split(':');
+                      const hours = parseInt(janela3Parts[0], 10);
+                      const minutes = parseInt(janela3Parts[1], 10);
+                      janela3Date = new Date(item.date);
+                      janela3Date.setHours(janela3Date.getHours() + hours);
+                      janela3Date.setMinutes(janela3Date.getMinutes() + minutes);
+                    }
+
                   }
 
-                  let janela4Date = date;
+                  const janela4 = item['Janela 4'];
+                  let janela4Date = janela4;
 
-                  if (item['Janela 4']) {
-                    const janela4 = item['Janela 4'];
-                    const janela4Parts = janela4.split(':');
-                    const hours = parseInt(janela4Parts[0], 10);
-                    const minutes = parseInt(janela4Parts[1], 10);
-                    janela4Date = new Date(date);
-                    janela4Date.setHours(janela4Date.getHours() + hours);
-                    janela4Date.setMinutes(janela4Date.getMinutes() + minutes);
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janela4))) {
+
+                  } else {
+                    if (janela4 !== undefined) {
+                      const janela4Parts = janela4.split(':');
+                      const hours = parseInt(janela4Parts[0], 10);
+                      const minutes = parseInt(janela4Parts[1], 10);
+                      janela4Date = new Date(item.date);
+                      janela4Date.setHours(janela4Date.getHours() + hours);
+                      janela4Date.setMinutes(janela4Date.getMinutes() + minutes);
+                    }
+
                   }
 
-                  let janelaDestino1Date = date;
+                  const janelaDestino1 = item['JanelaDestino 1'];
+                  let janelaDestino1Date = janelaDestino1;
 
-                  if (item['JanelaDestino 1']) {
-                    const janelaDestino1 = item['JanelaDestino 1'];
-                    const janelaDestino1Parts = janelaDestino1.split(':');
-                    const hours = parseInt(janelaDestino1Parts[0], 10);
-                    const minutes = parseInt(janelaDestino1Parts[1], 10);
-                    janelaDestino1Date = new Date(date);
-                    janelaDestino1Date.setHours(janelaDestino1Date.getHours() + hours);
-                    janelaDestino1Date.setMinutes(janelaDestino1Date.getMinutes() + minutes);
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janelaDestino1))) {
+
+                  } else {
+                    if (janelaDestino1 !== undefined) {
+                      const janelaDestino1Parts = janelaDestino1.split(':');
+                      const hours = parseInt(janelaDestino1Parts[0], 10);
+                      const minutes = parseInt(janelaDestino1Parts[1], 10);
+                      janelaDestino1Date = new Date(item.date);
+                      janelaDestino1Date.setHours(janelaDestino1Date.getHours() + hours);
+                      janelaDestino1Date.setMinutes(janelaDestino1Date.getMinutes() + minutes);
+                    }
                   }
 
-                  let janelaDestino2Date = date;
+                  const janelaDestino2 = item['JanelaDestino 2'];
+                  let janelaDestino2Date = janelaDestino2;
 
-                  if (item['JanelaDestino 2']) {
-                    const janelaDestino2 = item['JanelaDestino 2'];
-                    const janelaDestino2Parts = janelaDestino2.split(':');
-                    const hours = parseInt(janelaDestino2Parts[0], 10);
-                    const minutes = parseInt(janelaDestino2Parts[1], 10);
-                    janelaDestino2Date = new Date(date);
-                    janelaDestino2Date.setHours(janelaDestino2Date.getHours() + hours);
-                    janelaDestino2Date.setMinutes(janelaDestino2Date.getMinutes() + minutes);
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janelaDestino2))) {
+
+                  } else {
+                    if (janelaDestino2 !== undefined) {
+                      const janelaDestino2Parts = janelaDestino2.split(':');
+                      const hours = parseInt(janelaDestino2Parts[0], 10);
+                      const minutes = parseInt(janelaDestino2Parts[1], 10);
+                      janelaDestino2Date = new Date(item.date);
+                      janelaDestino2Date.setHours(janelaDestino2Date.getHours() + hours);
+                      janelaDestino2Date.setMinutes(janelaDestino2Date.getMinutes() + minutes);
+                    }
+
                   }
 
-                  let janelaDestino3Date = date;
+                  const janelaDestino3 = item['JanelaDestino 3'];
+                  let janelaDestino3Date = janelaDestino3;
 
-                  if (item['JanelaDestino 3']) {
-                    const janela2 = item['JanelaDestino 3'];
-                    const janela2Parts = janela2.split(':');
-                    const hours = parseInt(janela2Parts[0], 10);
-                    const minutes = parseInt(janela2Parts[1], 10);
-                    janela2Date = new Date(date);
-                    janela2Date.setHours(janela2Date.getHours() + hours);
-                    janela2Date.setMinutes(janela2Date.getMinutes() + minutes);
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janelaDestino3))) {
+
+                  } else {
+                    if (janelaDestino3 !== undefined) {
+                      const janelaDestino3Parts = janelaDestino3.split(':');
+                      const hours = parseInt(janelaDestino3Parts[0], 10);
+                      const minutes = parseInt(janelaDestino3Parts[1], 10);
+                      janelaDestino3Date = new Date(item.date);
+                      janelaDestino3Date.setHours(janelaDestino3Date.getHours() + hours);
+                      janelaDestino3Date.setMinutes(janelaDestino3Date.getMinutes() + minutes);
+                    }
                   }
 
-                  // Repita o mesmo padrão para as outras chaves...
+                  const janelaDestino4 = item['JanelaDestino 4'];
+                  let janelaDestino4Date = janelaDestino4;
+
+                  // Verifica se janela1 é uma data válida
+                  if (!isNaN(Date.parse(janelaDestino4))) {
+
+                  } else {
+                    if (janelaDestino4 !== undefined) {
+                      const janelaDestino4Parts = janelaDestino4.split(':');
+                      const hours = parseInt(janelaDestino4Parts[0], 10);
+                      const minutes = parseInt(janelaDestino4Parts[1], 10);
+                      janelaDestino4Date = new Date(item.date);
+                      janelaDestino4Date.setHours(janelaDestino4Date.getHours() + hours);
+                      janelaDestino4Date.setMinutes(janelaDestino4Date.getMinutes() + minutes);
+                    }
+                  }
 
                   return {
                     ...item,
@@ -377,6 +450,46 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
+  getPosicaoFromDynamoDB(): void {
+    const filtro = 'all';
+    this.dynamoDBService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.posicao = items.map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
+
+  armazenarLatitudeEmItems() {
+    for (let i = 0; i < this.items.length; i++) {
+      const plate = this.items[i]['Plate'];
+      const matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
+      if (matchingPosicao) {
+        this.items[i]['Latitude'] = matchingPosicao['Latitude'];
+        this.items[i]['Longitude'] = matchingPosicao['Longitude'];
+        this.items[i]['Endereco'] = matchingPosicao['Endereco'];
+      }
+    }
+  }
+
+
   editDialog(item: string): void {
 
     const itemAlterado = { local: item };
@@ -404,114 +517,8 @@ export class MilkRunSulComponent implements OnInit {
   }
 
 
-  sortBy(column: string) {
-    if (this.sortColumn === column) {
-      // Reverse the sort direction
-      this.sortDirection *= -1;
-    } else {
-      // Set the new sort column and reset the sort direction
-      this.sortColumn = column;
-      this.sortDirection = 1;
-    }
 
-    // Sort the data array based on the selected column and direction
-    this.itemsFiltrados.sort((a: { [x: string]: any; }, b: { [x: string]: any; }) => {
-      const valueA = a[this.sortColumn];
-      const valueB = b[this.sortColumn];
-
-      if (valueA < valueB) {
-        return -1 * this.sortDirection;
-      } else if (valueA > valueB) {
-        return 1 * this.sortDirection;
-      } else {
-        return 0;
-      }
-    });
-  }
-  sortBy2(column: string) {
-    if (this.sortColumn === column) {
-      // Reverse the sort direction
-      this.sortDirection *= -1;
-    } else {
-      // Set the new sort column and reset the sort direction
-      this.sortColumn = column;
-      this.sortDirection = 1;
-    }
-
-    // Sort the data array based on the selected column and direction
-    this.itemsFiltrados.sort((a: { [x: string]: any; }, b: { [x: string]: any; }) => {
-      const valueA = parseFloat(a[this.sortColumn]);
-      const valueB = parseFloat(b[this.sortColumn]);
-
-      if (valueA < valueB) {
-        return -1 * this.sortDirection;
-      } else if (valueA > valueB) {
-        return 1 * this.sortDirection;
-      } else {
-        return 0;
-      }
-    });
-  }
-  sortByDate(column: string) {
-    if (this.sortColumn === column) {
-      // Inverte a direção da ordenação
-      this.sortDirection *= -1;
-    } else {
-      // Define a nova coluna de ordenação e redefine a direção da ordenação
-      this.sortColumn = column;
-      this.sortDirection = 1;
-    }
-
-    // Sort the data array based on the selected column and direction
-    this.itemsFiltrados.sort((a: { [x: string]: any; }, b: { [x: string]: any; }) => {
-      const dateA = this.parseDate(a[this.sortColumn]);
-      const dateB = this.parseDate(b[this.sortColumn]);
-
-      if (dateA < dateB) {
-        return -1 * this.sortDirection;
-      } else if (dateA > dateB) {
-        return 1 * this.sortDirection;
-      } else {
-        return 0;
-      }
-    });
-  }
-
-  parseDate(dateString: string): Date {
-    const parts = dateString.split('/');
-    const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1;
-    const year = parseInt(parts[2], 10);
-    return new Date(year, month, day);
-  }
-
-
-  filterItems() {
-    const searchText = this.searchText.toLowerCase();
-    this.itemsFiltrados = this.items.filter(item => {
-
-      // Implemente a lógica de filtragem com base no seu HTML
-      // Por exemplo, se seus itens tiverem uma propriedade 'Process':
-      return item.Process.toLowerCase().includes(searchText)
-        || item.Invoice.toLowerCase().includes(searchText)
-        || item.Container.toLowerCase().includes(searchText)
-        || item.Step.toLowerCase().includes(searchText)
-        || item.Liner.toLowerCase().includes(searchText)
-        || item.Channel.toLowerCase().includes(searchText)
-        || item.ATA.toLowerCase().includes(searchText)
-        || item.Dias.toLowerCase().includes(searchText)
-        || item.FreeTime.toLowerCase().includes(searchText)
-        || item.TripCost.toLowerCase().includes(searchText)
-        || item.Handling.toLowerCase().includes(searchText)
-        || item.Demurrage.toLowerCase().includes(searchText);
-    });
-  }
-
-  onSearchTextChanged() {
-    this.searchTextSubject.next(this.searchText);
-  }
-
-  acaoDeClique(item: any, NomePasso: string, NomeBotao:string, NomeDestino:string) {
+  acaoDeClique(item: any, NomePasso: string, NomeBotao: string, NomeDestino: string) {
     if (item[NomeBotao] === false) {
       // Executa ação 1
       this.editDialog(item[NomeDestino]);
@@ -547,18 +554,129 @@ export class MilkRunSulComponent implements OnInit {
       }];
 
     } else {
+      let ValorPasso = 0;
+      let ContadorPasso = 0;
+      switch (Passo) {
+        case 'Passo Fornecedor1':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['Janela 1'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
+        case 'Passo Fornecedor2':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['Janela 2'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
+        case 'Passo Fornecedor3':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['Janela 3'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
+        case 'Passo Fornecedor4':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['Janela 4'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
+        case 'Passo Destino1':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['JanelaDestino 1'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
+        case 'Passo Destino2':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['JanelaDestino 2'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
+        case 'Passo Destino3':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['JanelaDestino 3'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
+        case 'Passo Destino4':
+          ContadorPasso = ContadorPasso + 1;
+          if (item['JanelaDestino 4'] > new Date()) {
+            ValorPasso = 1;
+          } else {
+            ValorPasso = 2;
+          }
+          break;
 
-      body = [{
-        ...item, // Mantém as chaves existentes
-        "ID": item.ID,
-        [Passo.toString()]: 1,
+      }
 
-        // Adicione outros campos conforme necessário
-      }];
+
+      if (item['Passo Fornecedor1'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+      if (item['Passo Fornecedor2'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+      if (item['Passo Fornecedor3'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+      if (item['Passo Fornecedor4'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+      if (item['Passo Destino1'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+      if (item['Passo Destino2'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+      if (item['Passo Destino3'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+      if (item['Passo Destino4'] > 0) {
+        ContadorPasso = ContadorPasso + 1;
+      }
+
+
+      if (parseInt(item['Passos'], 10) === ContadorPasso) {
+        body = [{
+          ...item, // Mantém as chaves existentes
+          "ID": item.ID,
+          "Finalizada": true,
+
+
+          [Passo.toString()]: ValorPasso,
+
+          // Adicione outros campos conforme necessário
+        }];
+
+      } else {
+        body = [{
+          ...item, // Mantém as chaves existentes
+          "ID": item.ID,
+
+
+          [Passo.toString()]: ValorPasso,
+
+          // Adicione outros campos conforme necessário
+        }];
+      }
 
 
     }
-
 
     this.dynamoDBService.salvar(body, this.query2, this.urlSalva).subscribe(response => {
       // Atualiza o item no banco de dados com sucesso
@@ -566,6 +684,16 @@ export class MilkRunSulComponent implements OnInit {
       console.log(error);
       // Lidar com o erro ao atualizar o item no banco de dados
     });
+  }
+
+
+  getItemAntigo(item: any): number {
+    for (let i = 0; i < this.itemsAntigo.length; i++) {
+      if (this.itemsAntigo[i].ID === item.ID) {
+        return i;
+      }
+    }
+    return -1; // Retorna -1 se não encontrar correspondência
   }
 
 

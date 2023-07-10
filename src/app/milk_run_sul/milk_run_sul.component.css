@@ -192,3 +192,12 @@ button {
 .background-green {
   border: 4px solid green;
 }
+.centered-table {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 500px; /* Defina a largura máxima desejada para a tabela */
+  border: 4px solid black; /* Adiciona uma borda preta de 1 pixel à tabela */
+}
+
