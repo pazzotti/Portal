@@ -1,14 +1,14 @@
 <body>
   <div>
     <div *ngIf="dataLoaded">
-      <form>
-        <label for="filtroDataInicio">Start date:</label>
-        <input type="date" id="filtroDataInicio" name="filtroDataInicio" [(ngModel)]="filtroDataInicio">
-        <label for="filtroDataTermino">End date:</label>
-        <input type="date" id="filtroDataTermino" name="filtroDataTermino" [(ngModel)]="filtroDataTermino">
-        <button type="button" (click)="aplicarFiltroPorData()">Search</button>
-        <button type="button" (click)="filtra()">Filtra</button>
-      </form>
+      <table class="table2">
+        <thead>
+          <th class="corlinha">
+            Milk Run Sul
+          </th>
+        </thead>
+      </table>
+
       <div class="form-wrapper">
         <table>
           <thead>
@@ -39,7 +39,10 @@
                 <td [attr.contenteditable]="editMode[i] ? true : null">{{ item["Transport Type"] }}</td>
                 <td (click)="toggleEditMode(i)">{{ item["Plate"] }}</td>
                 <td>{{ item["Endereco"] }}</td>
-                <td [attr.contenteditable]="editMode[i] ? true : null">{{ item["Plate"] }}</td>
+                <td *ngIf="item['Conexao'] === true" (click)="toggleInformationMode(i)"><i-feather
+                    name="zap" class="blinking-icon"></i-feather></td>
+                <td *ngIf="item['Conexao'] === false" (click)="toggleInformationMode(i)"><i-feather
+                    name="zap-off" class="vermelho-icon"></i-feather></td>
                 <td class="left-align auto-width">
                   <div class="button-container">
                     <button *ngIf="item.hasOwnProperty('Fornecedor 1') && item['Fornecedor 1'] !== ''"
@@ -122,30 +125,50 @@
               </tr>
               <table *ngIf="editMode[i]" class="centered-table">
                 <tr>
-                  <td><label>Placa</label></td>
-                  <td><label>Paradas</label></td>
+                  <td><label>Inserir Placa</label></td>
                 </tr>
                 <tr>
                   <td>
                     <input type="text" [(ngModel)]="item['Plate']">
                   </td>
-                  <td>
-                    <input type="text" [(ngModel)]="item['Passos']">
-                  </td>
                 </tr>
                 <tr>
-                  <td >
+                  <td>
 
                     <!-- Outros inputs para as colunas restantes -->
                     <button (click)="salvar('Placa',item); editMode[i] = false">Salvar</button>
+                    <button (click)="editMode[i] = false">Cancelar</button>
 
                   </td>
-                  <td>
-                    <button (click)="editMode[i] = false">Cancelar</button>
-                  </td>
+
                 </tr>
 
               </table>
+              <div *ngIf="informationMode[i]">
+                <table class="centered-table">
+                  <tr>
+                    <td><label>Última Atualização</label></td>
+                    <td><label>Último Sinal do Veículo</label></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <input type="text" [(ngModel)]="item['data_atualizacao']">
+                    </td>
+                    <td>
+                      <input type="text" [(ngModel)]="item['DataBordo']">
+                    </td>
+                  </tr>
+
+                </table>
+                <table class="centered-table2">
+                  <tr>
+                    <button (click)="informationMode[i] = false" >Ok</button>
+                  </tr>
+                </table>
+
+
+              </div>
+
 
             </ng-container>
           </tbody>

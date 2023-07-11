@@ -42,11 +42,15 @@ export class MilkRunSulComponent implements OnInit {
   query3: string = 'Fornecedores_Karrara_Transport';
   data: any;
   editMode!: boolean[];
+  informationMode!: boolean[];
   address!: string;
+  DataAtual: Date = new Date();
 
 
   constructor(private dynamoDBService: ApiService, public dialog: MatDialog, private http: HttpClient) {
     this.editMode = [];
+    this.informationMode = [];
+
   }
 
   ngOnInit() {
@@ -188,6 +192,9 @@ export class MilkRunSulComponent implements OnInit {
 
   toggleEditMode(index: number): void {
     this.editMode[index] = !this.editMode[index];
+  }
+  toggleInformationMode(index: number): void {
+    this.informationMode[index] = !this.informationMode[index];
   }
 
 
@@ -422,8 +429,6 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
-
-
   getFornecedoresFromDynamoDB(): void {
     const filtro = 'all';
     this.dynamoDBService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
@@ -478,6 +483,7 @@ export class MilkRunSulComponent implements OnInit {
 
 
   armazenarLatitudeEmItems() {
+
     for (let i = 0; i < this.items.length; i++) {
       const plate = this.items[i]['Plate'];
       const matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
@@ -485,7 +491,23 @@ export class MilkRunSulComponent implements OnInit {
         this.items[i]['Latitude'] = matchingPosicao['Latitude'];
         this.items[i]['Longitude'] = matchingPosicao['Longitude'];
         this.items[i]['Endereco'] = matchingPosicao['Endereco'];
+        this.items[i]['data_atualizacao'] = new Date(matchingPosicao['data_atualizacao']);
+        this.items[i]['DataBordo'] = new Date(matchingPosicao['DataBordo']);
+
       }
+      if (this.items[i]['DataBordo'] === undefined) {
+        this.items[i]['Conexao'] = false;
+      } else {
+        this.DataAtual = new Date();
+        var outraData = new Date(this.items[i]['DataBordo']);
+
+        if (new Date(outraData.setHours(outraData.getHours() + 1)) > this.DataAtual) {
+          this.items[i]['Conexao'] = true;
+        } else {
+          this.items[i]['Conexao'] = false;
+        }
+      }
+
     }
   }
 

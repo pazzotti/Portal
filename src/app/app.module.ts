@@ -34,8 +34,15 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { FeatherModule } from 'angular-feather';
+import { Camera, ZapOff, Zap } from 'angular-feather/icons';
 
 
+const icons = {
+  Camera,
+  ZapOff,
+  Zap
+};
 
 
 @NgModule({
@@ -65,6 +72,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
   ],
   imports: [
+    FeatherModule.pick(icons),
     BrowserModule,
     MatFormFieldModule,
     AppRoutingModule,
