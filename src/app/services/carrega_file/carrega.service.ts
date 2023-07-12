@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Papa } from 'ngx-papaparse';
+import * as XLSX from 'xlsx';
+import { addDays, addHours, format, parse } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,72 @@ export class CarregaService {
       .toPromise()
       .then(response => response || '');
   }
+
+
+
+
+  loadFile(fileBlob: Blob): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileData = event.target?.result;
+        if (typeof fileData === 'string') {
+          const workbook: XLSX.WorkBook = XLSX.read(fileData, { type: 'binary' });
+          const sheetName: string = workbook.SheetNames[0]; // Assume que o arquivo possui apenas uma planilha
+          const worksheet: XLSX.WorkSheet = workbook.Sheets[sheetName];
+          const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          const filteredData = this.filterRows(jsonData); // Filtra as linhas de acordo com os critérios
+          resolve(filteredData);
+        } else {
+          reject(new Error('Erro ao ler o arquivo.'));
+        }
+      };
+
+      reader.onerror = (event) => {
+        reject(event.target?.error || new Error('Erro ao ler o arquivo.'));
+      };
+
+      reader.readAsBinaryString(fileBlob);
+    });
+  }
+
+  filterRows(data: any[]): any[] {
+    const filteredData: any[] = [];
+    let skipFirstRow = true;
+
+    for (const row of data) {
+      if (skipFirstRow) {
+        skipFirstRow = false;
+        continue;
+      }
+
+      const cellValue = row[6]; // Coluna 7 (índice 6) baseada em 0
+
+      if (cellValue === undefined || cellValue === null || cellValue === '') {
+        break; // Para de carregar linhas ao encontrar uma célula vazia na coluna 7
+      }
+
+      filteredData.push(row);
+    }
+
+    return filteredData;
+  }
+
+
+
+  formatDate(serialNumber: number): Date {
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const excelDate = new Date(excelEpoch.getTime() + (serialNumber - 1) * millisecondsPerDay);
+    const formattedDate = addDays(excelDate, 1);
+
+    const formattedDate2 = addHours(formattedDate,3);
+    return formattedDate2;
+  }
+
+
 
 
   processData(fileContent: string): any[] {
@@ -64,11 +132,7 @@ export class CarregaService {
     return result;
   }
 
-  async loadFile(fileUrl: string): Promise<any[]> {
-    const fileContent = await this.getFileContent(fileUrl);
-    const data = this.processData(fileContent);
-    return data;
-  }
+
 
   testarArquivoCSV(arquivo: File): Promise<TesteArquivoResultado> {
     return new Promise<TesteArquivoResultado>((resolve, reject) => {
@@ -100,7 +164,7 @@ export class CarregaService {
     }
 
     // Verificar se o cabeçalho está correto
-    const cabecalhoEsperado = ['Process', 'Container Id', 'Channel', 'Clearance Place', 'Step', 'Transp. Type', 'Invoice Number', 'SLine', 'ATA','Vessel Name/Flight (SLine)'];
+    const cabecalhoEsperado = ['Process', 'Container Id', 'Channel', 'Clearance Place', 'Step', 'Transp. Type', 'Invoice Number', 'SLine', 'ATA', 'Vessel Name/Flight (SLine)'];
     if (!cabecalho || !this.arrayEquals(cabecalho, cabecalhoEsperado)) {
       return false;
     }

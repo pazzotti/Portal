@@ -36,7 +36,10 @@ import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FeatherModule } from 'angular-feather';
 import { Camera, ZapOff, Zap } from 'angular-feather/icons';
-
+import { MilkRunSPComponent } from './milk-run-sp/milk-run-sp.component';
+import { MilkRunARGComponent } from './milk-run-arg/milk-run-arg.component';
+import { InterplantasComponent } from './interplantas/interplantas.component';
+import { TimeTableComponent } from './timetable/timetable.component';
 
 const icons = {
   Camera,
@@ -69,6 +72,10 @@ const icons = {
     DevolverVazioFormDialogComponent,
     ContainerReuseFormDialogComponent,
     CarregaJettaComponent,
+    MilkRunSPComponent,
+    MilkRunARGComponent,
+    InterplantasComponent,
+    TimeTableComponent,
 
   ],
   imports: [

@@ -11,14 +11,14 @@ import * as XLSX from 'xlsx';
 
 
 @Component({
-  selector: 'atualizar-root',
-  templateUrl: './atualizar.component.html',
-  styleUrls: ['./atualizar.component.css'],
+  selector: 'timetable-root',
+  templateUrl: './timetable.component.html',
+  styleUrls: ['./timetable.component.css'],
   template: `
     <progressbar [value]="progressValue" [max]="100">{{ progressValue }}%</progressbar>
   `
 })
-export class AtualizarComponent {
+export class TimeTableComponent {
   progressValue = 0; // Valor atual da barra de progresso
   maxValue = 0; // Valor máximo da barra de progresso
   showProgressBar = false;

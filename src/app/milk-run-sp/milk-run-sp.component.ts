@@ -10,16 +10,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FornecedoresFormDialogComponent } from '../app/home/fornecedores/fornecedores-form-dialog.component';
-import * as moment from 'moment';
 
 
 
 @Component({
-  selector: 'app-milk_run_sul',
-  templateUrl: './milk_run_sul.component.html',
-  styleUrls: ['./milk_run_sul.component.css']
+  selector: 'app-milk-run_sp',
+  templateUrl: './milk-run-sp.component.html',
+  styleUrls: ['./milk-run-sp.component.css']
 })
-export class MilkRunSulComponent implements OnInit {
+export class MilkRunSPComponent implements OnInit {
   subscription: Subscription | undefined;
   items: any[] = [];
   itemsAntigo: any[] = [];
@@ -250,7 +249,7 @@ export class MilkRunSulComponent implements OnInit {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
               this.items = items
-                .filter(item => item.description && item.description.toLowerCase().includes('sul'))
+                .filter(item => item.description && item.description.toLowerCase().includes('progra'))
                 .filter(item => item.Finalizada !== true) // Novo filtro adicionado
                 .map(item => {
 
@@ -464,11 +463,8 @@ export class MilkRunSulComponent implements OnInit {
           try {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
-              this.posicao = items
-                .filter(item => item?.DataBordo !== undefined)
-                .map(item => ({ ...item, checked: false }));
+              this.posicao = items.map(item => ({ ...item, checked: false }));
               // Adiciona a chave 'checked' a cada item, com valor inicial como false
-              // Filtra os itens com chave 'DataBordo' indefinida
             } else {
               console.error('Invalid items data:', items);
             }
@@ -486,64 +482,31 @@ export class MilkRunSulComponent implements OnInit {
   }
 
 
-
   armazenarLatitudeEmItems() {
 
-
-
-
-
-
     for (let i = 0; i < this.items.length; i++) {
-      let dataString = ''
-      let formatoString = '';
-      let matchingPosicao = [];
-
-
       const plate = this.items[i]['Plate'];
+      const matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
+      if (matchingPosicao) {
+        this.items[i]['Latitude'] = matchingPosicao['Latitude'];
+        this.items[i]['Longitude'] = matchingPosicao['Longitude'];
+        this.items[i]['Endereco'] = matchingPosicao['Endereco'];
+        this.items[i]['data_atualizacao'] = new Date(matchingPosicao['data_atualizacao']);
+        this.items[i]['DataBordo'] = new Date(matchingPosicao['DataBordo']);
 
-      if (plate !== '' || plate !== undefined) {
+      }
+      if (this.items[i]['DataBordo'] === undefined) {
+        this.items[i]['Conexao'] = false;
+      } else {
+        this.DataAtual = new Date();
+        var outraData = new Date(this.items[i]['DataBordo']);
 
-        matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
-        if(matchingPosicao?.hasOwnProperty('DataBordo')){
-          dataString = matchingPosicao['DataBordo'];
-        }
-
-        formatoString = 'DD/MM/YYYY HH:mm:ss';
-        const data = moment(dataString, formatoString).toDate();
-        if (matchingPosicao) {
-          this.items[i]['Latitude'] = matchingPosicao['Latitude'];
-          this.items[i]['Longitude'] = matchingPosicao['Longitude'];
-          this.items[i]['Endereco'] = matchingPosicao['Endereco'];
-          this.items[i]['DataBordo'] = new Date(data);
-
-        }
-
-
-        if (this.items[i]?.hasOwnProperty('DataBordo')) {
-          if (this.items[i]['DataBordo'] === undefined || this.items[i]['DataBordo'] === '') {
-            this.items[i]['Conexao'] = false;
-          } else {
-            this.DataAtual = new Date();
-            var outraData = new Date(this.items[i]['DataBordo']);
-
-            if (new Date(outraData.setHours(outraData.getHours() + 1)) > this.DataAtual) {
-              this.items[i]['Conexao'] = true;
-            } else {
-              this.items[i]['Conexao'] = false;
-            }
-          }
+        if (new Date(outraData.setHours(outraData.getHours() + 1)) > this.DataAtual) {
+          this.items[i]['Conexao'] = true;
         } else {
           this.items[i]['Conexao'] = false;
         }
-
-      } else {
-        this.items[i]['Conexao'] = false;
       }
-
-
-
-
 
     }
   }

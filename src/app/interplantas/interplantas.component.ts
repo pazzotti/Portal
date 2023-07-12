@@ -10,16 +10,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FornecedoresFormDialogComponent } from '../app/home/fornecedores/fornecedores-form-dialog.component';
-import * as moment from 'moment';
 
 
 
 @Component({
-  selector: 'app-milk_run_sul',
-  templateUrl: './milk_run_sul.component.html',
-  styleUrls: ['./milk_run_sul.component.css']
+  selector: 'app-interplantas',
+  templateUrl: './interplantas.component.html',
+  styleUrls: ['./interplantas.component.css']
 })
-export class MilkRunSulComponent implements OnInit {
+export class InterplantasComponent implements OnInit {
   subscription: Subscription | undefined;
   items: any[] = [];
   itemsAntigo: any[] = [];
@@ -38,7 +37,7 @@ export class MilkRunSulComponent implements OnInit {
   private searchTextSubscription!: Subscription;
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
   urlSalva: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
-  query: string = 'Itens_Jetta';
+  query: string = 'items_Excel_Karrara';
   query2: string = 'Porta_Rastreando_JSL';
   query3: string = 'Fornecedores_Karrara_Transport';
   data: any;
@@ -250,170 +249,27 @@ export class MilkRunSulComponent implements OnInit {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
               this.items = items
-                .filter(item => item.description && item.description.toLowerCase().includes('sul'))
-                .filter(item => item.Finalizada !== true) // Novo filtro adicionado
+                .filter(item => item.description && item.description.toLowerCase().includes('arg'))
+                .filter(item => item.Finalizada !== true)
                 .map(item => {
-
                   const date = new Date(item.date);
-                  const janela1 = item['Janela 1'];
-                  let janela1Date = janela1;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janela1))) {
-
-                  } else {
-                    if (janela1 !== undefined) {
-                      const janela1Parts = janela1.split(':');
-                      const hours = parseInt(janela1Parts[0], 10);
-                      const minutes = parseInt(janela1Parts[1], 10);
-                      janela1Date = new Date(item.date);
-                      janela1Date.setHours(janela1Date.getHours() + hours);
-                      janela1Date.setMinutes(janela1Date.getMinutes() + minutes);
-                    }
-
-                  }
-
-                  const janela2 = item['Janela 2'];
-                  let janela2Date = janela2;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janela2))) {
-
-                  } else {
-                    if (janela2 !== undefined) {
-                      const janela2Parts = janela2.split(':');
-                      const hours = parseInt(janela2Parts[0], 10);
-                      const minutes = parseInt(janela2Parts[1], 10);
-                      janela2Date = new Date(item.date);
-                      janela2Date.setHours(janela2Date.getHours() + hours);
-                      janela2Date.setMinutes(janela2Date.getMinutes() + minutes);
-
-                    }
-
-                  }
-
-                  const janela3 = item['Janela 3'];
-                  let janela3Date = janela3;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janela3))) {
-
-                  } else {
-                    if (janela3 !== undefined) {
-                      const janela3Parts = janela3.split(':');
-                      const hours = parseInt(janela3Parts[0], 10);
-                      const minutes = parseInt(janela3Parts[1], 10);
-                      janela3Date = new Date(item.date);
-                      janela3Date.setHours(janela3Date.getHours() + hours);
-                      janela3Date.setMinutes(janela3Date.getMinutes() + minutes);
-                    }
-
-                  }
-
-                  const janela4 = item['Janela 4'];
-                  let janela4Date = janela4;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janela4))) {
-
-                  } else {
-                    if (janela4 !== undefined) {
-                      const janela4Parts = janela4.split(':');
-                      const hours = parseInt(janela4Parts[0], 10);
-                      const minutes = parseInt(janela4Parts[1], 10);
-                      janela4Date = new Date(item.date);
-                      janela4Date.setHours(janela4Date.getHours() + hours);
-                      janela4Date.setMinutes(janela4Date.getMinutes() + minutes);
-                    }
-
-                  }
-
-                  const janelaDestino1 = item['JanelaDestino 1'];
-                  let janelaDestino1Date = janelaDestino1;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janelaDestino1))) {
-
-                  } else {
-                    if (janelaDestino1 !== undefined) {
-                      const janelaDestino1Parts = janelaDestino1.split(':');
-                      const hours = parseInt(janelaDestino1Parts[0], 10);
-                      const minutes = parseInt(janelaDestino1Parts[1], 10);
-                      janelaDestino1Date = new Date(item.date);
-                      janelaDestino1Date.setHours(janelaDestino1Date.getHours() + hours);
-                      janelaDestino1Date.setMinutes(janelaDestino1Date.getMinutes() + minutes);
-                    }
-                  }
-
-                  const janelaDestino2 = item['JanelaDestino 2'];
-                  let janelaDestino2Date = janelaDestino2;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janelaDestino2))) {
-
-                  } else {
-                    if (janelaDestino2 !== undefined) {
-                      const janelaDestino2Parts = janelaDestino2.split(':');
-                      const hours = parseInt(janelaDestino2Parts[0], 10);
-                      const minutes = parseInt(janelaDestino2Parts[1], 10);
-                      janelaDestino2Date = new Date(item.date);
-                      janelaDestino2Date.setHours(janelaDestino2Date.getHours() + hours);
-                      janelaDestino2Date.setMinutes(janelaDestino2Date.getMinutes() + minutes);
-                    }
-
-                  }
-
-                  const janelaDestino3 = item['JanelaDestino 3'];
-                  let janelaDestino3Date = janelaDestino3;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janelaDestino3))) {
-
-                  } else {
-                    if (janelaDestino3 !== undefined) {
-                      const janelaDestino3Parts = janelaDestino3.split(':');
-                      const hours = parseInt(janelaDestino3Parts[0], 10);
-                      const minutes = parseInt(janelaDestino3Parts[1], 10);
-                      janelaDestino3Date = new Date(item.date);
-                      janelaDestino3Date.setHours(janelaDestino3Date.getHours() + hours);
-                      janelaDestino3Date.setMinutes(janelaDestino3Date.getMinutes() + minutes);
-                    }
-                  }
-
-                  const janelaDestino4 = item['JanelaDestino 4'];
-                  let janelaDestino4Date = janelaDestino4;
-
-                  // Verifica se janela1 é uma data válida
-                  if (!isNaN(Date.parse(janelaDestino4))) {
-
-                  } else {
-                    if (janelaDestino4 !== undefined) {
-                      const janelaDestino4Parts = janelaDestino4.split(':');
-                      const hours = parseInt(janelaDestino4Parts[0], 10);
-                      const minutes = parseInt(janelaDestino4Parts[1], 10);
-                      janelaDestino4Date = new Date(item.date);
-                      janelaDestino4Date.setHours(janelaDestino4Date.getHours() + hours);
-                      janelaDestino4Date.setMinutes(janelaDestino4Date.getMinutes() + minutes);
-                    }
-                  }
+                  let janela1Date = null;
 
                   return {
                     ...item,
-                    'Janela 1': janela1Date,
-                    'Janela 2': janela2Date,
-                    'Janela 3': janela3Date,
-                    'Janela 4': janela4Date,
-                    'JanelaDestino 1': janelaDestino1Date,
-                    'JanelaDestino 2': janelaDestino2Date,
-                    'JanelaDestino 3': janelaDestino3Date,
+                    'Janela 1': item['Janela 1'],
+                    'Janela 2': item['Janela 2'],
+                    'Janela 3': item['Janela 3'],
+                    'Janela 4': item['Janela 4'],
+                    'JanelaDestino 1': item['JanelaDestino 1'],
+                    'JanelaDestino 2': item['JanelaDestino 2'],
+                    'JanelaDestino 3': item['JanelaDestino 3'],
+                    'JanelaDestino 4': item['JanelaDestino 4'],
                     // Adicione as outras chaves aqui...
                     checked: false
                   };
                 });
-              // Filtra os itens que possuem a chave 'description' com a palavra 'sul'
-              // (sem diferenciar maiúsculas de minúsculas), adiciona a chave 'checked' a cada item com valor inicial como false,
-              // converte a chave 'date' em um objeto de data utilizando o construtor 'Date',
-              // soma o valor das chaves 'Janela 1', 'Janela 2' e assim por diante à data do item e atualiza as respectivas chaves com os resultados
+              // Restante do código...
             } else {
               console.error('Invalid items data:', items);
             }
@@ -429,6 +285,7 @@ export class MilkRunSulComponent implements OnInit {
       }
     );
   }
+
 
   getFornecedoresFromDynamoDB(): void {
     const filtro = 'all';
@@ -464,11 +321,8 @@ export class MilkRunSulComponent implements OnInit {
           try {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
-              this.posicao = items
-                .filter(item => item?.DataBordo !== undefined)
-                .map(item => ({ ...item, checked: false }));
+              this.posicao = items.map(item => ({ ...item, checked: false }));
               // Adiciona a chave 'checked' a cada item, com valor inicial como false
-              // Filtra os itens com chave 'DataBordo' indefinida
             } else {
               console.error('Invalid items data:', items);
             }
@@ -486,64 +340,31 @@ export class MilkRunSulComponent implements OnInit {
   }
 
 
-
   armazenarLatitudeEmItems() {
 
-
-
-
-
-
     for (let i = 0; i < this.items.length; i++) {
-      let dataString = ''
-      let formatoString = '';
-      let matchingPosicao = [];
-
-
       const plate = this.items[i]['Plate'];
+      const matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
+      if (matchingPosicao) {
+        this.items[i]['Latitude'] = matchingPosicao['Latitude'];
+        this.items[i]['Longitude'] = matchingPosicao['Longitude'];
+        this.items[i]['Endereco'] = matchingPosicao['Endereco'];
+        this.items[i]['data_atualizacao'] = new Date(matchingPosicao['data_atualizacao']);
+        this.items[i]['DataBordo'] = new Date(matchingPosicao['DataBordo']);
 
-      if (plate !== '' || plate !== undefined) {
+      }
+      if (this.items[i]['DataBordo'] === undefined) {
+        this.items[i]['Conexao'] = false;
+      } else {
+        this.DataAtual = new Date();
+        var outraData = new Date(this.items[i]['DataBordo']);
 
-        matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
-        if(matchingPosicao?.hasOwnProperty('DataBordo')){
-          dataString = matchingPosicao['DataBordo'];
-        }
-
-        formatoString = 'DD/MM/YYYY HH:mm:ss';
-        const data = moment(dataString, formatoString).toDate();
-        if (matchingPosicao) {
-          this.items[i]['Latitude'] = matchingPosicao['Latitude'];
-          this.items[i]['Longitude'] = matchingPosicao['Longitude'];
-          this.items[i]['Endereco'] = matchingPosicao['Endereco'];
-          this.items[i]['DataBordo'] = new Date(data);
-
-        }
-
-
-        if (this.items[i]?.hasOwnProperty('DataBordo')) {
-          if (this.items[i]['DataBordo'] === undefined || this.items[i]['DataBordo'] === '') {
-            this.items[i]['Conexao'] = false;
-          } else {
-            this.DataAtual = new Date();
-            var outraData = new Date(this.items[i]['DataBordo']);
-
-            if (new Date(outraData.setHours(outraData.getHours() + 1)) > this.DataAtual) {
-              this.items[i]['Conexao'] = true;
-            } else {
-              this.items[i]['Conexao'] = false;
-            }
-          }
+        if (new Date(outraData.setHours(outraData.getHours() + 1)) > this.DataAtual) {
+          this.items[i]['Conexao'] = true;
         } else {
           this.items[i]['Conexao'] = false;
         }
-
-      } else {
-        this.items[i]['Conexao'] = false;
       }
-
-
-
-
 
     }
   }
@@ -754,15 +575,4 @@ export class MilkRunSulComponent implements OnInit {
     }
     return -1; // Retorna -1 se não encontrar correspondência
   }
-
-
 }
-
-
-
-
-
-
-
-
-

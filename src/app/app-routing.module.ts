@@ -13,6 +13,10 @@ import { Locais_OrigemComponent } from './locais-origem/locais-origem.component'
 import { CarrierComponent } from './carriers/carriers.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { CarregaJettaComponent } from './carrega-jetta/carrega-jetta.component';
+import { MilkRunSPComponent } from './milk-run-sp/milk-run-sp.component';
+import { MilkRunARGComponent } from './milk-run-arg/milk-run-arg.component';
+import { InterplantasComponent } from './interplantas/interplantas.component';
+import { TimeTableComponent } from './timetable/timetable.component';
 
 const routes: Routes = [
   {path:'contratos',component:HomeComponent},
@@ -29,6 +33,10 @@ const routes: Routes = [
   {path:'carrier',component:CarrierComponent},
   {path:'dashboard',component:DashboardComponent},
   {path:'jetta',component:CarregaJettaComponent},
+  {path:'milk_SP',component:MilkRunSPComponent},
+  {path:'milk_ARG',component:MilkRunARGComponent},
+  {path:'interplantas',component:InterplantasComponent},
+  {path:'time',component:TimeTableComponent},
 
 ];
 
