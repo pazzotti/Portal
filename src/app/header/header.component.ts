@@ -1,6 +1,6 @@
 import { HeaderModule } from './header.module';
 import * as feather from 'feather-icons';
-import { createPopper } from '@popperjs/core';
+
 import { Component, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 
 
@@ -38,17 +38,7 @@ export class HeaderComponentes {
       top: `${buttonElement.offsetTop + buttonElement.offsetHeight}px`,
       left: `${buttonElement.offsetLeft}px`,
     };
-    createPopper(buttonElement, menuElement, {
-      placement: 'bottom-start',
-      modifiers: [
-        {
-          name: 'offset',
-          options: {
-            offset: [0, 10], // Adjust the offset if needed
-          },
-        },
-      ],
-    });
+
   }
 
 
