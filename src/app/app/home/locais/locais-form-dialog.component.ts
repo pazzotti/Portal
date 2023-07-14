@@ -5,30 +5,26 @@ import { ApiService } from 'src/app/services/contratos/contratos.service';
 import { format } from 'date-fns';
 
 @Component({
-  selector: 'app-live-form-dialog',
-  templateUrl: './live-form-dialog.component.html',
-  styleUrls: ['./live-form-dialog.component.css']
+  selector: 'app-locais-form-dialog',
+  templateUrl: './locais-form-dialog.component.html',
+  styleUrls: ['./locais-form-dialog.component.css']
 })
-export class LiveFormDialogComponent {
+export class LocaisFormDialogComponent {
 
   base: number = 3;
   ID: number = Date.now();
-  liner: string = "";
-  tripcost: number = 0;
-  freetime: number = 0;
-  fsperiod: number = 0;
-  scperiod: number = 0;
-  tdperiod: number = 0;
-  comentario: string = "";
+  local: string = "";
+  cor: string = "";
+  descricao: string = "";
   exponent: number = 22;
   dataSource: any;
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
-  query: string = 'PowerMathDatabase2';
+  query: string = 'Locais_Karrara_Transport';
 
 
   constructor(
     private apiService: ApiService,
-    public dialogRef: MatDialogRef<LiveFormDialogComponent>,
+    public dialogRef: MatDialogRef<LocaisFormDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
 
   ) { }
@@ -40,7 +36,7 @@ export class LiveFormDialogComponent {
       const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
       console.log(formattedDate);
 
-      this.data.itemsData = {"ID" : formattedDate.toString(),"comentario":this.data.itemsData.comentario,"freetime":this.data.itemsData.freetime,"fsperiod":this.data.itemsData.fsperiod,"liner":this.data.itemsData.liner, "scperiod":this.data.itemsData.scperiod,"tdperiod":this.data.itemsData.tdperiod,"tripcost":this.data.itemsData.tripcost }
+      this.data.itemsData = {"ID" : formattedDate.toString(),"cor":this.data.itemsData.cor,"descricao":this.data.itemsData.descricao,"local":this.data.itemsData.local,"latitude":this.data.itemsData.latitude,"longitude":this.data.itemsData.longitude }
 
 
     }

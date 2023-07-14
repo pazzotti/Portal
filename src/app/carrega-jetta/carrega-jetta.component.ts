@@ -3,8 +3,6 @@ import { isToday } from 'date-fns';
 import { debounceTime } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { CarregaJetta } from '../services/carrega_jetta/jetta.service';
-import { DevolverVazioFormDialogComponent } from '../app/home/devolver_vazio/devolver-vazio-form-dialog.component';
-import { ContainerReuseFormDialogComponent } from '../app/home/container_reuse/container-reuse-form-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ApiService } from 'src/app/services/contratos/contratos.service';

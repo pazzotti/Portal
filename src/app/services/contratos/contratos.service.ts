@@ -27,6 +27,7 @@ export class ApiService {
     const body = JSON.stringify(itemsData);
 
     return this.http.post<any>(apiUrl, body, { headers: headers });
+
   }
 
   deleteItem(ID: string, urlDeleta: string, query: string): Observable<any> {

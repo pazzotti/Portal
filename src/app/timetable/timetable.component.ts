@@ -1,12 +1,16 @@
 import { CarregaService } from '../services/carrega_file/carrega.service';
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { format, parse, differenceInDays } from 'date-fns';
+import { format, parse, differenceInDays, addHours } from 'date-fns';
 import { ApiService } from '../services/contratos/contratos.service';
 import { map, take } from 'rxjs/operators';
 import { formatDate } from '@angular/common';
 import { Observable } from 'rxjs';
 import * as XLSX from 'xlsx';
+import { EditaFormDialogComponent } from '../app/home/edita_timetable/edita_timetable-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DatePipe } from '@angular/common';
+
 
 
 
@@ -25,7 +29,8 @@ export class TimeTableComponent {
   @ViewChild('downloadLink') downloadLink!: ElementRef<HTMLAnchorElement>;
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
-  query: string = 'items_Excel_Karrara';
+  query: string = 'itens_Interplantas_Karrara';
+  query2: string = 'Operacao_Interplantas_Karrara';
   items$: Observable<any> | undefined;
   dataLoaded = false;
   jsonData: any;
@@ -46,12 +51,18 @@ export class TimeTableComponent {
   liner: string = "";
   vessel: string = "";
   custoestadia: number = 0;
+  startDate!: Date;
+  endDate: Date = new Date();
+  editMode!: boolean[];
+  informationMode!: boolean[];
+  programacao: any[] = [];
 
   constructor(
     private carregaService: CarregaService,
     private http: HttpClient,
     private dynamodbService: ApiService,
-
+    public dialog: MatDialog,
+    private datePipe: DatePipe
 
   ) { }
 
@@ -64,6 +75,34 @@ export class TimeTableComponent {
     this.jsonData = inflatedData;
     this.dataLoaded = true;
     // Chama a função para salvar os dados no API Gateway
+  }
+
+
+
+  getProgramacaoFromDynamoDB(): void {
+    const filtro = 'all';
+    this.dynamodbService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.programacao = items.map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
   }
 
 
@@ -101,6 +140,133 @@ export class TimeTableComponent {
     }, 7000); // Defina o tempo adequado conforme necessário
   }
 
+  toggleEditMode(index: number): void {
+    this.editMode[index] = !this.editMode[index];
+  }
+  toggleInformationMode(index: number): void {
+    this.informationMode[index] = !this.informationMode[index];
+  }
+
+  acaoDeClique(item: any, NomePasso: string, NomeBotao: string, NomeDestino: string) {
+    if (item[NomeBotao] === false) {
+      // Executa ação 1
+      this.editDialog(item[NomeDestino]);
+    } else {
+      // Executa ação 2
+      this.finalizaPasso(NomePasso, item);
+    }
+  }
+
+  finalizaPasso(Passo: string, item: any) {
+    this.salvarNoBanco();
+
+
+    setTimeout(() => {
+      this.ngOnInit();
+    }, 1500);
+
+
+  }
+
+  openDialog(item: any): void {
+    const horaMinuto1 = this.datePipe.transform(item['Janela 1'], 'HH:mm');
+    const horaMinuto2 = this.datePipe.transform(item['Janela 2'], 'HH:mm');
+    const horaMinuto3 = this.datePipe.transform(item['Janela 3'], 'HH:mm');
+    const horaMinuto4 = this.datePipe.transform(item['Janela 4'], 'HH:mm');
+    const horaMinuto5 = this.datePipe.transform(item['Janela 5'], 'HH:mm');
+    const horaMinuto6 = this.datePipe.transform(item['Janela 6'], 'HH:mm');
+
+
+    item = {
+      "ID": undefined,
+      "Transportadora": undefined,
+      "Plate": undefined,
+      "Viagem": undefined,
+      "Local 1": undefined,
+      "Local 2": undefined,
+      "Local 3": undefined,
+      "Local 4": undefined,
+      "Local 5": undefined,
+      "Local 6": undefined,
+      "Janela 1": undefined,
+      "Janela 2": undefined,
+      "Janela 3": undefined,
+      "Janela 4": undefined,
+      "Janela 5": undefined,
+      "Janela 6": undefined,
+      "tableName": this.query
+    }
+
+
+
+    const itemAlterado = { local: item };
+    const dialogRef = this.dialog.open(EditaFormDialogComponent, {
+      data: {
+        itemsData: itemAlterado,
+        janela1: horaMinuto1,
+        janela2: horaMinuto2,
+        janela3: horaMinuto3,
+        janela4: horaMinuto4,
+        janela5: horaMinuto5,
+        janela6: horaMinuto6,
+
+      },
+      width: '850px', // Defina a largura desejada em pixels ou porcentagem
+      height: '550px',
+      position: {
+        top: '1vh',
+        left: '30vw'
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        setTimeout(() => {
+          this.ngOnInit();
+        }, 1200); // Ajuste o tempo de atraso conforme necessário
+      }
+      console.log('The dialog was closed');
+    });
+  }
+
+  editDialog(item: any): void {
+    const horaMinuto1 = this.datePipe.transform(item['Janela 1'], 'HH:mm');
+    const horaMinuto2 = this.datePipe.transform(item['Janela 2'], 'HH:mm');
+    const horaMinuto3 = this.datePipe.transform(item['Janela 3'], 'HH:mm');
+    const horaMinuto4 = this.datePipe.transform(item['Janela 4'], 'HH:mm');
+    const horaMinuto5 = this.datePipe.transform(item['Janela 5'], 'HH:mm');
+    const horaMinuto6 = this.datePipe.transform(item['Janela 6'], 'HH:mm');
+
+    const itemAlterado = { local: item };
+    const dialogRef = this.dialog.open(EditaFormDialogComponent, {
+      data: {
+        itemsData: itemAlterado,
+        janela1: horaMinuto1,
+        janela2: horaMinuto2,
+        janela3: horaMinuto3,
+        janela4: horaMinuto4,
+        janela5: horaMinuto5,
+        janela6: horaMinuto6,
+
+      },
+      width: '850px', // Defina a largura desejada em pixels ou porcentagem
+      height: '550px',
+      position: {
+        top: '1vh',
+        left: '30vw'
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        setTimeout(() => {
+          this.ngOnInit();
+        }, 1200); // Ajuste o tempo de atraso conforme necessário
+      }
+      console.log('The dialog was closed');
+    });
+  }
+
 
   chunkArray(array: any[], size: number): any[][] {
     const chunks = [];
@@ -110,31 +276,136 @@ export class TimeTableComponent {
     return chunks;
   }
 
+
+  salvar() {
+
+    if (this.startDate === undefined) {
+      alert('Selecione a data');
+      return; // Retorna imediatamente para interromper a execução da função
+    }
+
+
+
+    const currentDate = new Date();
+
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
+
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+    const formattedDate = currentDate.getDate().toString().padStart(2, '0') +
+      (currentDate.getMonth() + 1).toString().padStart(2, '0') +
+      totalSeconds.toString() +
+      currentDate.getFullYear().toString();
+
+
+    const data = new Date(this.startDate);
+    data.setHours(data.getHours() + 3);
+    let i = 0;
+    this.programacao.forEach(objeto => {
+      let dateString = objeto['Janela 1'];  // Acessar a propriedade 'Janela 1' do objeto
+      let date = new Date(dateString);
+      let hours = ('0' + date.getHours()).slice(-2);
+      let minutes = ('0' + date.getMinutes()).slice(-2);
+      let seconds = ('0' + date.getSeconds()).slice(-2);
+      const timeString1 = hours + ':' + minutes + ':' + seconds;
+      const janela1 = this.carregaService.adicionarHora(timeString1, new Date(data));
+
+      dateString = objeto['Janela 2'];
+      date = new Date(dateString);
+      hours = ('0' + date.getHours()).slice(-2);
+      minutes = ('0' + date.getMinutes()).slice(-2);
+      seconds = ('0' + date.getSeconds()).slice(-2);
+      const timeString2 = hours + ':' + minutes + ':' + seconds;
+      const janela2 = this.carregaService.adicionarHora(timeString2, new Date(data));
+
+      dateString = objeto['Janela 3'];
+      date = new Date(dateString);
+      hours = ('0' + date.getHours()).slice(-2);
+      minutes = ('0' + date.getMinutes()).slice(-2);
+      seconds = ('0' + date.getSeconds()).slice(-2);
+      const timeString3 = hours + ':' + minutes + ':' + seconds;
+      const janela3 = this.carregaService.adicionarHora(timeString3, new Date(data));
+
+      dateString = objeto['Janela 4'];
+      date = new Date(dateString);
+      hours = ('0' + date.getHours()).slice(-2);
+      minutes = ('0' + date.getMinutes()).slice(-2);
+      seconds = ('0' + date.getSeconds()).slice(-2);
+      const timeString4 = hours + ':' + minutes + ':' + seconds;
+      const janela4 = this.carregaService.adicionarHora(timeString4, new Date(data));
+
+      dateString = objeto['Janela 5'];
+      date = new Date(dateString);
+      hours = ('0' + date.getHours()).slice(-2);
+      minutes = ('0' + date.getMinutes()).slice(-2);
+      seconds = ('0' + date.getSeconds()).slice(-2);
+      const timeString5 = hours + ':' + minutes + ':' + seconds;
+      const janela5 = this.carregaService.adicionarHora(timeString5, new Date(data));
+
+      dateString = objeto['Janela 6'];
+      date = new Date(dateString);
+      hours = ('0' + date.getHours()).slice(-2);
+      minutes = ('0' + date.getMinutes()).slice(-2);
+      seconds = ('0' + date.getSeconds()).slice(-2);
+      const timeString6 = hours + ':' + minutes + ':' + seconds;
+      const janela6 = this.carregaService.adicionarHora(timeString6, new Date(data));
+      objeto.ID = formattedDate + i;
+      objeto.tableName = 'Operacao_Interplantas_Karrara';
+      objeto['Janela 1'] = janela1;
+      objeto['Janela 2'] = janela2;
+      objeto['Janela 3'] = janela3;
+      objeto['Janela 4'] = janela4;
+      objeto['Janela 5'] = janela5;
+      objeto['Janela 6'] = janela6;
+      i++;
+    });
+
+
+    // Atualizando o array se necessário (opcional)
+    this.programacao = [...this.programacao];
+
+    // Remover as barras invertidas escapadas
+    const itemsDataString = JSON.stringify(this.programacao); // Acessa a string desejada
+    const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
+
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
+
+    // Converter o objeto JavaScript de volta para uma string JSON
+    const modifiedJsonString = JSON.stringify(jsonObject);
+
+    console.log(modifiedJsonString);
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject2 = JSON.parse(modifiedJsonString) as { tableName: string, ID: string, acao: string };
+
+    // Criar um array contendo o objeto
+    const jsonArray = [jsonObject2];
+
+    this.dynamodbService.salvar(jsonObject2, this.query2, this.urlAtualiza).subscribe(response => {
+
+    }, error => {
+      console.log(error);
+    });
+
+    this.getProgramacaoFromDynamoDB();
+    alert('Concluído com sucesso');
+
+  }
+
+
+
+
   ngOnInit() {
 
-    const key = 'liner'; // Substitua 'propriedade' pelo nome da propriedade que você deseja obter
-    const query = 'PowerMathDatabase2'
+    this.getProgramacaoFromDynamoDB();
     const filtro = '';
-    this.items$ = this.dynamodbService.getItems(query, this.urlConsulta, filtro).pipe(
-      map(data => {
-        const parsedData = JSON.parse(data.body); // Parse a string JSON contida em data.body
-        return parsedData; // Retorna o objeto JSON parseado
-      })
-    );
 
-    this.items$.subscribe(
-      items => {
-        this.contratos = items.map((item: { liner: any; }) => item.liner);
-        this.freetime = items.map((item: { freetime: any; }) => item.freetime);
-        this.tripcost = items.map((item: { tripcost: any; }) => item.tripcost);
-        this.handling = items.map((item: { fsperiod: any; }) => item.fsperiod);
-        this.demurrage = items.map((item: { scperiod: any; }) => item.scperiod);
+    console.log(this.programacao);
 
-      },
-      error => {
-        console.error(error);
-      }
-    );
 
   }
 
@@ -156,117 +427,55 @@ export class TimeTableComponent {
     let i = 0;
     return rawData.map((item: any) => {
 
-      const janelas: string[] = item['5'].split('|'); // Divide o valor da chave '5' usando o caractere '|'
-      const janelaData: Date[] = [];
-      const fornecedor: string[] = item['6'].split('|'); // Divide o valor da chave '6' usando o caractere '|'
-      const destino: string[] = item['15'].split('|'); // Divide o valor da chave '6' usando o caractere '|'
-      const janelaDestinoData: Date[] = [];
-      const janeladestino: string[] = item['17'].split('|'); // Divide o valor da chave '6' usando o caractere '|'
+      const hora1 = item[3];
+      const janela1 = this.carregaService.formatHora(item[3], this.startDate);
+      const janela2 = this.carregaService.formatHora(item[5], this.startDate);
+      const janela3 = this.carregaService.formatHora(item[7], this.startDate);
+      const janela4 = this.carregaService.formatHora(item[9], this.startDate);
+      const janela5 = this.carregaService.formatHora(item[11], this.startDate);
+      const janela6 = this.carregaService.formatHora(item[13], this.startDate);
+
       const currentDate = new Date();
       const formattedDate = format(currentDate, 'ddMMyyyyHHmmss') + i;
       i = i + 1;
-      console.log(formattedDate);
-      const serialNumber = item['4'];
-
-
-
-      const dataFormatada = this.carregaService.formatDate(serialNumber);
-      const dataDestinoFormatada = this.carregaService.formatDate(item['16']);
-      let passos = 0;
-
-      for (let i = 0; i < janelas.length; i++) {
-        const horasMinutos = janelas[i];
-
-        const dataFinal = new Date(dataFormatada);
-        if (horasMinutos !== null && horasMinutos !== undefined && horasMinutos !== '') {
-          const [horas, minutos] = horasMinutos.split(':');
-          dataFinal.setHours(dataFinal.getHours() + parseInt(horas, 10));
-          dataFinal.setMinutes(dataFinal.getMinutes() + parseInt(minutos, 10));
-          janelaData[i] = dataFinal;
-          passos = passos +1;
-        }
-
-      }
-
-      for (let i = 0; i < janeladestino.length; i++) {
-        const horasMinutos = janeladestino[i];
-
-        const dataFinal = new Date(dataDestinoFormatada);
-        if (horasMinutos !== null && horasMinutos !== undefined && horasMinutos !== '') {
-          const [horas, minutos] = horasMinutos.split(':');
-          dataFinal.setHours(dataFinal.getHours() + parseInt(horas, 10));
-          dataFinal.setMinutes(dataFinal.getMinutes() + parseInt(minutos, 10));
-          janelaDestinoData[i] = dataFinal;
-          passos = passos +1;
-        }
-
-      }
 
       const inflatedItem: any = {
         'tableName': this.query,
         'ID': formattedDate.toString(),
-        'description': item[3],
-        'Passos':passos,
-        'Plate': item[14],
-        'date': dataFormatada,
-        'Janela 1': janelaData[0], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Janela 2': janelaData[1], // Atribui o segundo valor do array resultante a 'Janela 2'
-        'Janela 3': janelaData[2], // Atribui o terceiro valor do array resultante a 'Janela 3'
-        'Janela 4': janelaData[3], // Atribui o terceiro valor do array resultante a 'Janela 3'
-        'Fornecedor 1': fornecedor[0], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Fornecedor 2': fornecedor[1], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Fornecedor 3': fornecedor[2], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Fornecedor 4': fornecedor[3], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Destino 1': destino[0], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Destino 2': destino[1], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Destino 3': destino[2], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Destino 4': destino[3], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'dataDestino': item['16'],
-        'JanelaDestino 1': janelaDestinoData[0], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'JanelaDestino 2': janelaDestinoData[1], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'JanelaDestino 3': janelaDestinoData[2], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'JanelaDestino 4': janelaDestinoData[3], // Atribui o primeiro valor do array resultante a 'Janela 1'
-        'Weight Loaded': item[10],
-        'Cubage': item[12],
-        'Volume': item[11],
-        'Transport Type': item[13],
-        'Total Distance': item[8],
-        'Total Cost': item[24]
-
-
+        'Transportadora': item[0],
+        'Viagem': item[1],
+        'Plate': item[2],
+        'Janela 1': new Date(janela1),
+        'Janela 2': new Date(janela2),
+        'Janela 3': new Date(janela3),
+        'Janela 4': new Date(janela4),
+        'Janela 5': new Date(janela5),
+        'Janela 6': new Date(janela6),
+        'Local 1': item[4],
+        'Local 2': item[6],
+        'Local 3': item[8],
+        'Local 4': item[10],
+        'Local 5': item[12],
+        'Local 6': item[14]
         // Adicione mais campos conforme necessário
       };
-
-
       return inflatedItem;
-
     });
 
   }
 
-  sortBy(column: string) {
-    if (this.sortColumn === column) {
-      // Reverse the sort direction
-      this.sortDirection *= -1;
-    } else {
-      // Set the new sort column and reset the sort direction
-      this.sortColumn = column;
-      this.sortDirection = 1;
-    }
-
-    // Sort the data array based on the selected column and direction
-    this.jsonData.sort((a: { [x: string]: any; }, b: { [x: string]: any; }) => {
-      const valueA = a[this.sortColumn];
-      const valueB = b[this.sortColumn];
-
-      if (valueA < valueB) {
-        return -1 * this.sortDirection;
-      } else if (valueA > valueB) {
-        return 1 * this.sortDirection;
-      } else {
-        return 0;
+  deleteItem(ID: string): void {
+    this.dynamodbService.deleteItem(ID, this.urlAtualiza, this.query).subscribe(
+      response => {
+        setTimeout(() => {
+          this.getProgramacaoFromDynamoDB();
+        }, 400); // Ajuste o tempo de atraso conforme necessário
+      },
+      error => {
+        // Lógica para lidar com erros durante a deleção do item
       }
-    });
+    );
+
   }
 
 }

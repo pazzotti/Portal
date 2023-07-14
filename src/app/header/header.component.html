@@ -5,17 +5,26 @@
       <a href="milk_sul" routerLink="/milk_sul">Milk Run Sul</a>
       <a href="milk_SP" routerLink="/milk_sp">Milk Run SP</a>
       <a href="milk_ARG" routerLink="/milk_ARG">Milk Run Argentina</a>
-      <a href="interplantas" routerLink="/interplantas">Interplantas</a>
+
+        <a class="btn btn-secondary dropdown-toggle" type="button" (click)="toggleInterplantasMenu()" [class.show]="isInterplantasMenuOpen" #interplantasButton>
+          Interplantas
+        </a>
+        <div class="dropdown-menu2" [ngClass]="{ 'show': isInterplantasMenuOpen }" *ngIf="isInterplantasMenuOpen" style="z-index: 9999; display: flex; flex-direction: column;">
+          <a class="dropdown-item custom-dropdown-item" href="interplantas" routerLink="/interplantas">Operação</a>
+          <a class="dropdown-item custom-dropdown-item" href="time" routerLink="/time">Time Table</a>
+        </div>
+
+
       <a href="containers" routerLink="/containers">Containers</a>
       <a href="frete_extra" routerLink="/frete_extra">Frete Extra</a>
     </div>
   </div>
   <div class="dropdown">
-    <a class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" (click)="toggleMenu()" routerLink="/frete_extra">
+    <a class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" (click)="toggleConfigMenu()" routerLink="/frete_extra">
       <i class="ri-tools-line"></i>Config
     </a>
 
-    <div class="dropdown-menu" *ngIf="isMenuOpen" aria-labelledby="dropdownMenuButton" style="z-index: 9999;">
+    <div class="dropdown-menu" *ngIf="isConfigMenuOpen" aria-labelledby="dropdownMenuButton" style="z-index: 9999;">
       <a class="dropdown-item custom-dropdown-item" href="jetta" routerLink="/jetta">Sinc Jetta</a>
       <a class="dropdown-item custom-dropdown-item" href="atualiza" routerLink="/atualiza">Sinc Excel</a>
       <a class="dropdown-item custom-dropdown-item" href="fornecedores" routerLink="/fornecedores">Fornecedores</a>

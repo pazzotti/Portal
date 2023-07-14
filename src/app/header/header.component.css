@@ -58,6 +58,14 @@ nav #navbarNav a:hover {
   cursor: pointer !important; /* Adiciona o estilo de cursor de apontar */
 }
 
+.dropdown-menu2 {
+  position: absolute;
+  right: 1000px;
+  left: auto;
+  cursor: pointer !important; /* Adiciona o estilo de cursor de apontar */
+  background-color: #292929;
+}
+
 .dropdown-menu a {
   display: block;
   padding: 10px;
@@ -74,3 +82,10 @@ nav #navbarNav a:hover {
   margin-top: 5px; /* ajuste o valor conforme necessário para criar espaço entre o menu e os itens do dropdown */
   min-width: 300px; /* ajuste o valor conforme necessário para definir a largura dos itens do dropdown */
 }
+
+.dropdown-menu-right {
+  right: 0;
+  left: auto;
+}
+
+

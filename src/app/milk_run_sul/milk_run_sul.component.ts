@@ -4,8 +4,6 @@ import { debounceTime } from 'rxjs/operators';
 import { Subject, Subscription, interval } from 'rxjs';
 import { ApiService } from '../services/contratos/contratos.service';
 import { AppModule } from '../app.module';
-import { DevolverVazioFormDialogComponent } from '../app/home/devolver_vazio/devolver-vazio-form-dialog.component';
-import { ContainerReuseFormDialogComponent } from '../app/home/container_reuse/container-reuse-form-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';

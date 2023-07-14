@@ -81,6 +81,34 @@ export class CarregaService {
     return formattedDate2;
   }
 
+  formatHora(serialNumber: number, dataBase: Date): string {
+    const dataConverte = new Date(dataBase);
+    const millisecondsPerDay = serialNumber * 24 * 60 * 60 * 1000;
+    const excelHora = new Date(millisecondsPerDay);
+    const HoraJanela = new Date(dataConverte.getTime() + excelHora.getTime());
+    HoraJanela.setHours(HoraJanela.getHours() + 3);
+
+    return HoraJanela.toISOString();
+  }
+
+  adicionarHora(hora: string, data: Date): Date {
+    // Divide a hora em horas e minutos
+    if(hora === null){
+      hora = '00:00'
+    }
+    const [horas, minutos] = hora.split(':').map(Number);
+
+    // Cria uma nova data com os valores da data original
+    const novaData = new Date(data);
+
+    // Adiciona as horas e minutos à nova data
+    novaData.setHours(novaData.getHours() + horas + 3);
+    novaData.setMinutes(novaData.getMinutes() + minutos);
+
+    return novaData;
+  }
+
+
 
 
 
