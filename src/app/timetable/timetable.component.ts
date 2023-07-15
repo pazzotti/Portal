@@ -202,6 +202,7 @@ export class TimeTableComponent {
     const itemAlterado = { local: item };
     const dialogRef = this.dialog.open(EditaFormDialogComponent, {
       data: {
+        query:'itens_Interplantas_Karrara',
         itemsData: itemAlterado,
         janela1: horaMinuto1,
         janela2: horaMinuto2,
@@ -240,6 +241,7 @@ export class TimeTableComponent {
     const itemAlterado = { local: item };
     const dialogRef = this.dialog.open(EditaFormDialogComponent, {
       data: {
+        query:'itens_Interplantas_Karrara',
         itemsData: itemAlterado,
         janela1: horaMinuto1,
         janela2: horaMinuto2,
@@ -310,7 +312,7 @@ export class TimeTableComponent {
       let minutes = ('0' + date.getMinutes()).slice(-2);
       let seconds = ('0' + date.getSeconds()).slice(-2);
       const timeString1 = hours + ':' + minutes + ':' + seconds;
-      const janela1 = this.carregaService.adicionarHora(timeString1, new Date(data));
+      const janela1 = this.carregaService.naoadicionarHora(timeString1, new Date(data));
 
       dateString = objeto['Janela 2'];
       date = new Date(dateString);
@@ -318,7 +320,7 @@ export class TimeTableComponent {
       minutes = ('0' + date.getMinutes()).slice(-2);
       seconds = ('0' + date.getSeconds()).slice(-2);
       const timeString2 = hours + ':' + minutes + ':' + seconds;
-      const janela2 = this.carregaService.adicionarHora(timeString2, new Date(data));
+      const janela2 = this.carregaService.naoadicionarHora(timeString2, new Date(data));
 
       dateString = objeto['Janela 3'];
       date = new Date(dateString);
@@ -326,7 +328,7 @@ export class TimeTableComponent {
       minutes = ('0' + date.getMinutes()).slice(-2);
       seconds = ('0' + date.getSeconds()).slice(-2);
       const timeString3 = hours + ':' + minutes + ':' + seconds;
-      const janela3 = this.carregaService.adicionarHora(timeString3, new Date(data));
+      const janela3 = this.carregaService.naoadicionarHora(timeString3, new Date(data));
 
       dateString = objeto['Janela 4'];
       date = new Date(dateString);
@@ -334,7 +336,7 @@ export class TimeTableComponent {
       minutes = ('0' + date.getMinutes()).slice(-2);
       seconds = ('0' + date.getSeconds()).slice(-2);
       const timeString4 = hours + ':' + minutes + ':' + seconds;
-      const janela4 = this.carregaService.adicionarHora(timeString4, new Date(data));
+      const janela4 = this.carregaService.naoadicionarHora(timeString4, new Date(data));
 
       dateString = objeto['Janela 5'];
       date = new Date(dateString);
@@ -342,7 +344,7 @@ export class TimeTableComponent {
       minutes = ('0' + date.getMinutes()).slice(-2);
       seconds = ('0' + date.getSeconds()).slice(-2);
       const timeString5 = hours + ':' + minutes + ':' + seconds;
-      const janela5 = this.carregaService.adicionarHora(timeString5, new Date(data));
+      const janela5 = this.carregaService.naoadicionarHora(timeString5, new Date(data));
 
       dateString = objeto['Janela 6'];
       date = new Date(dateString);
@@ -350,7 +352,7 @@ export class TimeTableComponent {
       minutes = ('0' + date.getMinutes()).slice(-2);
       seconds = ('0' + date.getSeconds()).slice(-2);
       const timeString6 = hours + ':' + minutes + ':' + seconds;
-      const janela6 = this.carregaService.adicionarHora(timeString6, new Date(data));
+      const janela6 = this.carregaService.naoadicionarHora(timeString6, new Date(data));
       objeto.ID = formattedDate + i;
       objeto.tableName = 'Operacao_Interplantas_Karrara';
       objeto['Janela 1'] = janela1;

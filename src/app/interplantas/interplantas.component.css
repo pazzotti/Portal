@@ -1,6 +1,6 @@
 /* Estilos para a lista */
 body {
-  background-color: #080000;
+  background-color: #361111;
 }
 
 ul {
@@ -48,27 +48,11 @@ table {
   background-color: #2b2b2b;
   color: white;
   border-radius: 5px;
-  text-align: center;
-  font-size: 18px;
+  text-align: center; /* centraliza o conteúdo das células da tabela */
+  font-size: 18px; /* aumenta o tamanho da fonte da tabela */
 }
 
-.table2 {
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-  background-color: black;
-  color: white;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 20px;
-}
-
-.corlinha {
-  background-color: black;
-  border-bottom: 2px solid #404040;
-}
-
-
+th,
 td {
   text-align: center;
   padding: 10px;
@@ -79,7 +63,6 @@ th {
   background-color: #393939;
   border-bottom: 2px solid #404040;
 }
-
 p {
   background-color: #f7f0f0;
   border-bottom: 2px solid #404040;
@@ -94,9 +77,8 @@ tr:nth-child(odd) {
 }
 
 tr:hover {
-  background-color: #4a3899;
+  background-color: #aa0d0d;
 }
-
 div {
   margin-top: 2px;
 }
@@ -105,7 +87,7 @@ div {
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
+  font-size: 24px;  /* Preferred icon size */
   display: inline-block;
   line-height: 1;
   text-transform: none;
@@ -113,152 +95,190 @@ div {
   word-wrap: normal;
   white-space: nowrap;
   direction: ltr;
+
+  /* Support for all WebKit browsers. */
   -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
   text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
   -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
   font-feature-settings: 'liga';
 }
 
-.black-row {
-  background-color: black;
-  color: white;
-}
+  body {
+    background-color: black;
+  }
 
-.grafiti-row {
-  background-color: #424242;
-  color: white;
-}
+  .black-row {
+    background-color: black;
+    color: white;
+  }
 
-.negative-value {
-  color: red;
-  font-weight: bold;
-}
+  .grafiti-row {
+    background-color: #424242;
+    color: white;
+  }
+  .negative-value {
+    color: red;
+    font-weight: bold;
+  }
+  .danger-value {
+    color: rgb(241, 226, 3);
+    font-weight: bold;
+  }
+  .verde-value {
+    color: rgb(0, 255, 98);
+    font-weight: bold;
+  }
 
-.danger-value {
-  color: rgb(241, 226, 3);
-  font-weight: bold;
-}
+  .data-save-btn {
+    margin-top: 10px; /* Adicione o espaçamento vertical desejado */
+    margin-left: 10px;
+    /* Outras propriedades de margem ou preenchimento conforme necessário */
+  }
 
-.verde-value {
-  color: rgb(0, 255, 98);
-  font-weight: bold;
-}
+  .button-spacing {
+    margin-left: 30px; /* Adicione o espaçamento horizontal desejado */
+  }
 
-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+  .meu-label {
+    margin-left: 30px; /* Adicione o espaçamento horizontal desejado */
+    color: rgb(239, 239, 243);
+  }
 
-label {
-  margin-right: 5px;
-  display: flex;
-  align-items: center;
-  color: #faf9f9;
-  font-size: 15px;
-}
+  .table2 {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 20px;
+  }
 
-input[type="date"],
-button {
-  padding: 5px;
-}
+  .corlinha {
+    background-color: black;
+    border-bottom: 2px solid #404040;
 
-.ultimo-input {
-  margin-left: 200px;
-}
+  }
 
-.left-align {
-  text-align: left;
-}
+  .R56 {
+    background-color: rgb(215, 245, 44);
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .R26 {
+    background-color: rgb(223, 74, 173);
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .R27 {
+    background-color: rgb(109, 107, 105);
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .R54 {
+    background-color: rgb(66, 6, 63);
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .R40 {
+    background-color: rgb(252, 250, 248);
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .R16 {
+    background-color: rgb(67, 196, 84);
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .R19 {
+    background-color: orange;
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .E37 {
+    background-color: rgb(123, 170, 209);
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
+  .PRU {
+    background-color: rgb(207, 102, 4);
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
 
-/* Estilo para ajuste da largura da coluna Fornecedores */
-.auto-width {
-  width: auto;
-  white-space: nowrap;
-}
-.custom-button {
-  width: max-content;
-}
-.button-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  justify-content: flex-start;
-}
+  .VAZIO {
+    background-color:black;
+    color:black;
+    border: 3px solid black;
+    border-radius: 10px;
+  }
 
-.button-container button {
-  flex: 1;
-  width: 100%;
-}
-.background-red {
-  background-color: red;
-}
+  .CMP {
+    background-color:black;
+    color:rgb(252, 251, 251);
+    border: 3px solid rgb(37, 243, 37);
+    border-radius: 10px;
+  }
 
-.background-blue {
-  background-color: rgb(37, 2, 100);
-}
-.form-wrapper {
-  position: absolute;
-  top: 10%;
-  left: 1%;
-  right:1%;
+  h4, h3 {
+    line-height: -3;
+    margin-bottom: 0px;
+    margin-top: 0px;
+  }
 
-}
+  .form-wrapper {
+    position: absolute;
+    top: 11.8%;
+    left: 1%;
+    right:1%;
 
-.background-green {
-  border: 4px solid green;
-}
-.centered-table {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 600px; /* Defina a largura máxima desejada para a tabela */
-  border: 4px solid black; /* Adiciona uma borda preta de 1 pixel à tabela */
-}
-.centered-table2 {
-  position: fixed;
-  top: 58%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 600px; /* Defina a largura máxima desejada para a tabela */
-  border: 4px solid black; /* Adiciona uma borda preta de 1 pixel à tabela */
-}
-.centered-button {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  background-color: #e0d9d9;
-  border: none;
-  color: rgb(14, 12, 12);
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin-bottom: 10px;
+  }
+  .align-left {
+    text-align: center;
+    margin-top: 3%;
+  }
 
-  cursor: pointer;
-  border-radius: 5px;
+  .blinking-icon {
+    animation: blink 1s infinite;
+    color: rgb(43, 226, 43);
+  }
 
-}
+  .vermelho-icon {
 
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
+    color: rgb(247, 11, 51);
+  }
 
-.blinking-icon {
-  animation: blink 1s infinite;
-  color: rgb(43, 226, 43);
-}
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 
-.vermelho-icon {
+  .cell-highlighted {
+    animation: blink 1s infinite;
+    border: 5px solid rgb(4, 247, 4);
+  }
 
-  color: rgb(247, 11, 51);
-}
 
-.button-spacing {
-  margin-right: 30px; /* Adicione o espaçamento horizontal desejado */
-}
+
+
+

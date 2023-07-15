@@ -39,8 +39,6 @@ export class EditaFormDialogComponent {
   places: any[] = [];
 
 
-
-
   constructor(
     private carregaService: CarregaService,
     private apiService: ApiService,
@@ -54,6 +52,7 @@ export class EditaFormDialogComponent {
   }
 
   ngOnInit() {
+    this.query = this.data.query;
     const teste = this.data;
     this.getCarriersFromDynamoDB();
     this.getPlacesFromDynamoDB();
@@ -161,6 +160,42 @@ export class EditaFormDialogComponent {
         (currentDate.getMonth() + 1).toString().padStart(2, '0') +
         totalSeconds.toString() +
         currentDate.getFullYear().toString();
+
+        let passos = 0
+        if (this.data.itemsData.local && this.data.itemsData.local['Local 1']) {
+          if(this.data.itemsData.local['Local 1']!== 'undefined'){
+            passos = passos + 1;
+          }
+
+        }
+        if (this.data.itemsData.local && this.data.itemsData.local['Local 2']) {
+          if(this.data.itemsData.local['Local 2']!== 'undefined'){
+            passos = passos + 1;
+          }
+        }
+        if (this.data.itemsData.local && this.data.itemsData.local['Local 3']) {
+          if(this.data.itemsData.local['Local 3']!== 'undefined'){
+            passos = passos + 1;
+          }
+        }
+        if (this.data.itemsData.local && this.data.itemsData.local['Local 4']) {
+          if(this.data.itemsData.local['Local 4']!== 'undefined'){
+            passos = passos + 1;
+          }
+        }
+        if (this.data.itemsData.local && this.data.itemsData.local['Local 5']) {
+          if(this.data.itemsData.local['Local 5']!== 'undefined'){
+            passos = passos + 1;
+          }
+        }
+        if (this.data.itemsData.local && this.data.itemsData.local['Local 6']) {
+          if(this.data.itemsData.local['Local 6']!== 'undefined'){
+            passos = passos + 1;
+          }
+        }
+
+
+
       this.data.itemsData = {
         "ID": formattedDate,
         "Transportadora": this.data.itemsData.local.Transportadora,
@@ -178,9 +213,45 @@ export class EditaFormDialogComponent {
         "Janela 4": new Date(janela4),
         "Janela 5": new Date(janela5),
         "Janela 6": new Date(janela6),
+        "Passos": passos,
         "tableName": this.query
       }
     } else {
+
+
+
+      let passos = 0
+      if (this.data.itemsData.local && this.data.itemsData.local['Local 1']) {
+        if(this.data.itemsData.local['Local 1']!== 'undefined'){
+          passos = passos + 1;
+        }
+
+      }
+      if (this.data.itemsData.local && this.data.itemsData.local['Local 2']) {
+        if(this.data.itemsData.local['Local 2']!== 'undefined'){
+          passos = passos + 1;
+        }
+      }
+      if (this.data.itemsData.local && this.data.itemsData.local['Local 3']) {
+        if(this.data.itemsData.local['Local 3']!== 'undefined'){
+          passos = passos + 1;
+        }
+      }
+      if (this.data.itemsData.local && this.data.itemsData.local['Local 4']) {
+        if(this.data.itemsData.local['Local 4']!== 'undefined'){
+          passos = passos + 1;
+        }
+      }
+      if (this.data.itemsData.local && this.data.itemsData.local['Local 5']) {
+        if(this.data.itemsData.local['Local 5']!== 'undefined'){
+          passos = passos + 1;
+        }
+      }
+      if (this.data.itemsData.local && this.data.itemsData.local['Local 6']) {
+        if(this.data.itemsData.local['Local 6']!== 'undefined'){
+          passos = passos + 1;
+        }
+      }
 
       this.data.itemsData = {
         "ID": this.data.itemsData.local.ID,
@@ -199,18 +270,11 @@ export class EditaFormDialogComponent {
         "Janela 4": new Date(janela4),
         "Janela 5": new Date(janela5),
         "Janela 6": new Date(janela6),
+        "Passos": passos,
         "tableName": this.query
       }
 
     }
-
-
-
-
-
-
-
-
 
     // Remover as barras invertidas escapadas
     const itemsDataString = JSON.stringify(this.data.itemsData); // Acessa a string desejada

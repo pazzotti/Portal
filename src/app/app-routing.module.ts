@@ -13,6 +13,7 @@ import { MilkRunARGComponent } from './milk-run-arg/milk-run-arg.component';
 import { InterplantasComponent } from './interplantas/interplantas.component';
 import { TimeTableComponent } from './timetable/timetable.component';
 import { LocaisComponent } from './locais/locais.component';
+import { VeiculosLabComponent } from './veiculos-lab/veiculos-lab.component';
 
 const routes: Routes = [
   {path:'',component:TelaUserComponent},
@@ -29,6 +30,7 @@ const routes: Routes = [
   {path:'interplantas',component:InterplantasComponent},
   {path:'time',component:TimeTableComponent},
   {path:'locais',component:LocaisComponent},
+  {path:'lab',component:VeiculosLabComponent},
 
 ];
 

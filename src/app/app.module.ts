@@ -14,14 +14,12 @@ import { ContratoTransportadoraComponent } from './contrato-transportadora/contr
 import { FornecedoresFormDialogComponent } from './app/home/fornecedores/fornecedores-form-dialog.component';
 import { FormularioLocaisComponent } from './formulario_locais/formulario_locais';
 import { MilkRunSulComponent } from './milk_run_sul/milk_run_sul.component';
-import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { CarrierComponent } from './carriers/carriers.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { CarregaJettaComponent } from './carrega-jetta/carrega-jetta.component';
 import { CommonModule, DatePipe } from '@angular/common';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FeatherModule } from 'angular-feather';
@@ -34,6 +32,10 @@ import { LocaisComponent } from './locais/locais.component';
 import { LocaisFormDialogComponent } from './app/home/locais/locais-form-dialog.component';
 import { EditaFormDialogComponent } from './app/home/edita_timetable/edita_timetable-dialog.component';
 import { MatInputModule } from '@angular/material/input';
+import { VeiculosLabComponent } from './veiculos-lab/veiculos-lab.component';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+import { VeiculosFormDialogComponent } from './app/home/veiculos/veiculos-form-dialog.component';
+
 
 
 
@@ -58,6 +60,7 @@ const icons = {
     DashboardComponent,
     ContratoTransportadoraComponent,
     FornecedoresFormDialogComponent,
+    VeiculosFormDialogComponent,
     LocaisFormDialogComponent,
     FormularioLocaisComponent,
     EditaFormDialogComponent,
@@ -69,26 +72,25 @@ const icons = {
     InterplantasComponent,
     TimeTableComponent,
     LocaisComponent,
+    VeiculosLabComponent,
 
   ],
   imports: [
-    FeatherModule.pick(icons),
-    BrowserModule,
-    MatFormFieldModule,
     AppRoutingModule,
-    ReactiveFormsModule,
+    BrowserAnimationsModule,
     BrowserModule,
+    CommonModule,
+    FeatherModule.pick(icons),
+    FormsModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
     HeaderModule,
     HttpClientModule,
-    FormsModule,
-    CommonModule,
     HighchartsChartModule,
     MatDialogModule,
     MatInputModule,
-    BrowserAnimationsModule,
-    BrowserAnimationsModule,
-    ProgressbarModule.forRoot(),
-    BsDropdownModule.forRoot(),
+    ProgressbarModule.forRoot()
+
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

@@ -108,6 +108,23 @@ export class CarregaService {
     return novaData;
   }
 
+  naoadicionarHora(hora: string, data: Date): Date {
+    // Divide a hora em horas e minutos
+    if(hora === null){
+      hora = '00:00'
+    }
+    const [horas, minutos] = hora.split(':').map(Number);
+
+    // Cria uma nova data com os valores da data original
+    const novaData = new Date(data);
+
+    // Adiciona as horas e minutos à nova data
+    novaData.setHours(novaData.getHours() + horas);
+    novaData.setMinutes(novaData.getMinutes() + minutos);
+
+    return novaData;
+  }
+
 
 
 

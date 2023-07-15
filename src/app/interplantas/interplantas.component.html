@@ -1,18 +1,28 @@
 <body>
   <div>
-    <div *ngIf="dataLoaded">
-      <table class="table2">
-        <thead>
-          <th class="corlinha">
-            Interplantas
-          </th>
-        </thead>
-      </table>
 
+    <table class="table2">
+      <thead>
+        <div class="align-left">
+          <i-feather name="plus-circle" ></i-feather>
+        </div>
+        <th class="corlinha">
+
+
+          Interplantas
+        </th>
+      </thead>
+    </table>
+
+    <div>
       <div class="form-wrapper">
         <table>
+
           <thead>
             <tr>
+              <th class="auto-width">
+                Transportadora
+              </th>
               <th class="auto-width">
                 Tipo de Veículo
               </th>
@@ -26,153 +36,147 @@
                 Rastreio
               </th>
               <th class="auto-width">
-                Fornecedores
+                Janela 1
               </th>
-              <th>
-                Destino
+              <th class="auto-width">
+                Janela 2
+              </th>
+              <th class="auto-width">
+                Janela 3
+              </th>
+              <th class="auto-width">
+                Janela 4
+              </th>
+              <th class="auto-width">
+                Janela 5
+              </th>
+              <th class="auto-width">
+                Janela 6
+              </th>
+              <th class="auto-width">
+                Editar
               </th>
             </tr>
           </thead>
+
           <tbody>
-            <ng-container *ngFor="let item of items; let i = index">
+            <ng-container *ngFor="let item of programacao ; let i = index">
               <tr>
-                <td [attr.contenteditable]="editMode[i] ? true : null">{{ item["Transport Type"] }}</td>
-                <td (click)="toggleEditMode(i)">{{ item["Plate"] }}</td>
-                <td>{{ item["Endereco"] }}</td>
+                <td>{{ item.Transportadora }}</td>
+                <td>{{ item.modelo }}</td>
+                <td>{{ item.Plate }}</td>
+                <td>{{ item.Endereco }}</td>
                 <td *ngIf="item['Conexao'] === true" (click)="toggleInformationMode(i)"><i-feather
-                    name="zap" class="blinking-icon"></i-feather></td>
-                <td *ngIf="item['Conexao'] === false" (click)="toggleInformationMode(i)"><i-feather
-                    name="zap-off" class="vermelho-icon"></i-feather></td>
-                <td class="left-align auto-width">
-                  <div class="button-container">
-                    <button *ngIf="item.hasOwnProperty('Fornecedor 1') && item['Fornecedor 1'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado1 === false, 'background-blue': item.cadastrado1 === true, 'background-green': item['Passo Fornecedor1'] === 1 || item['Passo Fornecedor1'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Fornecedor1', 'cadastrado1','Fornecedor 1')">
-                      {{ item['Fornecedor 1'] }}
-                      <br>
-                      Janela - {{ item['Janela 1'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-                    <button *ngIf="item.hasOwnProperty('Fornecedor 2') && item['Fornecedor 2'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado2 === false, 'background-blue': item.cadastrado2 === true, 'background-green': item['Passo Fornecedor2'] === 1 || item['Passo Fornecedor2'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Fornecedor2', 'cadastrado2','Fornecedor 2')">
-                      {{ item['Fornecedor 2'] }}
-                      <br>
-                      Janela - {{ item['Janela 2'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-                    <button *ngIf="item.hasOwnProperty('Fornecedor 3') && item['Fornecedor 3'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado3 === false, 'background-blue': item.cadastrado3 === true, 'background-green': item['Passo Fornecedor3'] === 1 || item['Passo Fornecedor3'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Fornecedor3', 'cadastrado3','Fornecedor 3')">
-                      {{ item['Fornecedor 3'] }}
-                      <br>
-                      Janela - {{ item['Janela 3'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-                    <button *ngIf="item.hasOwnProperty('Fornecedor 4') && item['Fornecedor 4'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado4 === false, 'background-blue': item.cadastrado4 === true, 'background-green': item['Passo Fornecedor4'] === 1 || item['Passo Fornecedor4'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Fornecedor4', 'cadastrado4','Fornecedor 4')">
-                      {{ item['Fornecedor 4'] }}
-                      <br>
-                      Janela - {{ item['Janela 4'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-                    <!-- Outros botões de fornecedores -->
-                  </div>
+                  name="zap" class="blinking-icon"></i-feather></td>
+              <td *ngIf="item['Conexao'] === false" (click)="toggleInformationMode(i)"><i-feather
+                  name="zap-off" class="vermelho-icon"></i-feather></td>
+                <td [ngClass]="{
+                  'R26': item['Local 1'] === 'R26',
+                  'R27': item['Local 1'] === 'R27',
+                  'R54': item['Local 1'] === 'R54',
+                  'R16': item['Local 1'] === 'R16',
+                  'R19': item['Local 1'] === 'R19',
+                  'R56': item['Local 1'] === 'R56',
+                  'E37': item['Local 1'] === 'E37',
+                  'PRU': item['Local 1'] === 'PRU',
+                  'VAZIO': item['Local 1'] === undefined,
+                  'CMP':item['JanelaConcluida1']>0
+                }"(click)="salvarStatus(item, 1)">
+                  <h3  class="my-heading">{{ item['Local 1'] }}</h3>
+                  <h4 class="my-subheading">{{ item['Janela 1'] | date: 'dd/MM/yyyy - HH:mm' }}</h4>
                 </td>
-                <td class="left-align auto-width">
-                  <div class="button-container">
-
-
-                    <button *ngIf="item.hasOwnProperty('Destino 1') && item['Destino 1'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino1 === false, 'background-blue': item.cadastradoDestino1 === true, 'background-green': item['Passo Destino1'] === 1 || item['Passo Destino1'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Destino1','cadastradoDestino1','Destino 1')">
-                      {{ item['Destino 1'] }}
-                      <br>
-                      Janela - {{ item['JanelaDestino 1'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-                    <button *ngIf="item.hasOwnProperty('Destino 2') && item['Destino 2'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino2 === false, 'background-blue': item.cadastradoDestino2 === true, 'background-green': item['Passo Destino2'] === 1 || item['Passo Destino2'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Destino2', 'cadastradoDestino2','Destino 2')">
-                      {{ item['Destino 2'] }}
-                      <br>
-                      Janela - {{ item['JanelaDestino 2'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-                    <button *ngIf="item.hasOwnProperty('Destino 3') && item['Destino 3'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino3 === false, 'background-blue': item.cadastradoDestino3 === true, 'background-green': item['Passo Destino3'] === 1 || item['Passo Destino3'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Destino3', 'cadastradoDestino3','Destino 3')">
-                      {{ item['Destino 3'] }}
-                      <br>
-                      Janela - {{ item['JanelaDestino 3'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-                    <button *ngIf="item.hasOwnProperty('Destino 4') && item['Destino 4'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino4 === false, 'background-blue': item.cadastradoDestino4 === true, 'background-green': item['Passo Destino4'] === 1 || item['Passo Destino'] === 2}"
-                      (click)="acaoDeClique(item, 'Passo Destino4','cadastradoDestino4','Destino 4')">
-                      {{ item['Destino 4'] }}
-                      <br>
-                      Janela - {{ item['JanelaDestino 4'] | date: 'dd/MM/yyyy - HH:mm' }}
-                    </button>
-
-
-                    <!-- Outros botões de destino -->
-
-                  </div>
-
+                <td [ngClass]="{
+                  'R26': item['Local 2'] === 'R26',
+                  'R27': item['Local 2'] === 'R27',
+                  'R54': item['Local 2'] === 'R54',
+                  'R16': item['Local 2'] === 'R16',
+                  'R19': item['Local 2'] === 'R19',
+                  'R56': item['Local 2'] === 'R56',
+                  'E37': item['Local 2'] === 'E37',
+                  'PRU': item['Local 2'] === 'PRU',
+                  'VAZIO': item['Local 2'] === undefined,
+                  'CMP':item['JanelaConcluida2']>0
+                }" (click)="salvarStatus(item, 2)">
+                  <h3 class="my-heading">{{ item['Local 2'] }}</h3>
+                  <h4 class="my-subheading">{{ item['Janela 2'] | date: 'dd/MM/yyyy - HH:mm' }}</h4>
                 </td>
+
+
+                <td [ngClass]="{
+                  'R26': item['Local 3'] === 'R26',
+                  'R27': item['Local 3'] === 'R27',
+                  'R54': item['Local 3'] === 'R54',
+                  'R16': item['Local 3'] === 'R16',
+                  'R19': item['Local 3'] === 'R19',
+                  'R56': item['Local 3'] === 'R56',
+                  'E37': item['Local 3'] === 'E37',
+                  'PRU': item['Local 3'] === 'PRU',
+                  'VAZIO': item['Local 3'] === undefined,
+                  'CMP':item['JanelaConcluida3']>0
+                }" (click)="salvarStatus(item, 3)">
+                  <h3  class="my-heading">{{ item['Local 3'] }}</h3>
+                  <h4 class="my-subheading">{{ item['Janela 3'] | date: 'dd/MM/yyyy - HH:mm' }}</h4>
+                </td>
+
+                <td [ngClass]="{
+                  'R26': item['Local 4'] === 'R26',
+                  'R27': item['Local 4'] === 'R27',
+                  'R54': item['Local 4'] === 'R54',
+                  'R16': item['Local 4'] === 'R16',
+                  'R19': item['Local 4'] === 'R19',
+                  'R56': item['Local 4'] === 'R56',
+                  'E37': item['Local 4'] === 'E37',
+                  'PRU': item['Local 4'] === 'PRU',
+                  'VAZIO': item['Local 4'] === undefined,
+                  'CMP':item['JanelaConcluida4']>0
+                }" (click)="salvarStatus(item, 4)">
+                  <h3  class="my-heading">{{ item['Local 4'] }}</h3>
+                  <h4 class="my-subheading">{{ item['Janela 4'] | date: 'dd/MM/yyyy - HH:mm' }}</h4>
+                </td>
+
+                <td [ngClass]="{
+                  'R26': item['Local 5'] === 'R26',
+                  'R27': item['Local 5'] === 'R27',
+                  'R54': item['Local 5'] === 'R54',
+                  'R16': item['Local 5'] === 'R16',
+                  'R19': item['Local 5'] === 'R19',
+                  'R56': item['Local 5'] === 'R56',
+                  'E37': item['Local 5'] === 'E37',
+                  'PRU': item['Local 5'] === 'PRU',
+                  'VAZIO': item['Local 5'] === undefined,
+                  'CMP':item['JanelaConcluida5']>0
+                }" (click)="salvarStatus(item, 5)">
+                  <h3  class="my-heading">{{ item['Local 5'] }}</h3>
+                  <h4 class="my-subheading">{{ item['Janela 5'] | date: 'dd/MM/yyyy - HH:mm' }}</h4>
+                </td>
+
+                <td [ngClass]="{
+                  'R26': item['Local 6'] === 'R26',
+                  'R27': item['Local 6'] === 'R27',
+                  'R54': item['Local 6'] === 'R54',
+                  'R16': item['Local 6'] === 'R16',
+                  'R19': item['Local 6'] === 'R19',
+                  'R56': item['Local 6'] === 'R56',
+                  'E37': item['Local 6'] === 'E37',
+                  'PRU': item['Local 6'] === 'PRU',
+                  'VAZIO': item['Local 6'] === undefined,
+                  'CMP':item['JanelaConcluida6']>0
+                }" (click)="salvarStatus(item, 6)">
+                  <h3  class="my-heading">{{ item['Local 6'] }}</h3>
+                  <h4 class="my-subheading">{{ item['Janela 6'] | date: 'dd/MM/yyyy - HH:mm' }}</h4>
+                </td>
+
+                <td>
+                  <i-feather name="edit" (click)="editDialog(item)"></i-feather>
+                <i-feather name="delete" (click)="deleteItem(item.ID)" class="button-spacing"></i-feather>
+                </td>
+
+
               </tr>
-              <table *ngIf="editMode[i]" class="centered-table">
-                <tr>
-                  <td><label>Inserir Placa</label></td>
-                </tr>
-                <tr>
-                  <td>
-                    <input type="text" [(ngModel)]="item['Plate']">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <!-- Outros inputs para as colunas restantes -->
-                    <button class="button-spacing" (click)="salvar('Placa',item); editMode[i] = false">Salvar</button>
-                    <button class="button-spacing" (click)="editMode[i] = false">Cancelar</button>
-                  </td>
-
-                </tr>
-
-              </table>
-              <div *ngIf="informationMode[i]">
-                <table class="centered-table">
-                  <tr>
-                    <td><label>Última Atualização</label></td>
-                    <td><label>Último Sinal do Veículo</label></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <input type="text" [(ngModel)]="item['data_atualizacao']">
-                    </td>
-                    <td>
-                      <input type="text" [(ngModel)]="item['DataBordo']">
-                    </td>
-                  </tr>
-
-                </table>
-                <table class="centered-table2">
-                  <tr>
-                    <button (click)="informationMode[i] = false" >Ok</button>
-                  </tr>
-                </table>
-
-
-              </div>
-
-
             </ng-container>
           </tbody>
         </table>
       </div>
-
     </div>
   </div>
 </body>

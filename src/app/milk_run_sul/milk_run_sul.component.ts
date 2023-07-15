@@ -487,11 +487,6 @@ export class MilkRunSulComponent implements OnInit {
 
   armazenarLatitudeEmItems() {
 
-
-
-
-
-
     for (let i = 0; i < this.items.length; i++) {
       let dataString = ''
       let formatoString = '';
