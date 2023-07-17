@@ -20,7 +20,8 @@ export class TrackingComponent {
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
   query: string = 'Operacao_Interplantas_Karrara';
-  query2: string = 'veiculos_lab_Karrara'
+  query2: string = 'veiculos_lab_Karrara';
+  query3:string = 'Itens_Jetta';
   placaFiltrada: string = '';
   posicaoSul!: any[];
 
@@ -37,6 +38,7 @@ export class TrackingComponent {
 
   ngOnInit() {
     this.getPosicaoFromDynamoDB();
+    this.getPosicaoMilkSulFromDynamoDB();
     setTimeout(() => {
       if (this.posicao !== undefined) {
         this.markerCoordinates = this.posicao
@@ -142,7 +144,7 @@ export class TrackingComponent {
 
   getPosicaoMilkSulFromDynamoDB(): void {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+    this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
