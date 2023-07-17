@@ -25,10 +25,12 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/remixicon/fonts/remixicon.css",
+              "node_modules/maplibre-gl/dist/maplibre-gl.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/maplibre-gl/dist/maplibre-gl.js"
+            ]
           },
           "configurations": {
             "production": {

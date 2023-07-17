@@ -261,4 +261,11 @@ button {
 .button-spacing {
   margin-right: 30px; /* Adicione o espaçamento horizontal desejado */
 }
+.dialog-center .mat-dialog-container {
+  max-width: 400px; /* ajuste conforme necessário */
+  margin: auto;
+  background-color: #fff;
+  padding: 20px;
+}
+
 

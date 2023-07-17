@@ -1,46 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;900&display=swap');
 
-input {
-  caret-color: red;
-}
 
-body {
-  margin: 0;
-  width: 100vw;
-  height: 100vh;
+.dialog-container {
+  padding: 20px;
   background: #ecf0f3;
-  display: flex;
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-  place-items: center;
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif;
-}
-
-.container {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 850px;
-  height: 550px;
   border-radius: 20px;
-  padding: 40px;
-  box-sizing: border-box;
-  background: #ecf0f3;
   box-shadow: 14px 14px 20px #cbced1, -14px -14px 20px white;
+  width: 830px;
+  height: 390px;
 }
 
-.brand-logo {
-  height: 100px;
-  width: 100px;
-  background: url("https://img.icons8.com/color/100/000000/twitter--v2.png");
-  margin: auto;
-  border-radius: 50%;
-  box-sizing: border-box;
-  box-shadow: 7px 7px 10px #cbced1, -7px -7px 10px white;
-}
+
 
 .brand-title {
   margin-top: 10px;
@@ -48,6 +17,7 @@ body {
   font-size: 1.8rem;
   color: #1DA1F2;
   letter-spacing: 1px;
+  text-align: center;
 }
 
 .inputs {
@@ -80,8 +50,7 @@ input::placeholder {
 
 input {
   background: #ecf0f3;
-  padding: 10px;
-  padding-left: 20px;
+  padding: 10px 20px;
   height: 50px;
   font-size: 14px;
   border-radius: 50px;
@@ -104,35 +73,22 @@ button:hover {
   box-shadow: none;
 }
 
-a {
-  position: absolute;
-  font-size: 8px;
-  bottom: 4px;
-  right: 4px;
-  text-decoration: none;
-  color: black;
-  background: yellow;
-  border-radius: 10px;
-  padding: 2px;
-}
-
-h1 {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-.form-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
 .input2 {
   background: #f3f3f7;
-  padding: 10px;
-  padding-left: 20px;
+  padding: 10px 20px;
   height: 50px;
-  width: 550px;
+  width: 100%;
   border-radius: 50px;
-
+  margin-top: 10px;
 }
+.dialog-relative-position {
+  position: relative;
+  top: -2000px;
+  left: 50px;
+}
+
+
+
+
+
+

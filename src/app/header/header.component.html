@@ -1,34 +1,65 @@
 <nav class="main-nav">
-  <a href="dashboard" routerLink="/dashboard">Karrara Transport</a>
+  <a href="#" routerLink="/">Karrara Transport</a>
   <div id="navbarNav">
     <div class="menu-items">
-      <a href="milk_sul" routerLink="/milk_sul">Milk Run Sul</a>
-      <a href="milk_SP" routerLink="/milk_sp">Milk Run SP</a>
-      <a href="milk_ARG" routerLink="/milk_ARG">Milk Run Argentina</a>
 
-        <a class="btn btn-secondary dropdown-toggle" type="button" (click)="toggleInterplantasMenu()" [class.show]="isInterplantasMenuOpen" #interplantasButton>
-          Interplantas
-        </a>
-        <div class="dropdown-menu2" [ngClass]="{ 'show': isInterplantasMenuOpen }" *ngIf="isInterplantasMenuOpen" style="z-index: 9999; display: flex; flex-direction: column;">
-          <a class="dropdown-item custom-dropdown-item" href="interplantas" routerLink="/interplantas">Operação</a>
-          <a class="dropdown-item custom-dropdown-item" href="time" routerLink="/time">Time Table</a>
+
+      <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        <a href="milk_sul" routerLink="/milk_sul">Milk Run Sul</a>
+      </div>
+
+
+      <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        <a href="milk_SP" routerLink="/milk_sp">Milk Run SP</a>
+      </div>
+
+
+
+      <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        <a href="milk_ARG" routerLink="/milk_ARG">Milk Run Argentina</a>
+      </div>
+
+
+      <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        <button class="dropbtn">Interplantas</button>
+        <div class="dropdown-content" *ngIf="showDropdown">
+          <a href="interplantas" routerLink="/interplantas">Acompanhar Operação</a>
+          <a href="time" routerLink="/time">Time Table</a>
         </div>
+      </div>
 
+      <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        <button class="dropbtn">Container</button>
+        <div class="dropdown-content" *ngIf="showDropdown">
+          <a href="interplantas" routerLink="/interplantas">Acompanhar Operação</a>
+          <a href="container" routerLink="/container">Time Table</a>
+        </div>
+      </div>
 
-      <a href="containers" routerLink="/containers">Containers</a>
-      <a href="frete_extra" routerLink="/frete_extra">Frete Extra</a>
+      <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        <a href="extra" routerLink="/extra">Frete Extra</a>
+      </div>
+
     </div>
   </div>
-  <div class="dropdown">
-    <a class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" (click)="toggleConfigMenu()" routerLink="/frete_extra">
-      <i class="ri-tools-line"></i>Config
-    </a>
+  <div id="navbarNav">
+    <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+      <button class="dropbtn"><i class="ri-tools-line"></i>Configurações</button>
+      <div class="dropdown-content" *ngIf="showDropdown">
+        <a href="jetta" routerLink="/jetta">Sinc Jetta</a>
+        <a href="atualiza" routerLink="/atualiza">Sinc Excel</a>
+        <a href="fornecedores" routerLink="/fornecedores">Fornecedores</a>
+        <a href="lab" routerLink="/lab">Veiculos Lab</a>
+        <a href="cadastro" routerLink="/cadastro">Cadastrar Usuário</a>
 
-    <div class="dropdown-menu" *ngIf="isConfigMenuOpen" aria-labelledby="dropdownMenuButton" style="z-index: 9999;">
-      <a class="dropdown-item custom-dropdown-item" href="jetta" routerLink="/jetta">Sinc Jetta</a>
-      <a class="dropdown-item custom-dropdown-item" href="atualiza" routerLink="/atualiza">Sinc Excel</a>
-      <a class="dropdown-item custom-dropdown-item" href="fornecedores" routerLink="/fornecedores">Fornecedores</a>
-      <a class="dropdown-item custom-dropdown-item" href="lab" routerLink="/lab">Veiculos Lab</a>
+
+      </div>
+    </div>
+    <div>
+      <button class="btnLogout" type="button" (click)="logout()">LOGOUT</button>
     </div>
   </div>
+
+
+
 </nav>

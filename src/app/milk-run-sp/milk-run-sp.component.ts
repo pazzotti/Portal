@@ -516,13 +516,12 @@ export class MilkRunSPComponent implements OnInit {
     const dialogRef = this.dialog.open(FornecedoresFormDialogComponent, {
       data: {
         itemsData: itemAlterado,
-
       },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
+      width: '870px',
+      height: '430px',
       position: {
-        top: '1vh',
-        left: '30vw'
+        top: '-85%',
+        left: '30%',
       },
     });
 

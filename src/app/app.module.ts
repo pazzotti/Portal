@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderModule } from './header/header.module';
 import { FormsModule } from '@angular/forms';
-import {MatDialogModule} from '@angular/material/dialog';
+import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import { ContratoTransportadoraFormDialogComponent } from './app/home/contrato_transportadora/contrato-transportadora-form-dialog.component';
 import { CarrierFormDialogComponent } from './app/home/carriers/carriers-form-dialog.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,8 +35,16 @@ import { MatInputModule } from '@angular/material/input';
 import { VeiculosLabComponent } from './veiculos-lab/veiculos-lab.component';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { VeiculosFormDialogComponent } from './app/home/veiculos/veiculos-form-dialog.component';
-
-
+import { TimeTableContainerComponent } from './timetable-container/timetable-container.component';
+import { MatIconModule } from '@angular/material/icon';
+import { ClarityModule } from '@clr/angular';
+import { TrackingComponent } from './tracking/tracking.component';
+import { ContratoTerrestreFormDialogComponent } from './app/home/contrato_terrestre/contrato-terrestre-form-dialog.component';
+import { ExtraRequestComponent } from './app/home/extra-request/extra-request.component';
+import { ExtraFreightComponent } from './extra-freight/extra-freight.component';
+import { LoginComponent } from './login/login.component';
+import { SharedModule } from './shared/shared.module';
+import { CadastroComponent } from './cadastro/cadastro.component';
 
 
 
@@ -60,10 +68,15 @@ const icons = {
     DashboardComponent,
     ContratoTransportadoraComponent,
     FornecedoresFormDialogComponent,
+    LoginComponent,
     VeiculosFormDialogComponent,
+    CadastroComponent,
     LocaisFormDialogComponent,
     FormularioLocaisComponent,
     EditaFormDialogComponent,
+    ExtraRequestComponent,
+    ExtraFreightComponent,
+    ContratoTerrestreFormDialogComponent,
     MilkRunSulComponent,
     CarrierComponent,
     CarregaJettaComponent,
@@ -73,17 +86,23 @@ const icons = {
     TimeTableComponent,
     LocaisComponent,
     VeiculosLabComponent,
+    TimeTableContainerComponent,
+    TrackingComponent
 
   ],
   imports: [
     AppRoutingModule,
+    MatIconModule,
+    CommonModule,
+    SharedModule,
+    ReactiveFormsModule,
+    ClarityModule,
     BrowserAnimationsModule,
     BrowserModule,
     CommonModule,
     FeatherModule.pick(icons),
     FormsModule,
     MatFormFieldModule,
-    ReactiveFormsModule,
     HeaderModule,
     HttpClientModule,
     HighchartsChartModule,
@@ -92,7 +111,8 @@ const icons = {
     ProgressbarModule.forRoot()
 
   ],
-  providers: [DatePipe],
+  providers: [DatePipe,{provide:MatDialogRef,useValue:{}}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

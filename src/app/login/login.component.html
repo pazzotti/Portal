@@ -1,0 +1,22 @@
+<div class="container">
+    <nav class="navbar navbar-light">
+        <div class="brand-title">Login</div>
+        <div class="contact">
+            <label class="align-right" for="reason">Contact: <abbr style="color: #3b82f6;">SSBUIF</abbr> Phone: 55
+                11 3190-3611 | Mobile: +55 11 98550-7468</label>
+        </div>
+    </nav>
+    <form [formGroup]="formGroup">
+        <table class="table">
+            <div class="camposLabels">
+                <input type="text" id="login" name="login" placeholder="user" formControlName="login">
+            </div>
+            <div class="camposLabels">
+                <input type="password" id="senha" name="senha" placeholder="password" formControlName="senha">
+            </div>
+            <button type="button" (click)="submit()">LOGIN</button>
+            <br>
+            <!-- <button type="button" (click)="logout()">LOGOUT</button> -->
+        </table>
+    </form>
+</div>

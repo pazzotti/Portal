@@ -2,6 +2,7 @@ import { HeaderModule } from './header.module';
 import * as feather from 'feather-icons';
 
 import { Component, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { AutenticacaoService } from '../autenticacao/autenticacao.service';
 
 
 
@@ -15,13 +16,36 @@ export class HeaderComponentes {
   @ViewChild('interplantasButton', { static: true }) interplantasButton!: ElementRef;
   @ViewChild('interplantasMenu', { static: true }) interplantasMenu!: ElementRef;
 
+
+
+  opcoes: string[] = ['Opção 1', 'Opção 2', 'Opção 3'];
+  opcaoSelecionada!: string;
   selectedOption: string = "";
   alinharDireita = true;
+  showDropdown = false;
 
   isConfigMenuOpen: boolean = false;
 
   isInterplantasMenuOpen = false;
   dropdownMenuStyle: any;
+
+
+
+  constructor(
+    private servicoAutenticacao: AutenticacaoService,
+    private renderer: Renderer2
+
+  ) {feather.replace(); }
+
+  public async logout(): Promise<void> {
+    try {
+      await this.servicoAutenticacao.logout()
+    } catch (excecao: any) {
+      const mensagemErro = excecao?.error?.erro || 'Erro ao realizar o logout!'
+      alert(mensagemErro)
+    }
+  }
+
 
   toggleInterplantasMenu() {
     this.isInterplantasMenuOpen = !this.isInterplantasMenuOpen;
@@ -47,10 +71,7 @@ export class HeaderComponentes {
   }
 
 
-  constructor(private renderer: Renderer2) {
-    // Importe o ícone desejado
-    feather.replace();
-  }
+
 
   ngOnInit() {
     this.changeCursorStyle(false);

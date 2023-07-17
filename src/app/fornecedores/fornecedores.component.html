@@ -1,11 +1,44 @@
 <div class="table-container">
   <ul>
     <div>
-      <button mat-button (click)="openDialog(items, urlConsulta, query)">
-        <span class="material-icons">note_add</span> Add new contract
+
+      <button mat-button (click)="editDialog('')">
+
+        <span class="material-icons">note_add</span> Adicionar Fornecedor
       </button>
     </div>
-    <div class="form-wrapper">
+    <clr-modal [(clrModalOpen)]="dialogOpen" [clrModalSize]="'md'" class="dialog-container">
+      <h2 class="modal-title">Adicionar Fornecedor</h2>
+      <div class="modal-body">
+        <form class="inputs">
+          <div>
+            <label class="modal-label">Fornecedor</label>
+            <input type="string" name="fornecedor" [(ngModel)]="item.local" class="modal-input1">
+          </div>
+          <div>
+            <label class="modal-label">e-mail</label>
+            <input type="string" name="email" [(ngModel)]="item.contato" class="modal-input2">
+          </div>
+          <div>
+            <label class="modal-label">Endereço</label>
+            <input type="string" name="endereco" [(ngModel)]="item.endereco" class="modal-input3">
+          </div>
+          <div>
+            <label class="modal-label">Latitude</label>
+            <input type="string" name="latitude" [(ngModel)]="item.latitude" class="modal-input4">
+            <label class="modal-label">Longitude</label>
+            <input type="string" name="logitude" [(ngModel)]="item.longitude" class="modal-input4">
+          </div>
+
+          <div class="modal-div">
+            <button class="modal-button" type="button" (click)="salvar()">Save</button>
+            <button class="modal-button" type="button" (click)="cancel()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </clr-modal>
+
+    <div class="table2">
       <table>
         <thead>
           <tr>
@@ -25,13 +58,13 @@
             <td>{{ item.latitude }}</td>
             <td>{{ item.longitude }}</td>
             <td>
-              <button mat-icon-button color="primary" aria-label="Editar" (click)="editDialog(item, urlConsulta, query)">
-                <a>edit</a>
-              </button>
+
+              <i-feather name="edit" (click)="editDialog(item)"></i-feather>
               <span style="margin-left: 10px; margin-right: 10px;"></span>
-              <button mat-icon-button color="warn" aria-label="Excluir" (click)="deleteItem(item.ID, urlConsulta, query)">
-                <a>delete</a>
-              </button>
+              <i-feather name="delete" (click)="deleteItem(item.ID, urlConsulta, query)"
+                class="button-spacing"></i-feather>
+
+
             </td>
           </tr>
         </tbody>
@@ -39,4 +72,5 @@
     </div>
 
   </ul>
+
 </div>

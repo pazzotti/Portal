@@ -1,5 +1,5 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ApiService } from 'src/app/services/contratos/contratos.service';
 import { format } from 'date-fns';
@@ -25,9 +25,18 @@ export class FornecedoresFormDialogComponent {
   constructor(
     private apiService: ApiService,
     public dialogRef: MatDialogRef<FornecedoresFormDialogComponent>,
+    private elementRef: ElementRef,
     @Inject(MAT_DIALOG_DATA) public data: any
 
   ) { }
+
+  ngAfterViewInit(): void {
+    const dialogElement = this.elementRef.nativeElement;
+    const windowHeight = window.innerHeight;
+    const dialogHeight = dialogElement.getBoundingClientRect().height;
+    const topOffset = windowHeight > dialogHeight ? (windowHeight - dialogHeight) / 2 : 0;
+    dialogElement.style.top = `${topOffset}px`;
+  }
 
   salvar() {
 
