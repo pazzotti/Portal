@@ -55,9 +55,11 @@
 
       </div>
     </div>
-    <div>
-      <button class="btnLogout" type="button" (click)="logout()">LOGOUT</button>
+
+    <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+      <button  class="dropbtn" type="button" (click)="logout()">Logout</button>
     </div>
+
   </div>
 
 
