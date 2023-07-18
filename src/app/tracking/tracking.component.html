@@ -1,1 +1,7 @@
-<div id="map"></div>
+<div id="map">
+  <!-- Adicione o formulário dentro da div do mapa -->
+  <form>
+    <input type="text" [(ngModel)]="placaFiltrada" placeholder="Digite a placa">
+    <button type="button" (click)="filtrar()">Filtrar</button>
+  </form>
+</div>
