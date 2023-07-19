@@ -23,7 +23,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FeatherModule } from 'angular-feather';
-import { Camera, ZapOff, Zap, Edit, Delete, PlusCircle } from 'angular-feather/icons';
+import { Camera, ZapOff, Zap, Edit, Delete, PlusCircle, Settings } from 'angular-feather/icons';
 import { MilkRunSPComponent } from './milk-run-sp/milk-run-sp.component';
 import { MilkRunARGComponent } from './milk-run-arg/milk-run-arg.component';
 import { InterplantasComponent } from './interplantas/interplantas.component';
@@ -54,7 +54,8 @@ const icons = {
   Zap,
   Edit,
   Delete,
-  PlusCircle
+  PlusCircle,
+  Settings
 };
 
 

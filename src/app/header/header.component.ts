@@ -1,5 +1,6 @@
 import { HeaderModule } from './header.module';
-import * as feather from 'feather-icons';
+
+import { AppModule } from '../app.module';
 
 import { Component, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 import { AutenticacaoService } from '../autenticacao/autenticacao.service';
@@ -35,7 +36,7 @@ export class HeaderComponentes {
     private servicoAutenticacao: AutenticacaoService,
     private renderer: Renderer2
 
-  ) {feather.replace(); }
+  ) {}
 
   public async logout(): Promise<void> {
     try {
