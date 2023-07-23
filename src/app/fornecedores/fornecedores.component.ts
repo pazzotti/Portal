@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { ApiService } from '../services/contratos/contratos.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FornecedoresFormDialogComponent } from '../app/home/fornecedores/fornecedores-form-dialog.component';
 import { Observable, map, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { format } from 'date-fns';
@@ -31,7 +30,8 @@ export class FornecedoresComponent {
     contato: '',
     endereco: '',
     latitude: '',
-    longitude: ''
+    longitude: '',
+    descarga:false
   };
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
@@ -67,6 +67,7 @@ export class FornecedoresComponent {
     this.item.endereco = item.endereco;
     this.item.latitude = item.latitude;
     this.item.longitude = item.longitude;
+    this.item.descarga = item.descarga;
     this.dialogOpen = true;
   }
 
@@ -83,7 +84,8 @@ export class FornecedoresComponent {
         "endereco": this.item.endereco,
         "local": this.item.local,
         "latitude": this.item.latitude,
-        "longitude": this.item.longitude
+        "longitude": this.item.longitude,
+        "descarga":this.item.descarga
       }
 
 

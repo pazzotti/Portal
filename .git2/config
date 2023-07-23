@@ -1,0 +1,23 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = https://github.com/LUISFFSILVA/PortalKarrara.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+[branch "pazza"]
+	github-pr-base-branch = "LUISFFSILVA#PortalKarrara#main"
+	remote = origin
+	merge = refs/heads/pazza
+	github-pr-owner-number = "LUISFFSILVA#PortalKarrara#5"
+[branch "pazzaatual"]
+	github-pr-base-branch = "LUISFFSILVA#PortalKarrara#pazza"
+	remote = origin
+	merge = refs/heads/pazzaatual
+	github-pr-owner-number = "LUISFFSILVA#PortalKarrara#8"

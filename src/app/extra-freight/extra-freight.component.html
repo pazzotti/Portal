@@ -1,84 +1,295 @@
 <body>
-    <div class="headerContratos">
-        <div class="align-left">
-            <input type="text" [(ngModel)]="filtroDelivery" (keyup)="aplicarFiltro()" placeholder="Search Destination">
-        </div>
-        <div class="align-right">
-            <button mat-button (click)="openDialog(items, urlConsulta, query)">
-                <span class="material-icons">note_add</span> Request Extra Freight
-            </button>
-        </div>
+  <div class="headerContratos">
+    <div class="align-left">
+      <input type="text" [(ngModel)]="filtroDelivery" (keyup)="aplicarFiltro()" placeholder="Search Destination">
     </div>
+    <div class="align-right">
+      <button mat-button (click)=" editDialog(items)">
+        <span class="material-icons">note_add</span> Solicitar Frete Extra
+      </button>
+    </div>
+  </div>
 
-    <ul>
-        <table>
-            <thead>
-                <tr class="header-row">
-                    <td><label>ID</label></td>
-                    <td><label>Pickup Date</label></td>
-                    <td><label>Origin</label></td>
-                    <td><label>Address</label></td>
-                    <td><label>Destination</label></td>
-                    <td><label>Delivery Date</label></td>
-                    <!-- <td><label>Area</label></td> -->
-                    <!-- <td><label>Region</label></td> -->
-                    <td><label>Request By</label></td>
-                    <td><label>Carrier</label></td>
-                    <td><label>Vehicle Carrier</label></td>
-                    <td><label>Vehicle Requested</label></td>
-                    <td><label>License Plate</label></td>
-                    <!-- <td><label>Distance</label></td>
-                    <td><label>Cost</label></td>
-                    <td><label>Invoice</label></td>
-                    <td><label>EPS</label></td> -->
-                    <td><label>Status</label></td>
-                    <td><label>Actions</label></td>
-                </tr>
-            </thead>
-            <tbody >
-                <tr *ngFor="let item of items" [class]="getStatusClass(item.status)">
-                    <td>{{ item.ID }}</td>
-                    <td>{{ item.datePickup | date:'dd-MM-yy' + " " + item.timePickup }}</td>
-                    <td>{{ item.locationPickup }}</td>
-                    <td>{{ item.addressPickup }}</td>
-                    <td>{{ item.locationDelivery + " - " + (item.areaDelivery ? item.areaDelivery : "")}}</td>
-                    <td>{{ item.dateDelivery | date:'dd-MM-yy' + " " + item.timeDelivery }}</td>
-                    <!-- <td>{{ item.areaDelivery}}</td> -->
-                    <!-- <td>{{ item.regionDelivery}}</td> -->
-                    <td>{{ item.reqName + " - " + item.reqId}}</td>
-                    <td>{{ item.carrier}}</td>
-                    <td>{{ item.vehicleType}}</td>
-                    <!-- <td>
-                        <select name="vehicleType" [(ngModel)]="item.vehicleType" appendTo="body">
-                            <option value="-" disabled selected>-</option>
-                            <option *ngFor="let type of typesVehicles" [value]="type">{{ type }}</option>
-                        </select>
-                    </td> -->
-                    <td>{{ item.reqVehicle}}</td>
-                    <!-- <td>
-                        <select name="reqVehicle" [(ngModel)]="item.reqVehicle" appendTo="body">
-                            <option value="-" disabled selected>-</option>
-                            <option *ngFor="let type of typesVehicles" [value]="type">{{ type }}</option>
-                        </select>
-                    </td> -->
-                    <td>{{ item.licensePlate}}</td>
-                    <!-- <td>{{ item.distance}}</td>
-                    <td>{{ item.cost}}</td>
-                    <td>{{ item.invoice}}</td>
-                    <td>{{ item.eps}}</td> -->
-                    <td>{{ item.status}}</td>
-                    <td class="action-buttons">
-                        <button mat-icon-button color="primary" aria-label="Editar"
-                            (click)="editDialog(item, urlConsulta, query)">
-                            <span class="material-icons">edit</span>
-                        </button>
-                        <button mat-icon-button color="warn" aria-label="Excluir"
-                            (click)="deleteItem(item.ID, urlConsulta, query)">
-                            <span class="material-icons">delete</span>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </ul>
+  <ul>
+    <table>
+      <thead>
+        <tr class="header-row">
+          <td><label>ID</label></td>
+          <td><label>Pickup Date</label></td>
+          <td><label>Origin</label></td>
+          <td><label>Address</label></td>
+          <td><label>Destination</label></td>
+          <td><label>Delivery Date</label></td>
+          <td><label>Request By</label></td>
+          <td><label>Carrier</label></td>
+          <td><label>Vehicle Carrier</label></td>
+          <td><label>Vehicle Requested</label></td>
+          <td><label>License Plate</label></td>
+          <td><label>Status</label></td>
+          <td><label>Actions</label></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items" [class]="getStatusClass(item.status)">
+          <td>{{ item.ID }}</td>
+          <td>{{ item.datePickup | date:'dd-MM-yy' + " " + item.timePickup }}</td>
+          <td>{{ item.locationPickup }}</td>
+          <td>{{ item.addressPickup }}</td>
+          <td>{{ item.locationDelivery + " - " + (item.areaDelivery ? item.areaDelivery : "")}}</td>
+          <td>{{ item.dateDelivery | date:'dd-MM-yy' + " " + item.timeDelivery }}</td>
+          <td>{{ item.reqName + " - " + item.reqId}}</td>
+          <td>{{ item.carrier}}</td>
+          <td>{{ item.vehicleType}}</td>
+          <td>{{ item.reqVehicle}}</td>
+          <td>{{ item.licensePlate}}</td>
+          <td>{{ item.status}}</td>
+          <td class="action-buttons">
+            <button mat-icon-button color="primary" aria-label="Editar" (click)="editDialog(item)">
+              <span class="material-icons">edit</span>
+            </button>
+            <button mat-icon-button color="warn" aria-label="Excluir" (click)="deleteItem(item.ID, urlConsulta, query)">
+              <span class="material-icons">delete</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ul>
 </body>
+<clr-modal [(clrModalOpen)]="dialogOpen" [clrModalSize]="'md'" class="dialog-container">
+
+    <h3 class="modal-title">Solicitação de Frete Extra</h3>
+  <div class="modal-body">
+    <form class="inputs">
+      <table class="table2000">
+        <tr>
+          <td style="max-width: 50px;" >
+            <label class="modal-label">Motivo da solicitação</label>
+          </td>
+          <td style="max-width: 840px;" class="align-left">
+            <input type="string" name="motive" [(ngModel)]="item.motive" class="modal-input0">
+          </td>
+        </tr>
+      </table>
+      <table class="table2000">
+        <tr>
+          <td style="width: 100px;">
+            <label class="modal-label">Numero da NF</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="nf" [(ngModel)]="item.nf" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Valor total da NF</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="nfTotal" [(ngModel)]="item.nfTotal" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Peso (Kg)</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="weight" [(ngModel)]="item.weight" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Quantidade</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="quantity" [(ngModel)]="item.quantity" class="modal-input1">
+          </td>
+        </tr>
+      </table>
+
+      <table class="table2000">
+        <tr>
+          <td style="max-width: 100px;">
+            <label class="modal-label">Transport.</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="carrier" [(ngModel)]="item.carrier" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Veículo Solicitado</label>
+          </td>
+          <td style="width: 250px;">
+            <select id="reqVehicle" name="reqVehicle" [(ngModel)]="item.reqVehicle" class="modal-select">
+              <option *ngFor="let vehicle of typesVehicles" [value]="vehicle">{{ vehicle }}</option>
+            </select>
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Veículo Disponível</label>
+          </td>
+          <td style="width: 250px;">
+            <select id="vehicleType" name="vehicleType" [(ngModel)]="item.vehicleType" class="modal-select">
+              <option *ngFor="let vehicle of typesVehicles" [value]="vehicle">{{ vehicle }}</option>
+            </select>
+          </td>
+          <td style="width: 100px;">
+          </td>
+          <td style="width: 250px;">
+          </td>
+        </tr>
+      </table>
+      <table class="table2000">
+        <tr>
+          <td style="max-width: 50px;">
+            <label class="modal-label">Descrição do Material</label>
+          </td>
+          <td style="max-width: 840px;" class="align-left">
+            <input type="string" name="description" [(ngModel)]="item.description" class="modal-input0">
+          </td>
+        </tr>
+      </table>
+      <table class="table2000">
+        <tr>
+          <td style="width: 100px;">
+            <label class="modal-label">Nome do requisitante</label>
+          </td>
+          <td style="width: 1040px;" class="align-left">
+            <input type="string" name="reqName" [(ngModel)]="item.reqName" class="modal-input0">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Usuário</label>
+          </td>
+          <td style="max-width: 20px;">
+            <input type="string" name="reqId" [(ngModel)]="item.reqId" class="modal-input1">
+          </td>
+        </tr>
+      </table>
+      <table class="table2000">
+        <tr>
+          <td style="width: 100px;">
+            <label class="modal-label">E-mail</label>
+          </td>
+          <td style="width: 1040px;" class="align-left">
+            <input type="string" name="reqEmail" [(ngModel)]="item.reqEmail" class="modal-input0">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Contato</label>
+          </td>
+          <td style="max-width: 20px;">
+            <input type="string" name="reqPhone" [(ngModel)]="item.reqPhone" class="modal-input1">
+          </td>
+        </tr>
+      </table>
+
+      <table class="table2000">
+        <tr>
+          <td style="width: 100px;">
+            <label class="modal-label">E-mail do Gestor</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="supEmail" [(ngModel)]="item.supEmail" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Centro de Custo</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="costCenter" [(ngModel)]="item.costCenter" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Numero do Projeto</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="projectNumber" [(ngModel)]="item.projectNumber" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Numero da OS</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="orderNumber" [(ngModel)]="item.orderNumber" class="modal-input1">
+          </td>
+        </tr>
+      </table>
+      <h3 class="modal-title">Informações de coleta</h3>
+      <table class="table2000">
+        <tr>
+          <td style="width: 100px;">
+            <label class="modal-label">Local</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="locationPickup" [(ngModel)]="item.locationPickup" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Data da Coleta</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="datePickup" [(ngModel)]="item.datePickup" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Horário de Coleta</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="timePickup" [(ngModel)]="item.timePickup" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+
+          </td>
+          <td style="width: 250px;">
+
+          </td>
+        </tr>
+      </table>
+
+      <h3 class="modal-title">Informações de entrega</h3>
+
+      <table class="table2000">
+        <tr>
+          <td style="width: 100px;">
+            <label class="modal-label">Local</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="locationDelivery" [(ngModel)]="item.locationDelivery" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Área</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="areaDelivery" [(ngModel)]="item.areaDelivery" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Data</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="dateDelivery" [(ngModel)]="item.dateDelivery" class="modal-input1">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Horário de Entrega</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="string" name="timeDelivery" [(ngModel)]="item.timeDelivery" class="modal-input1">
+          </td>
+        </tr>
+      </table>
+      <table class="table2000">
+        <tr>
+          <td style="width: 100px;">
+            <label class="modal-label">Observações</label>
+          </td>
+          <td style="width: 640px;" class="align-left">
+            <input type="string" name="notes" [(ngModel)]="item.notes" class="modal-input2">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Item Crítico?</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="checkbox" id="critical">
+          </td>
+          <td style="width: 100px;">
+            <label class="modal-label">Produto Perigoso?</label>
+          </td>
+          <td style="width: 250px;">
+            <input type="checkbox" id="dangerousProduct">
+          </td>
+        </tr>
+      </table>
+
+
+
+      <div class="modal-div">
+        <button class="modal-button" type="button" (click)="salvar()">Save</button>
+        <button class="modal-button" type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</clr-modal>

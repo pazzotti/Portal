@@ -14,12 +14,12 @@ import { InterplantasComponent } from './interplantas/interplantas.component';
 import { TimeTableComponent } from './timetable/timetable.component';
 import { LocaisComponent } from './locais/locais.component';
 import { VeiculosLabComponent } from './veiculos-lab/veiculos-lab.component';
-import { TimeTableContainerComponent } from './timetable-container/timetable-container.component';
 import { TrackingComponent } from './tracking/tracking.component';
 import { ExtraFreightComponent } from './extra-freight/extra-freight.component';
 import { AutenticacaoGuard } from './autenticacao/autenticacao.guard';
 import { LoginComponent } from './login/login.component';
 import { CadastroComponent } from './cadastro/cadastro.component';
+import { RelatorioComponent } from './relatorio/relatorio.component';
 
 
 const routes: Routes = [
@@ -40,9 +40,9 @@ const routes: Routes = [
   {path:'time',component:TimeTableComponent},
   {path:'locais',component:LocaisComponent},
   {path:'lab',component:VeiculosLabComponent},
-  {path:'container',component:TimeTableContainerComponent},
   { path: 'extra', canActivate: [AutenticacaoGuard], component: ExtraFreightComponent },
   { path: 'cadastro', canActivate: [AutenticacaoGuard], component: CadastroComponent },
+  { path: 'relatorio', canActivate: [AutenticacaoGuard], component: RelatorioComponent },
 
 
 ];

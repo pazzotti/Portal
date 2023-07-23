@@ -5,6 +5,8 @@ import { AppModule } from '../app.module';
 import { Subject, interval } from 'rxjs';
 import { Observable, fromEvent } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
+import supercluster, { PointFeature } from 'supercluster';
+
 
 
 
@@ -33,6 +35,7 @@ export class TrackingComponent {
   filtro: boolean = false;
   subscription: any;
   private placaFiltradaSubject = new Subject<string>();
+  posicaoLOTS!: any[];
   constructor(
     private dynamodbService: ApiService,
 
@@ -52,16 +55,15 @@ export class TrackingComponent {
     await this.getPosicaoFromDynamoDB();
     await this.getPosicaoMilkSulFromDynamoDB();
     await this.getPosicaoMilkRastreioFromDynamoDB();
+    await this.getPosicaoLOTSFromDynamoDB();
 
 
 
 
     setTimeout(() => {
-      if (this.filtro === true) {
-        this.posicao = this.posicao.filter(item => item.Plate === this.placaFiltrada);
-        this.posicaoSul = this.posicaoSul.filter(item => item.Plate === this.placaFiltrada);
-      }
+
       this.compareAndMergePlates();
+      this.compareAndMergePlatesLOTS();
       if (this.posicao !== undefined) {
         this.markerCoordinates = this.posicao
           .filter((item: any) => item.Longitude !== undefined && item.Latitude !== undefined && item.Latitude !== null && item.Latitude !== 'None' && item.Latitude !== "")
@@ -78,21 +80,15 @@ export class TrackingComponent {
 
 
 
-    this.subscription = interval(3 * 60 * 100).subscribe(() => {
+    this.subscription = interval(3 * 60 * 1000).subscribe(() => {
       this.getPosicaoFromDynamoDB();
       this.getPosicaoMilkSulFromDynamoDB();
       this.getPosicaoMilkRastreioFromDynamoDB();
-
-
-
-
+      this.getPosicaoLOTSFromDynamoDB();
 
 
       setTimeout(() => {
-        if (this.filtro === true) {
-          this.posicao = this.posicao.filter(item => item.Plate === this.placaFiltrada);
-          this.posicaoSul = this.posicaoSul.filter(item => item.Plate === this.placaFiltrada);
-        }
+        this.compareAndMergePlatesLOTS();
         this.compareAndMergePlates();
         if (this.posicao !== undefined) {
           this.markerCoordinates = this.posicao
@@ -104,10 +100,12 @@ export class TrackingComponent {
                 .map((item: any) => [item.Longitude, item.Latitude] as [number, number])
             );
         }
-
+        console.log(this.posicao);
 
       }, 1500);
     });
+
+
 
 
   }
@@ -130,6 +128,45 @@ export class TrackingComponent {
         return { url };
       }
     });
+
+    const cluster = new supercluster({
+      radius: 40, // O raio de agrupamento (em pixels)
+      maxZoom: 10, // O zoom máximo em que os agrupamentos serão ativados
+    });
+
+    const adicionarMarcadoresImportantes = (locais: any[]) => {
+      locais.forEach(local => {
+        const { latitude, longitude, popupContent } = local;
+
+        // Crie o marcador
+        const marker = new maplibregl.Marker()
+          .setLngLat([longitude, latitude]) // Use as coordenadas corretamente como uma tupla [longitude, latitude]
+          .addTo(map);
+
+        // Adicione um popup associado ao marcador (opcional)
+        if (popupContent) {
+          const popup = new maplibregl.Popup({ closeOnClick: false }).setText(popupContent);
+          marker.setPopup(popup);
+        }
+      });
+    };
+
+    // Array com informações dos locais importantes
+    const locaisImportantes = [
+      {
+        latitude: -23.712620487057045,
+        longitude: -46.56663637422363,
+        popupContent: 'Scania Latin América',
+      },
+      {
+        latitude: -23.738863633108867,
+        longitude: -46.564072374683434,
+        popupContent: 'LCB Scania',
+      },
+    ];
+
+    // Chame a função para adicionar os marcadores dos locais importantes
+    adicionarMarcadoresImportantes(locaisImportantes);
 
     const atualizarMarcadores = () => {
       // Remover marcadores existentes
@@ -157,15 +194,15 @@ export class TrackingComponent {
         const endereco = this.getPosicaoEndereco(coordinates); // Obtenha o endereço com base nas coordenadas
         const fornecedor = this.getPosicaoFornecedores(coordinates); // Obtenha o fornecedor com base nas coordenadas
 
-        const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false })
+        const popup = new maplibregl.Popup({ closeButton: true, closeOnClick: true })
           .setLngLat(coordinates)
           .setHTML(`<span style="font-weight: bold; font-size: 1.1em">Placa: ${placa}</span><br>Fornecedores: ${fornecedor}<br>Endereço Atual: ${endereco}`);
 
-        marker.getElement().addEventListener('mousedown', () => {
+        marker.getElement().addEventListener('mouseover', () => {
           popup.addTo(map);
         });
 
-        marker.getElement().addEventListener('mouseup', () => {
+        marker.getElement().addEventListener('mouseout', () => {
           popup.remove();
         });
 
@@ -174,6 +211,20 @@ export class TrackingComponent {
 
       });
 
+      const pointFeatures: PointFeature<any>[] = markers.map(marker => {
+        const [longitude, latitude] = marker.getLngLat().toArray();
+        return {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Point',
+            coordinates: [longitude, latitude],
+          },
+        };
+      });
+
+      cluster.load(pointFeatures);
+      console.log(pointFeatures);
     };
 
     const ocultarMarcadores = () => {
@@ -305,6 +356,35 @@ export class TrackingComponent {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
               this.posicao = items
+                .map(item => ({ ...item, checked: false }))
+                .filter(item => item.ViagemCompleta !== true);
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+              // Filtra os itens com chave 'DataBordo' indefinida
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
+  async getPosicaoLOTSFromDynamoDB(): Promise<void> {
+    const filtro = 'all';
+    this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.posicaoLOTS = items
                 .map(item => ({ ...item, checked: false }));
               // Adiciona a chave 'checked' a cada item, com valor inicial como false
               // Filtra os itens com chave 'DataBordo' indefinida
@@ -398,6 +478,24 @@ export class TrackingComponent {
       }
     }
     console.log(this.posicaoSul);
+  }
+
+  compareAndMergePlatesLOTS(): void {
+    if (this.posicao && this.posicaoLOTS) {
+      for (let i = 0; i < this.posicao.length; i++) {
+        const plate = this.posicao[i].Plate;
+        const matchingPlate = this.posicaoLOTS.find(item => item.placa === plate);
+        if (matchingPlate) {
+          // Copiar as demais chaves de matchingPlate para this.posicaoSul[i]
+          Object.keys(matchingPlate).forEach(key => {
+            if (key !== 'Plate') {
+              this.posicao[i][key] = matchingPlate[key];
+            }
+          });
+        }
+      }
+    }
+    console.log(this.posicao);
   }
 
 

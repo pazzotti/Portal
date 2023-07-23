@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { isToday } from 'date-fns';
+import { format, isToday } from 'date-fns';
 import { debounceTime } from 'rxjs/operators';
 import { Subject, Subscription, interval } from 'rxjs';
 import { ApiService } from '../services/contratos/contratos.service';
@@ -7,8 +7,11 @@ import { AppModule } from '../app.module';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { FornecedoresFormDialogComponent } from '../app/home/fornecedores/fornecedores-form-dialog.component';
 import * as moment from 'moment';
+import { CarregaService } from '../services/carrega_file/carrega.service';
+import { DatePipe } from '@angular/common';
+
+
 
 
 
@@ -18,6 +21,36 @@ import * as moment from 'moment';
   styleUrls: ['./milk_run_sul.component.css']
 })
 export class MilkRunSulComponent implements OnInit {
+  item: any = {
+    ID: '',
+    Transportadoral: '',
+    description: '',
+    ['Transport Type']: '',
+    Plate: '',
+    date: '',
+    ['Fornecedor 1']: '',
+    ['Fornecedor 2']: '',
+    ['Fornecedor 3']: '',
+    ['Fornecedor 4']: '',
+    ['Janela 1']: '',
+    ['Janela 2']: '',
+    ['Janela 3']: '',
+    ['Janela 4']: '',
+    ['Total Distance']: '',
+    ['Weight Loaded']: '',
+    Cubage: '',
+    itemsLoaded: '',
+    ['Destino 1']: '',
+    ['Destino 2']: '',
+    ['Destino 3']: '',
+    ['Destino 4']: '',
+    dateDescarga: '',
+    ['JanelaDestino 1']: '',
+    ['JanelaDestino 2']: '',
+    ['JanelaDestino 3']: '',
+    ['JanelaDestino 4']: '',
+
+  };
   subscription: Subscription | undefined;
   items: any[] = [];
   itemsAntigo: any[] = [];
@@ -39,14 +72,53 @@ export class MilkRunSulComponent implements OnInit {
   query: string = 'Itens_Jetta';
   query2: string = 'Porta_Rastreando_JSL';
   query3: string = 'Fornecedores_Karrara_Transport';
+  query4: string = 'Carriers';
+  query5: string = 'tipos_Veiculos_Karrara';
   data: any;
   editMode!: boolean[];
   informationMode!: boolean[];
   address!: string;
   DataAtual: Date = new Date();
+  dialogOpen!: boolean;
+  dialogAddViagem!: boolean;
+  janela1!: string;
+  janela2!: string;
+  janela3!: string;
+  janela4!: string;
+  janelaDestino1!: string;
+  janelaDestino2!: string;
+  janelaDestino3!: string;
+  janelaDestino4!: string;
+  carriers!: any[];
+  places!: any[];
+  transportadora!: string[];
+  locais!: string[];
+  datePipe: any;
 
+  progManual: string[] = [
+    'MR SP - ProgManual',
+    'MR SUL - ProgManual',
+    'MR ARG - ProgManual',
 
-  constructor(private dynamoDBService: ApiService, public dialog: MatDialog, private http: HttpClient) {
+  ];
+  selectedDescription!: string;
+  Transportadoras!: string;
+  listaTransportadoras!: any[];
+  dataInvertida: string = '';
+  fornecedores1!: any[];
+  fornecedores2!: any[];
+  fornecedores3!: any[];
+  fornecedores4!: any[];
+  fornecedoresDescarga1!: any[];
+  fornecedoresDescarga2!: any[];
+  fornecedoresDescarga3!: any[];
+  fornecedoresDescarga4!: any[];
+  tipoVeiculo!: any[];
+  listaVeiculo1!: any[];
+  datadescarga!: string | null;
+  tipoVeiculos: any;
+
+  constructor(private dynamoDBService: ApiService, public dialog: MatDialog, private http: HttpClient, private carregaService: CarregaService,) {
     this.editMode = [];
     this.informationMode = [];
 
@@ -57,14 +129,16 @@ export class MilkRunSulComponent implements OnInit {
     this.getItemsFromDynamoDB();
     this.getFornecedoresFromDynamoDB();
     this.getPosicaoFromDynamoDB();
+    this.getCarriersFromDynamoDB();
+    this.getTipoVeiculoFromDynamoDB();
     setTimeout(() => {
       this.armazenarLatitudeEmItems();
-    }, 1500);
+    }, 2000);
 
     // Aguardar 1 segundo antes de chamar this.filtra()
     setTimeout(() => {
       this.filtra();
-    }, 1500);
+    }, 2000);
 
 
     this.subscription = interval(3 * 60 * 1000).subscribe(() => {
@@ -72,20 +146,393 @@ export class MilkRunSulComponent implements OnInit {
       this.getItemsFromDynamoDB();
       this.getFornecedoresFromDynamoDB();
       this.getPosicaoFromDynamoDB();
+      this.getCarriersFromDynamoDB();
+      this.getTipoVeiculoFromDynamoDB();
       setTimeout(() => {
         this.armazenarLatitudeEmItems();
-      }, 1500);
+      }, 2000);
 
       // Aguardar 1 segundo antes de chamar this.filtra()
       setTimeout(() => {
         this.filtra();
-      }, 1500);
+      }, 2000);
     });
+  }
+
+  addViagem(item: any): void {
+    if (Array.isArray(this.carriers)) {
+      this.transportadora = this.carriers.map(carrier => carrier.name);
+    }
+
+    if (Array.isArray(this.places)) {
+      this.locais = this.places.map(places => places.local);
+    }
+
+    this.janela1 = '';
+    this.janela2 = '';
+    this.janela3 = '';
+    this.janela4 = '';
+    this.janelaDestino1 = '';
+    this.janelaDestino2 = '';
+    this.janelaDestino3 = '';
+    this.janelaDestino4 = '';
+
+    if (item.ID === undefined || item.ID === '') {
+      this.janela1 = '';
+      this.janela2 = '';
+      this.janela3 = '';
+      this.janela4 = '';
+      this.janelaDestino1 = '';
+      this.janelaDestino2 = '';
+      this.janelaDestino3 = '';
+      this.janelaDestino4 = '';
+
+
+    } else {
+      const datePipe = new DatePipe('en-US');
+      const horaMinuto1 = datePipe.transform(item['Janela 1'], 'HH:mm');
+      const horaMinuto2 = datePipe.transform(item['Janela 2'], 'HH:mm');
+      const horaMinuto3 = datePipe.transform(item['Janela 3'], 'HH:mm');
+      const horaMinuto4 = datePipe.transform(item['Janela 4'], 'HH:mm');
+      const horaMinutoDestino1 = datePipe.transform(item['JanelaDestino 1'], 'HH:mm');
+      const horaMinutoDestino2 = datePipe.transform(item['JanelaDestino 2'], 'HH:mm');
+      const horaMinutoDestino3 = datePipe.transform(item['JanelaDestino 3'], 'HH:mm');
+      const horaMinutoDestino4 = datePipe.transform(item['JanelaDestino 4'], 'HH:mm');
+
+
+
+      this.janela1 = horaMinuto1 ?? this.janela1;
+      this.janela2 = horaMinuto2 ?? this.janela2;
+      this.janela3 = horaMinuto3 ?? this.janela3;
+      this.janela4 = horaMinuto4 ?? this.janela4;
+      this.janelaDestino1 = horaMinutoDestino1 ?? this.janelaDestino1;
+      this.janelaDestino2 = horaMinutoDestino2 ?? this.janelaDestino2;
+      this.janelaDestino3 = horaMinutoDestino3 ?? this.janelaDestino3;
+      this.janelaDestino4 = horaMinutoDestino4 ?? this.janelaDestino4;
+
+
+
+
+    }
+
+    this.item.ID = item.ID
+    this.item.Transportadora = item.Transportadora;
+    this.item.Plate = item.Plate;
+    this.item['Transport Type'] = item['Transport Type'];
+    this.item['Destino 1'] = item['Destino 1'];
+    this.item['Destino 2'] = item['Destino 2'];
+    this.item['Destino 3'] = item['Destino 3'];
+    this.item['Destino 4'] = item['Destino 4'];
+    this.item.datadescarga = this.datadescarga;
+    this.item['Fornecedor 1'] = item['Fornecedor 1'];
+    this.item['Fornecedor 2'] = item['Fornecedor 2'];
+    this.item['Fornecedor 3'] = item['Fornecedor 3'];
+    this.item['Fornecedor 4'] = item['Fornecedor 4'];
+
+
+    if (item.description !== undefined && item.description !== '' && item.description !== null) {
+      this.progManual.push(item.description);
+    }
+
+    this.item.description = item.description;
+    this.dialogAddViagem = true;
+
+
+    let dateObject = new Date(item.date);
+    let day = dateObject.getUTCDate();
+    let month = dateObject.getUTCMonth() + 1; // Os meses em JavaScript começam em 0, então é necessário adicionar 1
+    let year = dateObject.getUTCFullYear();
+    let formattedDate = `${year.toString()}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    console.log('data coleta' + formattedDate); // Output: "30-06-2023"
+    this.item.date = formattedDate;
+
+    dateObject = new Date(item['JanelaDestino 1']);
+    day = dateObject.getUTCDate();
+    month = dateObject.getUTCMonth() + 1; // Os meses em JavaScript começam em 0, então é necessário adicionar 1
+    year = dateObject.getUTCFullYear();
+    formattedDate = `${year.toString()}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    console.log('data entrega' + formattedDate); // Output: "30-06-2023"
+    this.item.datadescarga = formattedDate;
+
+
+
+
+
+
+
+
+    this.item['Total Distance'] = item['Total Distance'];
+    this.item['Weight Loaded'] = item['Weight Loaded'];
+    this.item.Cubage = item.Cubage;
+    this.item.itemsLoaded = item.itemsLoaded;
+
+    if (item.description && item.description.toLowerCase().includes('sul')) {
+      item.Transportadora = 'TCM';
+    }
+
+    if (item.description && item.description.toLowerCase().includes('prog')) {
+      item.Transportadora = 'JSL';
+    }
+    this.Transportadoras = item.Transportadora;
+    this.listaTransportadoras = [this.Transportadoras, ...this.transportadora];
+
+    this.fornecedores1 = this.fornecedores.map(fornecedor => fornecedor.local);
+    this.fornecedores2 = this.fornecedores.map(fornecedor => fornecedor.local);
+    this.fornecedores3 = this.fornecedores.map(fornecedor => fornecedor.local);
+    this.fornecedores4 = this.fornecedores.map(fornecedor => fornecedor.local);
+
+    this.listaVeiculo1 = this.tipoVeiculo.map(item => item.modelo);
+    this.listaVeiculo1 = [item['Transport Type'], ...this.listaVeiculo1];
+
+
+
+
+    this.item['Transport Type'] = item['Transport Type'];
+
+
+
+
+
+    this.fornecedoresDescarga1 = this.fornecedores
+      .filter(fornecedor => fornecedor.descarga === true)
+      .map(fornecedor => fornecedor.local);
+    this.fornecedoresDescarga2 = this.fornecedores
+      .filter(fornecedor => fornecedor.descarga === true)
+      .map(fornecedor => fornecedor.local);
+    this.fornecedoresDescarga3 = this.fornecedores
+      .filter(fornecedor => fornecedor.descarga === true)
+      .map(fornecedor => fornecedor.local);
+    this.fornecedoresDescarga4 = this.fornecedores
+      .filter(fornecedor => fornecedor.descarga === true)
+      .map(fornecedor => fornecedor.local);
+
+
+
 
 
   }
 
+  deleteItem(ID: string): void {
+    this.dynamoDBService.deleteItem(ID, this.urlSalva, this.query).subscribe(
+      response => {
+        setTimeout(() => {
+        this.ngOnInit();
 
+        }, 400); // Ajuste o tempo de atraso conforme necessário
+      },
+      error => {
+        // Lógica para lidar com erros durante a deleção do item
+      }
+    );
+
+  }
+
+  salvar2() {
+
+    this.dataInvertida = this.item.date;
+
+    if (this.dataInvertida === '') {
+      this.dataInvertida = '2006-04-04';
+    }
+
+
+    const janela1 = this.carregaService.adicionarHora(this.janela1, new Date(this.dataInvertida));
+    const janela2 = this.carregaService.adicionarHora(this.janela2, new Date(this.dataInvertida));
+    const janela3 = this.carregaService.adicionarHora(this.janela3, new Date(this.dataInvertida));
+    const janela4 = this.carregaService.adicionarHora(this.janela4, new Date(this.dataInvertida));
+    const janelaDestino1 = this.carregaService.adicionarHora(this.janelaDestino1, new Date(this.dataInvertida));
+    const janelaDestino2 = this.carregaService.adicionarHora(this.janelaDestino2, new Date(this.dataInvertida));
+    const janelaDestino3 = this.carregaService.adicionarHora(this.janelaDestino3, new Date(this.dataInvertida));
+    const janelaDestino4 = this.carregaService.adicionarHora(this.janelaDestino4, new Date(this.dataInvertida));
+
+
+    if (this.item.ID === undefined) {
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
+      console.log(formattedDate);
+
+      this.item.ID = formattedDate.toString();
+    }
+
+    if (!isNaN(janela1.getTime())) {
+      this.item['Janela 1'] = janela1;
+    } else {
+      delete this.item['Janela 1'];
+    }
+
+    if (!isNaN(janela2.getTime())) {
+      this.item['Janela 2'] = janela2;
+    } else {
+      delete this.item['Janela 2'];
+    }
+    if (!isNaN(janela3.getTime())) {
+      this.item['Janela 3'] = janela3;
+    } else {
+      delete this.item['Janela 3'];
+    }
+    if (!isNaN(janela4.getTime())) {
+      this.item['Janela 4'] = janela4;
+    } else {
+      delete this.item['Janela 4'];
+    }
+
+
+
+    if (!isNaN(janelaDestino1.getTime())) {
+      this.item['JanelaDestino 1'] = janelaDestino1;
+    } else {
+      delete this.item['JanelaDestino 1'];
+    }
+
+    if (!isNaN(janelaDestino2.getTime())) {
+      this.item['JanelaDestino 2'] = janelaDestino2;
+    } else {
+      delete this.item['JanelaDestino 2'];
+    }
+    if (!isNaN(janelaDestino3.getTime())) {
+      this.item['JanelaDestino 3'] = janelaDestino3;
+    } else {
+      delete this.item['JanelaDestino 3'];
+    }
+    if (!isNaN(janelaDestino4.getTime())) {
+      this.item['JanelaDestino 4'] = janelaDestino4;
+    } else {
+      delete this.item['JanelaDestino 4'];
+    }
+
+    this.item.Passos = 0;
+
+    if (this.item['Fornecedor 1'] !== '' && this.item['Fornecedor 1'] !== null && this.item['Fornecedor 1'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+    if (this.item['Fornecedor 2'] !== '' && this.item['Fornecedor 2'] !== null && this.item['Fornecedor 2'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+    if (this.item['Fornecedor 3'] !== '' && this.item['Fornecedor 3'] !== null && this.item['Fornecedor 3'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+    if (this.item['Fornecedor 4'] !== '' && this.item['Fornecedor 4'] !== null && this.item['Fornecedor 4'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+
+    if (this.item['Destino 1'] !== '' && this.item['Destino 1'] !== null && this.item['Destino 1'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+    if (this.item['Destino 2'] !== '' && this.item['Destino 2'] !== null && this.item['Destino 2'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+    if (this.item['Destino 3'] !== '' && this.item['Destino 3'] !== null && this.item['Destino 3'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+    if (this.item['Destino 4'] !== '' && this.item['Destino 4'] !== null && this.item['Destino 4'] !== undefined) {
+      this.item.Passos = this.item.Passos + 1;
+    }
+
+
+
+    this.item.tableName = this.query
+
+
+    // Remover as barras invertidas escapadas
+    const itemsDataString = JSON.stringify(this.item); // Acessa a string desejada
+    const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
+
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
+
+    // Converter o objeto JavaScript de volta para uma string JSON
+    const modifiedJsonString = JSON.stringify(jsonObject);
+
+    console.log(modifiedJsonString);
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject2 = JSON.parse(modifiedJsonString) as { tableName: string, ID: string, acao: string };
+
+    // Criar um array contendo o objeto
+    const jsonArray = [jsonObject2];
+
+    this.dynamoDBService.salvar(jsonArray, this.query, this.urlSalva).subscribe(response => {
+
+    }, error => {
+      console.log(error);
+    });
+    this.dialogAddViagem = false;
+    setTimeout(() => {
+      this.ngOnInit();
+    }, 1500);
+  }
+
+
+
+
+
+  salvarFornecedor() {
+
+    if (this.item.ID === undefined || this.item.ID === '') {
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
+      console.log(formattedDate);
+
+      this.item = {
+        "ID": formattedDate.toString(),
+        "contato": this.item.contato,
+        "endereco": this.item.endereco,
+        "local": this.item.local,
+        "latitude": this.item.latitude,
+        "longitude": this.item.longitude
+      }
+
+
+    }
+
+    this.item.tableName = this.query3
+
+
+    // Remover as barras invertidas escapadas
+    const itemsDataString = JSON.stringify(this.item); // Acessa a string desejada
+    const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
+
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
+
+    // Converter o objeto JavaScript de volta para uma string JSON
+    const modifiedJsonString = JSON.stringify(jsonObject);
+
+    console.log(modifiedJsonString);
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject2 = JSON.parse(modifiedJsonString) as { tableName: string, ID: string, acao: string };
+
+    // Criar um array contendo o objeto
+    const jsonArray = [jsonObject2];
+
+    this.dynamoDBService.salvar(jsonArray, this.query3, this.urlSalva).subscribe(response => {
+
+    }, error => {
+      console.log(error);
+    });
+    this.dialogOpen = false;
+    setTimeout(() => {
+      this.getItemsFromDynamoDB();
+    }, 200);
+  }
+
+  cancel(): void {
+    this.dialogOpen = false;
+    this.dialogAddViagem = false;
+  }
+
+  editDialog(item: any): void {
+    this.item.ID = ''
+    this.item.local = item;
+    this.item.contato = '';
+    this.item.endereco = '';
+    this.item.latitude = '';
+    this.item.longitude = '';
+    this.dialogOpen = true;
+  }
 
   filtra() {
     for (const item of this.items) {
@@ -428,6 +875,32 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
+  getCarriersFromDynamoDB(): void {
+    const filtro = 'all';
+    this.dynamoDBService.getItems(this.query4, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.carriers = items.map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
   getFornecedoresFromDynamoDB(): void {
     const filtro = 'all';
     this.dynamoDBService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
@@ -437,6 +910,32 @@ export class MilkRunSulComponent implements OnInit {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
               this.fornecedores = items.map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
+  getTipoVeiculoFromDynamoDB(): void {
+    const filtro = 'all';
+    this.dynamoDBService.getItems(this.query5, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.tipoVeiculo = items.map(item => ({ ...item, checked: false }));
               // Adiciona a chave 'checked' a cada item, com valor inicial como false
             } else {
               console.error('Invalid items data:', items);
@@ -498,7 +997,7 @@ export class MilkRunSulComponent implements OnInit {
       if (plate !== '' || plate !== undefined) {
 
         matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
-        if(matchingPosicao?.hasOwnProperty('DataBordo')){
+        if (matchingPosicao?.hasOwnProperty('DataBordo')) {
           dataString = matchingPosicao['DataBordo'];
         }
 
@@ -540,35 +1039,6 @@ export class MilkRunSulComponent implements OnInit {
 
     }
   }
-
-
-  editDialog(item: string): void {
-
-    const itemAlterado = { local: item };
-    const dialogRef = this.dialog.open(FornecedoresFormDialogComponent, {
-      data: {
-        itemsData: itemAlterado,
-
-      },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
-      position: {
-        top: '1vh',
-        left: '30vw'
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.ngOnInit();
-        }, 1200); // Ajuste o tempo de atraso conforme necessário
-      }
-      console.log('The dialog was closed');
-    });
-  }
-
-
 
   acaoDeClique(item: any, NomePasso: string, NomeBotao: string, NomeDestino: string) {
     if (item[NomeBotao] === false) {

@@ -1,0 +1,146 @@
+<div class="table-container">
+  <ul>
+    <div>
+
+      <button mat-button (click)="editDialog('')">
+
+        <span class="material-icons">note_add</span> Adicionar Fornecedor
+      </button>
+    </div>
+    <div class="table2">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo de Veículo</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let item of items">
+          <tr [ngClass]="{ 'black-row': $even, 'grafiti-row': $odd }">
+            <td [class.background-red]="!valorExisteNoModelo(item['Transport Type'])" (click)="veiculoDialog(item)">
+              {{ item['Transport Type'] }}
+            </td>
+            <td>
+              <i-feather name="edit" (click)="editDialog(item)"></i-feather>
+              <span style="margin-left: 10px; margin-right: 10px;"></span>
+              <i-feather name="delete" (click)="deleteItem(item.ID, urlConsulta, query)"
+                class="button-spacing"></i-feather>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </ul>
+
+</div>
+
+<clr-modal [(clrModalOpen)]="dialogOpen" [clrModalSize]="'md'" class="dialog-container">
+  <h2 class="modal-title">Adicionar Fornecedor</h2>
+  <div class="modal-body">
+    <form class="inputs">
+      <div>
+        <label class="modal-label">Fornecedor</label>
+        <input type="string" name="fornecedor" [(ngModel)]="item.local" class="modal-input1">
+      </div>
+      <div>
+        <label class="modal-label">e-mail</label>
+        <input type="string" name="email" [(ngModel)]="item.contato" class="modal-input2">
+      </div>
+      <div>
+        <label class="modal-label">Endereço</label>
+        <input type="string" name="endereco" [(ngModel)]="item.endereco" class="modal-input3">
+      </div>
+      <div>
+        <label class="modal-label">Latitude</label>
+        <input type="string" name="latitude" [(ngModel)]="item.latitude" class="modal-input4">
+        <label class="modal-label">Longitude</label>
+        <input type="string" name="logitude" [(ngModel)]="item.longitude" class="modal-input4">
+      </div>
+
+      <div>
+        <label class="modal-label">Local de Descarga?</label>
+        <input type="checkbox" id="descarga" name="descarga" [(ngModel)]="item.descarga">
+      </div>
+
+      <div class="modal-div">
+        <button class="modal-button" type="button" (click)="salvar()">Save</button>
+        <button class="modal-button" type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="dialogTiposOpen" [clrModalSize]="'md'" class="dialog-container">
+  <h2 class="modal-title">Cadastrar Tipo de Veículo</h2>
+  <div class="modal-body">
+    <form class="inputs">
+      <table class="table2000" style="width: 100%;">
+        <tr>
+          <td style="width: 20%;">
+            <label class="modal-label">Modelo</label>
+          </td>
+          <td style="width: 80%;">
+            <input type="string" name="modelo" [(ngModel)]="item.modelo" class="modal-input1">
+          </td>
+        </tr>
+      </table>
+      <table class="table2000" style="width: 100%;">
+        <tr>
+          <td style="width: 20%;">
+            <label class="modal-label">Transportadora</label>
+          </td>
+          <td style="width: 80%;">
+            <select id="transportadora" name="transportadora" [(ngModel)]="item.transportadora" class="modal-select">
+              <option *ngFor="let transportadora of carrier" [value]="transportadora.name">{{ transportadora.name }}
+              </option>
+            </select>
+          </td>
+        </tr>
+      </table>
+
+      <table class="table2000" style="width: 100%;">
+        <tr>
+          <td style="width: 20%;">
+            <label class="modal-label">Perfil</label>
+          </td>
+          <td style="width: 80%;">
+
+            <select id="perfil" name="perfil" [(ngModel)]="item.perfil" class="modal-select">
+              <option *ngFor="let perfil of perfilVehicles" [value]="perfil">{{ perfil }}
+              </option>
+            </select>
+
+
+          </td>
+        </tr>
+      </table>
+      <table class="table2000" style="width: 100%;">
+        <tr>
+          <td style="width: 15%;">
+            <label class="modal-label">Combustivel</label>
+          </td>
+          <td style="width: 35%;">
+            <select id="combustivel" name="perfil" [(ngModel)]="item.combustivel" class="modal-select1">
+              <option *ngFor="let combustivel of combustiveis" [value]="combustivel">{{ combustivel }}
+              </option>
+            </select>
+          </td>
+
+          <td style="width: 35%;">
+            <label class="modal-label">Emissões</label>
+          </td>
+          <td style="width: 15%;">
+            <input type="string" name="emissoes" [(ngModel)]="item.emissoes" class="modal-input4">
+          </td>
+        </tr>
+      </table>
+      <table class="table2000" style="width: 100%;">
+        <tr>
+          <button class="modal-button" type="button" (click)="salvarVeiculo()">Save</button>
+          <button class="modal-button" type="button" (click)="cancel()">Cancel</button>
+        </tr>
+
+      </table>
+    </form>
+  </div>
+</clr-modal>

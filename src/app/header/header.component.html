@@ -40,6 +40,13 @@
         <a href="extra" routerLink="/extra">Frete Extra</a>
       </div>
 
+      <div class="dropdown" (mouseenter)="showDropdown = true" (mouseleave)="showDropdown = false">
+        <button class="dropbtn">Relatórios</button>
+        <div class="dropdown-content" *ngIf="showDropdown">
+          <a href="relatorio" routerLink="/relatorio">Relatorio Milk Run</a>
+        </div>
+      </div>
+
     </div>
   </div>
   <div id="navbarNav">
@@ -49,6 +56,8 @@
         <a href="jetta" routerLink="/jetta">Sinc Jetta</a>
         <a href="atualiza" routerLink="/atualiza">Sinc Excel</a>
         <a href="fornecedores" routerLink="/fornecedores">Fornecedores</a>
+        <a href="locais" routerLink="/locais">Recebimentos Scania</a>
+        <a href="carrier" routerLink="/carrier">Transportadoras</a>
         <a href="lab" routerLink="/lab">Veiculos Lab</a>
         <a href="cadastro" routerLink="/cadastro">Cadastrar Usuário</a>
 

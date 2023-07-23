@@ -7,12 +7,8 @@ import { map, take } from 'rxjs/operators';
 import { formatDate } from '@angular/common';
 import { Observable } from 'rxjs';
 import * as XLSX from 'xlsx';
-import { EditaFormDialogComponent } from '../app/home/edita_timetable/edita_timetable-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
-
-
-
 
 @Component({
   selector: 'timetable-root',
@@ -23,6 +19,25 @@ import { DatePipe } from '@angular/common';
   `
 })
 export class TimeTableComponent {
+  item: any = {
+    ID: '',
+    Transportadora: '',
+    Plate: '',
+    ['Local 1']: '',
+    ['Local 2']: '',
+    ['Local 3']: '',
+    ['Local 4']: '',
+    ['Local 5']: '',
+    ['Local 6']: '',
+    ['Janela 1']: '',
+    ['Janela 2']: '',
+    ['Janela 3']: '',
+    ['Janela 4']: '',
+    ['Janela 5']: '',
+    ['Janela 6']: '',
+
+  };
+
   progressValue = 0; // Valor atual da barra de progresso
   maxValue = 0; // Valor máximo da barra de progresso
   showProgressBar = false;
@@ -30,8 +45,8 @@ export class TimeTableComponent {
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
   query: string = 'itens_Interplantas_Karrara';
-  query2: string = 'Operacao_Interplantas_Karrara';
-  items$: Observable<any> | undefined;
+  query2: string = 'Carriers';
+  query3: string = 'Locais_Karrara_Transport';
   dataLoaded = false;
   jsonData: any;
   sortColumn: string = '';
@@ -56,6 +71,17 @@ export class TimeTableComponent {
   editMode!: boolean[];
   informationMode!: boolean[];
   programacao: any[] = [];
+  dialogOpen!: boolean;
+  janela1:string='';
+  janela2:string='';
+  janela3:string='';
+  janela4:string='';
+  janela5:string='';
+  janela6:string='';
+  places!: any[];
+  carriers!: any[];
+  transportadora!: string[];
+  locais!: string[];
 
   constructor(
     private carregaService: CarregaService,
@@ -75,6 +101,135 @@ export class TimeTableComponent {
     this.jsonData = inflatedData;
     this.dataLoaded = true;
     // Chama a função para salvar os dados no API Gateway
+  }
+
+  editDialog(item: any): void {
+
+
+
+    if (Array.isArray(this.carriers)) {
+      this.transportadora = this.carriers.map(carrier => carrier.name);
+    } else {
+      // Trate o caso em que this.carriers não é um array ou é undefined
+      // Por exemplo, atribua um array vazio a this.transportadora ou faça alguma outra ação apropriada.
+    }
+
+    if (Array.isArray(this.places)) {
+      this.locais = this.places.map(places => places.local);
+    } else {
+      // Trate o caso em que this.carriers não é um array ou é undefined
+      // Por exemplo, atribua um array vazio a this.transportadora ou faça alguma outra ação apropriada.
+    }
+
+if(item.ID===undefined || item.ID==='' ){
+  this.janela1 = '';
+  this.janela2 = '';
+  this.janela3 = '';
+  this.janela4 = '';
+  this.janela5 = '';
+  this.janela6 = '';
+
+}else{
+
+  const horaMinuto1 = this.datePipe.transform(item['Janela 1'], 'HH:mm');
+  const horaMinuto2 = this.datePipe.transform(item['Janela 2'], 'HH:mm');
+  const horaMinuto3 = this.datePipe.transform(item['Janela 3'], 'HH:mm');
+  const horaMinuto4 = this.datePipe.transform(item['Janela 4'], 'HH:mm');
+  const horaMinuto5 = this.datePipe.transform(item['Janela 5'], 'HH:mm');
+  const horaMinuto6 = this.datePipe.transform(item['Janela 6'], 'HH:mm');
+  this.janela1 = horaMinuto1 ?? this.janela1;
+  this.janela2 = horaMinuto2 ?? this.janela2;
+  this.janela3 = horaMinuto3 ?? this.janela3;
+  this.janela4 = horaMinuto4 ?? this.janela4;
+  this.janela5 = horaMinuto5 ?? this.janela5;
+  this.janela6 = horaMinuto6 ?? this.janela6;
+
+}
+
+
+
+
+    this.item.ID = item.ID
+    this.item.Transportadora = item.Transportadora;
+    this.item.Plate = item.Plate;
+    this.item['Local 1'] = item['Local 1'];
+    this.item['Local 2'] = item['Local 2'];
+    this.item['Local 3'] = item['Local 3'];
+    this.item['Local 4'] = item['Local 4'];
+    this.item['Local 5'] = item['Local 5'];
+    this.item['Local 6'] = item['Local 6'];
+    this.item['Janela 1'] = item['Janela 1'];
+    this.item['Janela 2'] = item['Janela 2'];
+    this.item['Janela 3'] = item['Janela 3'];
+    this.item['Janela 4'] = item['Janela 4'];
+    this.item['Janela 5'] = item['Janela 5'];
+    this.item['Janela 6'] = item['Janela 6'];
+
+    this.dialogOpen = true;
+
+  }
+
+  salvar2() {
+
+    const datapadrao = '2006-04-04';
+
+    const janela1 = this.carregaService.adicionarHora(this.janela1, new Date(datapadrao));
+    const janela2 = this.carregaService.adicionarHora(this.janela2, new Date(datapadrao));
+    const janela3 = this.carregaService.adicionarHora(this.janela3, new Date(datapadrao));
+    const janela4 = this.carregaService.adicionarHora(this.janela4, new Date(datapadrao));
+    const janela5 = this.carregaService.adicionarHora(this.janela5, new Date(datapadrao));
+    const janela6 = this.carregaService.adicionarHora(this.janela6, new Date(datapadrao));
+
+    if (this.item.ID === undefined) {
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
+      console.log(formattedDate);
+
+      this.item.ID = formattedDate.toString();
+    }
+
+    this.item['Janela 1']=janela1;
+    this.item['Janela 2']=janela2;
+    this.item['Janela 3']=janela3;
+    this.item['Janela 4']=janela4;
+    this.item['Janela 5']=janela5;
+    this.item['Janela 6']=janela6;
+
+    this.item.tableName = this.query
+
+
+    // Remover as barras invertidas escapadas
+    const itemsDataString = JSON.stringify(this.item); // Acessa a string desejada
+    const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
+
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
+
+    // Converter o objeto JavaScript de volta para uma string JSON
+    const modifiedJsonString = JSON.stringify(jsonObject);
+
+    console.log(modifiedJsonString);
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject2 = JSON.parse(modifiedJsonString) as { tableName: string, ID: string, acao: string };
+
+    // Criar um array contendo o objeto
+    const jsonArray = [jsonObject2];
+
+    this.dynamodbService.salvar(jsonArray, this.query, this.urlAtualiza).subscribe(response => {
+
+    }, error => {
+      console.log(error);
+    });
+    this.dialogOpen = false;
+    setTimeout(() => {
+      this.ngOnInit();
+    }, 200);
+  }
+
+  cancel(): void {
+    this.dialogOpen = false;
   }
 
 
@@ -104,6 +259,59 @@ export class TimeTableComponent {
       }
     );
   }
+
+  getPlacesFromDynamoDB(): void {
+    const filtro = 'all';
+    this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.places = items.map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
+  getCarriersFromDynamoDB(): void {
+    const filtro = 'all';
+    this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.carriers = items.map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
 
 
   salvarNoBanco() {
@@ -168,107 +376,6 @@ export class TimeTableComponent {
 
   }
 
-  openDialog(item: any): void {
-    const horaMinuto1 = this.datePipe.transform(item['Janela 1'], 'HH:mm');
-    const horaMinuto2 = this.datePipe.transform(item['Janela 2'], 'HH:mm');
-    const horaMinuto3 = this.datePipe.transform(item['Janela 3'], 'HH:mm');
-    const horaMinuto4 = this.datePipe.transform(item['Janela 4'], 'HH:mm');
-    const horaMinuto5 = this.datePipe.transform(item['Janela 5'], 'HH:mm');
-    const horaMinuto6 = this.datePipe.transform(item['Janela 6'], 'HH:mm');
-
-
-    item = {
-      "ID": undefined,
-      "Transportadora": undefined,
-      "Plate": undefined,
-      "Viagem": undefined,
-      "Local 1": undefined,
-      "Local 2": undefined,
-      "Local 3": undefined,
-      "Local 4": undefined,
-      "Local 5": undefined,
-      "Local 6": undefined,
-      "Janela 1": undefined,
-      "Janela 2": undefined,
-      "Janela 3": undefined,
-      "Janela 4": undefined,
-      "Janela 5": undefined,
-      "Janela 6": undefined,
-      "tableName": this.query
-    }
-
-
-
-    const itemAlterado = { local: item };
-    const dialogRef = this.dialog.open(EditaFormDialogComponent, {
-      data: {
-        query:'itens_Interplantas_Karrara',
-        itemsData: itemAlterado,
-        janela1: horaMinuto1,
-        janela2: horaMinuto2,
-        janela3: horaMinuto3,
-        janela4: horaMinuto4,
-        janela5: horaMinuto5,
-        janela6: horaMinuto6,
-
-      },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
-      position: {
-        top: '1vh',
-        left: '30vw'
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.ngOnInit();
-        }, 1200); // Ajuste o tempo de atraso conforme necessário
-      }
-      console.log('The dialog was closed');
-    });
-  }
-
-  editDialog(item: any): void {
-    const horaMinuto1 = this.datePipe.transform(item['Janela 1'], 'HH:mm');
-    const horaMinuto2 = this.datePipe.transform(item['Janela 2'], 'HH:mm');
-    const horaMinuto3 = this.datePipe.transform(item['Janela 3'], 'HH:mm');
-    const horaMinuto4 = this.datePipe.transform(item['Janela 4'], 'HH:mm');
-    const horaMinuto5 = this.datePipe.transform(item['Janela 5'], 'HH:mm');
-    const horaMinuto6 = this.datePipe.transform(item['Janela 6'], 'HH:mm');
-
-    const itemAlterado = { local: item };
-    const dialogRef = this.dialog.open(EditaFormDialogComponent, {
-      data: {
-        query:'itens_Interplantas_Karrara',
-        itemsData: itemAlterado,
-        janela1: horaMinuto1,
-        janela2: horaMinuto2,
-        janela3: horaMinuto3,
-        janela4: horaMinuto4,
-        janela5: horaMinuto5,
-        janela6: horaMinuto6,
-
-      },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
-      position: {
-        top: '1vh',
-        left: '30vw'
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.ngOnInit();
-        }, 1200); // Ajuste o tempo de atraso conforme necessário
-      }
-      console.log('The dialog was closed');
-    });
-  }
-
 
   chunkArray(array: any[], size: number): any[][] {
     const chunks = [];
@@ -285,8 +392,6 @@ export class TimeTableComponent {
       alert('Selecione a data');
       return; // Retorna imediatamente para interromper a execução da função
     }
-
-
 
     const currentDate = new Date();
 
@@ -404,7 +509,9 @@ export class TimeTableComponent {
   ngOnInit() {
 
     this.getProgramacaoFromDynamoDB();
-    const filtro = '';
+    this.getPlacesFromDynamoDB();
+    this.getCarriersFromDynamoDB();
+
 
     console.log(this.programacao);
 

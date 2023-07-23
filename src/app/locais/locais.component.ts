@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/contratos/contratos.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { LocaisFormDialogComponent } from '../app/home/locais/locais-form-dialog.component';
 import { Observable, map, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { format } from 'date-fns';
@@ -24,6 +23,14 @@ import { format } from 'date-fns';
 })
 
 export class LocaisComponent {
+  item: any = {
+    ID: '',
+    local: '',
+    cor: '',
+    descricao: '',
+    latitude: '',
+    longitude: ''
+  };
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
   query: string = 'Locais_Karrara_Transport';
@@ -43,6 +50,7 @@ export class LocaisComponent {
   items: any[] = [];
   name!: string;
   animal!: string;
+  dialogOpen!: boolean;
   constructor(
     public dialog: MatDialog,
     private dynamodbService: ApiService,
@@ -50,55 +58,73 @@ export class LocaisComponent {
 
   }
 
-  editDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(LocaisFormDialogComponent, {
-      data: {
-        itemsData: item,
-        url: url,
-        query: table
-      },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
-      position: {
-        top: '1vh',
-        left: '30vw'
-      },
-      });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
-      }
-      console.log('The dialog was closed');
-    });
+  editDialog(item: any): void {
+    this.item.ID = item.ID
+    this.item.local = item.local;
+    this.item.cor = item.cor;
+    this.item.descricao = item.descricao;
+    this.item.latitude = item.latitude;
+    this.item.longitude = item.longitude;
+    this.dialogOpen = true;
   }
 
-  openDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(LocaisFormDialogComponent, {
-      data: {
-        itemsData: [],
-        url: url,
-        query: table
-      },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
-      position: {
-        top: '1vh',
-        left: '30vw'
-      },
-      });
+  salvar() {
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
+    if (this.item.ID === undefined) {
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
+      console.log(formattedDate);
+
+      this.item = {
+        "ID": formattedDate.toString(),
+        "local": this.item.local,
+        "cor": this.item.cor,
+        "descricao": this.item.descricao,
+        "latitude": this.item.latitude,
+        "longitude": this.item.longitude
       }
-      console.log('The dialog was closed');
+
+
+    }
+
+    this.item.tableName = this.query
+
+
+    // Remover as barras invertidas escapadas
+    const itemsDataString = JSON.stringify(this.item); // Acessa a string desejada
+    const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
+
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
+
+    // Converter o objeto JavaScript de volta para uma string JSON
+    const modifiedJsonString = JSON.stringify(jsonObject);
+
+    console.log(modifiedJsonString);
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject2 = JSON.parse(modifiedJsonString) as { tableName: string, ID: string, acao: string };
+
+    // Criar um array contendo o objeto
+    const jsonArray = [jsonObject2];
+
+    this.dynamodbService.salvar(jsonArray, this.query, this.urlAtualiza).subscribe(response => {
+
+    }, error => {
+      console.log(error);
     });
+    this.dialogOpen = false;
+    setTimeout(() => {
+      this.getItemsFromDynamoDB();
+    }, 200);
   }
+
+  cancel(): void {
+    this.dialogOpen = false;
+  }
+
 
   onNoClick(): void {
     this.dialogRef.close();

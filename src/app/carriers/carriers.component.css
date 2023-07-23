@@ -150,4 +150,93 @@ div {
     align-items: center;
   }
 
+  .table2 {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 20px;
+  }
+  .dialog-relative-position {
+    position: relative;
+    top: -500px;
+    left: 50px;
+  }
+
+  .dialog-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: black !important;
+
+  }
+  .dialog-container .modal-body {
+    margin: 0%;
+  }
+
+  .dialog-container .modal-title {
+    color: white;
+    text-align: center;
+    margin: auto;
+    width: 50%;
+  }
+
+
+  .dialog-container .modal-label {
+    color: white;
+    margin-left: 30px;
+  }
+
+  .dialog-container .modal-input1 {
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+    margin-left: 30px;
+    margin-right: 30px;
+    width: 500px;
+    text-align: left;
+  }
+  .dialog-container .modal-input2 {
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+    margin-left: 60px;
+    margin-right: 30px;
+    width: 500px;
+    text-align: left;
+  }
+  .dialog-container .modal-input3 {
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+    margin-left: 43px;
+    margin-right: 30px;
+    width: 500px;
+    text-align: left;
+  }
+  .dialog-container .modal-input4 {
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+    margin-left: 43px;
+    margin-right: 30px;
+    text-align: left;
+  }
+
+  .dialog-container .modal-div {
+    display: flex;
+  justify-content: center;
+  }
+
+  .dialog-container .modal-button {
+    margin-right: 30px;
+  }
+
+
+
+
 

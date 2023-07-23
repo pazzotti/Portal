@@ -24,6 +24,14 @@ import { format } from 'date-fns';
 })
 
 export class VeiculosLabComponent {
+  item: any = {
+    ID: '',
+    modelo: '',
+    placa: '',
+    chassis: '',
+    vincode: '',
+    fabricacao: ''
+  };
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
   query: string = 'veiculos_lab_Karrara';
@@ -38,6 +46,7 @@ export class VeiculosLabComponent {
   items: any[] = [];
   name!: string;
   animal!: string;
+  dialogOpen!: boolean;
   constructor(
     public dialog: MatDialog,
     private dynamodbService: ApiService,
@@ -45,56 +54,71 @@ export class VeiculosLabComponent {
 
   }
 
-  editDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(VeiculosFormDialogComponent, {
-      data: {
-        itemsData: item,
-        url: url,
-        query: table
-      },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
-      position: {
-        top: '1vh',
-        left: '30vw'
-      },
-      });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
-      }
-      console.log('The dialog was closed');
-    });
+  editDialog(item: any): void {
+    this.item.ID = item.ID
+    this.item.modelo = item.modelo;
+    this.item.placa = item.placa;
+    this.item.chassis = item.chassis;
+    this.item.vincode = item.vincode;
+    this.item.fabricacao = item.fabricacao;
+    this.dialogOpen = true;
   }
 
-  openDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(VeiculosFormDialogComponent, {
-      data: {
-        itemsData: [],
-        url: url,
-        query: table
-      },
-      width: '850px', // Defina a largura desejada em pixels ou porcentagem
-      height: '550px',
-      position: {
-        top: '1vh',
-        left: '30vw'
-      },
-      });
+  salvar() {
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
+    if (this.item.ID === undefined) {
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
+      console.log(formattedDate);
+
+      this.item = {
+        "ID": formattedDate.toString(),
+        "modelo": this.item.modelo,
+        "placa": this.item.placa,
+        "chassis": this.item.chassis,
+        "vincode": this.item.vincode,
+        "fabricacao": this.item.fabricacao
       }
-      console.log('The dialog was closed');
+
+
+    }
+
+    this.item.tableName = this.query
+
+
+    // Remover as barras invertidas escapadas
+    const itemsDataString = JSON.stringify(this.item); // Acessa a string desejada
+    const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
+
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
+
+    // Converter o objeto JavaScript de volta para uma string JSON
+    const modifiedJsonString = JSON.stringify(jsonObject);
+
+    console.log(modifiedJsonString);
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject2 = JSON.parse(modifiedJsonString) as { tableName: string, ID: string, acao: string };
+
+    // Criar um array contendo o objeto
+    const jsonArray = [jsonObject2];
+
+    this.dynamodbService.salvar(jsonArray, this.query, this.urlAtualiza).subscribe(response => {
+
+    }, error => {
+      console.log(error);
     });
+    this.dialogOpen = false;
+    setTimeout(() => {
+      this.getItemsFromDynamoDB();
+    }, 200);
   }
 
+  cancel(): void {
+    this.dialogOpen = false;
+  }
   onNoClick(): void {
     this.dialogRef.close();
   }

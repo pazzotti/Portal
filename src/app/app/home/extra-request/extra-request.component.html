@@ -13,12 +13,7 @@
     <form [formGroup]="formGroup">
         <table class="table">
             <div class="conteudoTable selectButton">
-                <!-- <div class="camposLabels selectStatus">
-                    <label for="status">Status</label>
-                    <select class="selectVehicle" [value]="formGroup.get('status')?.value ? formGroup.get('status')?.value : 'Requested'" name="status" formControlName="status" appendTo="body">
-                        <option *ngFor="let type of statuses" [value]="type.value" [selected]="type.selected">{{ type.name }}</option>
-                    </select>
-                </div> -->
+
                 <div class="camposLabels selectStatus">
                     <H2>{{ formGroup.get('status')?.value }}</H2>
                 </div>

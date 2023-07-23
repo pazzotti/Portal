@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/contratos/contratos.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CarrierFormDialogComponent } from '../app/home/carriers/carriers-form-dialog.component';
 import { Observable, map, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { format } from 'date-fns';
@@ -14,6 +13,12 @@ import { format } from 'date-fns';
 })
 
 export class CarrierComponent {
+  item: any = {
+    ID: '',
+    name: '',
+    contato: '',
+    endereco: '',
+  };
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
   query: string = 'Carriers';
@@ -28,65 +33,77 @@ export class CarrierComponent {
   dialogRef: any;
   items$!: Observable<any[]>;
   items: any[] = [];
+  dialogOpen!: boolean;
   constructor(public dialog: MatDialog, private dynamodbService: ApiService, private http: HttpClient, private cdr: ChangeDetectorRef) {
 
   }
 
-  editDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(CarrierFormDialogComponent, {
-      data: {
-        itemsData: item,
-        url: url,
-        query: table
-      },
-      height: '350px',
-      minWidth: '450px',
-      position: {
-        top: '10vh',
-        left: '30vw'
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
-      }
-      console.log('The dialog was closed');
-    });
-  }
-
-  openDialog(item: Array<any>, url: string, table: string): void {
-    const dialogRef = this.dialog.open(CarrierFormDialogComponent, {
-      data: {
-        itemsData: [],
-        url: url,
-        query: table
-      },
-      height: '350px',
-      minWidth: '450px',
-      position: {
-        top: '10vh',
-        left: '30vw'
-      },
-
-
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
-      }
-      console.log('The dialog was closed');
-
-    });
-  }
 
   ngOnInit(): void {
     this.getItemsFromDynamoDB();
+  }
+
+  editDialog(item: any): void {
+
+    this.item.ID = item.ID
+    this.item.name = item.name;
+    this.item.contato = item.contato;
+    this.item.endereco = item.endereco;
+    this.dialogOpen = true;
+  }
+
+  salvar() {
+
+    if (this.item.ID === undefined) {
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
+      console.log(formattedDate);
+
+      this.item = {
+        "ID": formattedDate.toString(),
+        "name": this.item.name,
+        "contato": this.item.contato,
+        "endereco": this.item.endereco,
+      }
+
+
+    }
+
+    this.item.tableName = this.query
+
+
+    // Remover as barras invertidas escapadas
+    const itemsDataString = JSON.stringify(this.item); // Acessa a string desejada
+    const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
+
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
+
+    // Converter o objeto JavaScript de volta para uma string JSON
+    const modifiedJsonString = JSON.stringify(jsonObject);
+
+    console.log(modifiedJsonString);
+
+    // Converter a string JSON para um objeto JavaScript
+    const jsonObject2 = JSON.parse(modifiedJsonString) as { tableName: string, ID: string, acao: string };
+
+    // Criar um array contendo o objeto
+    const jsonArray = [jsonObject2];
+
+    this.dynamodbService.salvar(jsonArray, this.query, this.urlAtualiza).subscribe(response => {
+
+    }, error => {
+      console.log(error);
+    });
+    this.dialogOpen = false;
+    setTimeout(() => {
+      this.getItemsFromDynamoDB();
+    }, 200);
+  }
+
+  cancel(): void {
+    this.dialogOpen = false;
   }
 
   getItemsFromDynamoDB(): void {

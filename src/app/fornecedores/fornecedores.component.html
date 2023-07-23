@@ -30,6 +30,11 @@
             <input type="string" name="logitude" [(ngModel)]="item.longitude" class="modal-input4">
           </div>
 
+          <div>
+            <label class="modal-label">Local de Descarga?</label>
+            <input type="checkbox" id="descarga" name="descarga" [(ngModel)]="item.descarga">
+          </div>
+
           <div class="modal-div">
             <button class="modal-button" type="button" (click)="salvar()">Save</button>
             <button class="modal-button" type="button" (click)="cancel()">Cancel</button>
@@ -47,6 +52,7 @@
             <th>Address</th>
             <th>Latitude</th>
             <th>Longitude</th>
+            <th>Local de Descarga?</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -57,6 +63,7 @@
             <td>{{ item.endereco }}</td>
             <td>{{ item.latitude }}</td>
             <td>{{ item.longitude }}</td>
+            <td>{{ item.descarga }}</td>
             <td>
 
               <i-feather name="edit" (click)="editDialog(item)"></i-feather>

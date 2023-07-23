@@ -7,11 +7,9 @@ import { HeaderModule } from './header/header.module';
 import { FormsModule } from '@angular/forms';
 import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import { ContratoTransportadoraFormDialogComponent } from './app/home/contrato_transportadora/contrato-transportadora-form-dialog.component';
-import { CarrierFormDialogComponent } from './app/home/carriers/carriers-form-dialog.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AtualizarComponent } from './atualizar/atualizar.component';
 import { ContratoTransportadoraComponent } from './contrato-transportadora/contrato-transportadora.component';
-import { FornecedoresFormDialogComponent } from './app/home/fornecedores/fornecedores-form-dialog.component';
 import { FormularioLocaisComponent } from './formulario_locais/formulario_locais';
 import { MilkRunSulComponent } from './milk_run_sul/milk_run_sul.component';
 import { CarrierComponent } from './carriers/carriers.component';
@@ -29,13 +27,10 @@ import { MilkRunARGComponent } from './milk-run-arg/milk-run-arg.component';
 import { InterplantasComponent } from './interplantas/interplantas.component';
 import { TimeTableComponent } from './timetable/timetable.component';
 import { LocaisComponent } from './locais/locais.component';
-import { LocaisFormDialogComponent } from './app/home/locais/locais-form-dialog.component';
-import { EditaFormDialogComponent } from './app/home/edita_timetable/edita_timetable-dialog.component';
 import { MatInputModule } from '@angular/material/input';
 import { VeiculosLabComponent } from './veiculos-lab/veiculos-lab.component';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { VeiculosFormDialogComponent } from './app/home/veiculos/veiculos-form-dialog.component';
-import { TimeTableContainerComponent } from './timetable-container/timetable-container.component';
 import { MatIconModule } from '@angular/material/icon';
 import { ClarityModule } from '@clr/angular';
 import { TrackingComponent } from './tracking/tracking.component';
@@ -45,6 +40,7 @@ import { ExtraFreightComponent } from './extra-freight/extra-freight.component';
 import { LoginComponent } from './login/login.component';
 import { SharedModule } from './shared/shared.module';
 import { CadastroComponent } from './cadastro/cadastro.component';
+import { RelatorioComponent } from './relatorio/relatorio.component';
 
 
 
@@ -64,17 +60,13 @@ const icons = {
     AppComponent,
     FornecedoresComponent,
     ContratoTransportadoraFormDialogComponent,
-    CarrierFormDialogComponent,
     AtualizarComponent,
     DashboardComponent,
     ContratoTransportadoraComponent,
-    FornecedoresFormDialogComponent,
     LoginComponent,
     VeiculosFormDialogComponent,
     CadastroComponent,
-    LocaisFormDialogComponent,
     FormularioLocaisComponent,
-    EditaFormDialogComponent,
     ExtraRequestComponent,
     ExtraFreightComponent,
     ContratoTerrestreFormDialogComponent,
@@ -87,8 +79,8 @@ const icons = {
     TimeTableComponent,
     LocaisComponent,
     VeiculosLabComponent,
-    TimeTableContainerComponent,
-    TrackingComponent
+    TrackingComponent,
+    RelatorioComponent
 
   ],
   imports: [

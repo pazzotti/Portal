@@ -1,11 +1,11 @@
 <div class="table-container">
   <ul>
     <div>
-      <button mat-button (click)="openDialog(items, urlConsulta, query)">
+      <button mat-button (click)="editDialog('')">
         <span class="material-icons">note_add</span> Adicionar Veículo
       </button>
     </div>
-    <div class="form-wrapper">
+    <div class="table2">
       <table>
         <thead>
           <tr>
@@ -26,13 +26,10 @@
             <td>{{ item.vincode }}</td>
             <td>{{ item.fabricacao }}</td>
             <td>
-              <button mat-icon-button color="primary" aria-label="Editar" (click)="editDialog(item, urlConsulta, query)">
-                <a>edit</a>
-              </button>
+              <i-feather name="edit" (click)="editDialog(item)"></i-feather>
               <span style="margin-left: 10px; margin-right: 10px;"></span>
-              <button mat-icon-button color="warn" aria-label="Excluir" (click)="deleteItem(item.ID, urlConsulta, query)">
-                <a>delete</a>
-              </button>
+              <i-feather name="delete" (click)="deleteItem(item.ID, urlConsulta, query)"
+                class="button-spacing"></i-feather>
             </td>
           </tr>
         </tbody>
@@ -41,3 +38,34 @@
 
   </ul>
 </div>
+<clr-modal [(clrModalOpen)]="dialogOpen" [clrModalSize]="'md'" class="dialog-container">
+  <h2 class="modal-title">Adicionar Local</h2>
+  <div class="modal-body">
+    <form class="inputs">
+      <div>
+        <label class="modal-label">Modelo</label>
+        <input type="string" name="modelo" [(ngModel)]="item.modelo" class="modal-input1">
+      </div>
+      <div>
+        <label class="modal-label">Placa</label>
+        <input type="string" name="placa" [(ngModel)]="item.placa" class="modal-input2">
+      </div>
+      <div>
+        <label class="modal-label">Chassis</label>
+        <input type="string" name="chassis" [(ngModel)]="item.chassis" class="modal-input3">
+      </div>
+      <div>
+        <label class="modal-label">Vin Code</label>
+        <input type="string" name="vincode" [(ngModel)]="item.vincode" class="modal-input3">
+      </div>
+      <div>
+        <label class="modal-label">Ano Veículo</label>
+        <input type="string" name="fabricacao" [(ngModel)]="item.fabricacao" class="modal-input3">
+      </div>
+      <div class="modal-div">
+        <button class="modal-button" type="button" (click)="salvar()">Save</button>
+        <button class="modal-button" type="button" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</clr-modal>
