@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { ClrModal } from '@clr/angular';
 
 
+
 @Component({
   selector: 'app-locais-relatorio',
   templateUrl: './relatorio.component.html',
@@ -24,6 +25,9 @@ import { ClrModal } from '@clr/angular';
 })
 
 export class RelatorioComponent {
+  fieldBeingEdited!: string;
+  editedValue: any;
+  argentina!: any[];
   perfilVehicles: string[] = [
     'Pequeno',
     'Medio',
@@ -43,13 +47,14 @@ export class RelatorioComponent {
     endereco: '',
     latitude: '',
     longitude: '',
-    descarga:false
+    descarga: false
   };
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
   query: string = 'Itens_Jetta';
   query2: string = 'Carriers';
   query3: string = 'tipos_Veiculos_Karrara';
+  query4: string = 'items_Excel_Karrara';
   data: any;
   base: number = 3;
   ID: number = Date.now();
@@ -71,6 +76,72 @@ export class RelatorioComponent {
   carrier!: any[];
   veiculos!: any[];
   teste!: boolean;
+  startDate!: string;
+  endDate!: string;
+  milkRunSP: boolean = true;
+  milkRunSul: boolean = true;
+  milkRunArg: boolean = true;
+  filteredItems!: any[];
+
+
+  isDateInRange(date: Date, startDate: string, endDate: string): boolean {
+    const rangeStartDate = new Date(startDate);
+    const rangeEndDate = new Date(endDate);
+
+    const dateYear = date.getFullYear();
+    const dateMonth = date.getMonth();
+    const dateDay = date.getDate();
+
+    return (
+      date >= new Date(rangeStartDate.getFullYear(), rangeStartDate.getMonth(), rangeStartDate.getDate()) &&
+      date <= new Date(rangeEndDate.getFullYear(), rangeEndDate.getMonth(), rangeEndDate.getDate(), 23, 59, 59, 999) &&
+      dateYear === rangeStartDate.getFullYear() &&
+      dateMonth === rangeStartDate.getMonth() &&
+      dateDay === rangeStartDate.getDate()
+    );
+  }
+
+  // ... Rest of your component code ...
+
+
+
+
+  filterByDateRange(startDate: string, endDate: string): any[] {
+    const rangeStartDate = new Date(startDate);
+    const rangeEndDate = new Date(endDate);
+
+    // Adjust rangeEndDate to the end of the selected day (23:59:59)
+    rangeEndDate.setHours(23);
+    rangeEndDate.setMinutes(59);
+    rangeEndDate.setSeconds(59);
+
+    const filteredItems = this.items.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= rangeStartDate && itemDate <= rangeEndDate;
+    });
+
+    const argentinaItems = this.argentina.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= rangeStartDate && itemDate <= rangeEndDate;
+    });
+
+    return [...filteredItems, ...argentinaItems];
+  }
+
+
+  editField(item: any, fieldName: string) {
+    if (!this.isValorValido(item[fieldName])) {
+      const newValue = prompt(`Insert a value for ${fieldName}:`);
+      if (newValue !== null) {
+        item[fieldName] = newValue;
+        this.salvarField(item); // Call salvar function after editing the field
+      }
+    }
+  }
+  isValorValido(value: any): boolean {
+    return value !== '' && value !== null && value !== undefined;
+  }
+
   constructor(
     public dialog: MatDialog,
     private dynamodbService: ApiService,
@@ -92,8 +163,16 @@ export class RelatorioComponent {
   valorExisteNoModelo(transportType: string): boolean {
 
     return this.veiculos.some(veiculos => veiculos.modelo === transportType);
+  }
 
-
+  applyDateFilter() {
+    // Apply filter only when both startDate and endDate are selected
+    if (this.startDate && this.endDate) {
+      this.filteredItems = this.filterByDateRange(this.startDate, this.endDate);
+    } else {
+      // Otherwise, show all items
+      this.filteredItems = [...this.items, ...this.argentina];
+    }
   }
 
 
@@ -161,6 +240,25 @@ export class RelatorioComponent {
     }, 200);
   }
 
+  salvarField(item: any) {
+
+    // Criar um array contendo o objeto
+    const jsonArray = [item];
+
+    this.dynamodbService.salvar(jsonArray, this.query, this.urlAtualiza).subscribe(response => {
+      // Successfully saved to the database
+    }, error => {
+      console.log(error);
+    });
+
+    this.dialogOpen = false;
+    setTimeout(() => {
+      this.getItemsFromDynamoDB();
+    }, 200);
+  }
+
+
+
   salvar() {
 
     if (this.item.ID === undefined) {
@@ -175,7 +273,7 @@ export class RelatorioComponent {
         "local": this.item.local,
         "latitude": this.item.latitude,
         "longitude": this.item.longitude,
-        "descarga":this.item.descarga
+        "descarga": this.item.descarga
       }
 
 
@@ -224,10 +322,20 @@ export class RelatorioComponent {
     this.dialogRef.close();
   }
   ngOnInit(): void {
+    this.getItemsFromArgentina();
     this.getItemsFromDynamoDB();
     this.getCarriersFromDynamoDB();
     this.getVeiculosFromDynamoDB();
-    setTimeout(() => this.centerDialog(), 0);
+
+    setTimeout(() =>
+      this.centerDialog()
+      , 0);
+
+    setTimeout(() =>
+    this.filteredItems = this.items.concat(this.argentina)
+      , 1500);
+
+
   }
 
   centerDialog(): void {
@@ -245,14 +353,15 @@ export class RelatorioComponent {
   }
 
   getItemsFromDynamoDB(): void {
-    const filtro = 'all';
-    this.dynamodbService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+    this.dynamodbService.getItems(this.query, this.urlConsulta, 'all').subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
-              this.items = items.map(item => ({ ...item, checked: false }));
+              this.items = items
+                .filter(item => this.shouldIncludeItem(item))
+                .map(item => ({ ...item, checked: false }));
               // Adiciona a chave 'checked' a cada item, com valor inicial como false
               // Forçar detecção de alterações após atualizar os dados
               this.cdr.detectChanges();
@@ -272,6 +381,16 @@ export class RelatorioComponent {
     );
   }
 
+  shouldIncludeItem(item: any): boolean {
+    const description = item.description ? item.description.toLowerCase() : '';
+    if (this.milkRunSP && description.includes('prog')) {
+      return true;
+    }
+    if (this.milkRunSul && (description.includes('sul') || description.includes('tcm'))) {
+      return true;
+    }
+    return false;
+  }
   getVeiculosFromDynamoDB(): void {
     const filtro = 'all';
     this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
@@ -298,6 +417,43 @@ export class RelatorioComponent {
         console.error(error);
       }
     );
+  }
+
+  getItemsFromArgentina(): void {
+    this.dynamodbService.getItems(this.query4, this.urlConsulta, 'all').subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.argentina = items
+                .filter(item => this.shouldIncludeArgentina(item))
+                .map(item => ({ ...item, checked: false }));
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+              // Forçar detecção de alterações após atualizar os dados
+              this.cdr.detectChanges();
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
+  shouldIncludeArgentina(item: any): boolean {
+    const description = item.description ? item.description.toLowerCase() : '';
+    if (this.milkRunArg && description.includes('arg')) {
+      return true;
+    }
+    return false;
   }
 
 
@@ -342,6 +498,43 @@ export class RelatorioComponent {
       }
     );
 
+  }
+
+  milkRunSPFilter() {
+    if (this.milkRunSP === true) {
+      this.milkRunSP = false;
+    } else {
+      this.milkRunSP = true;
+    }
+
+    setTimeout(() => {
+      this.ngOnInit();
+    }, 200);
+
+  }
+  milkRunSulFilter() {
+    if (this.milkRunSul === true) {
+      this.milkRunSul = false;
+
+    } else {
+      this.milkRunSul = true;
+
+    }
+    setTimeout(() => {
+      this.ngOnInit();
+    }, 200);
+
+  }
+  milkRunArgFilter() {
+
+    if (this.milkRunArg === true) {
+      this.milkRunArg = false;
+    } else {
+      this.milkRunArg = true;
+    }
+    setTimeout(() => {
+      this.ngOnInit();
+    }, 200);
   }
 
 }

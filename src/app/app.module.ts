@@ -41,6 +41,8 @@ import { LoginComponent } from './login/login.component';
 import { SharedModule } from './shared/shared.module';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { RelatorioComponent } from './relatorio/relatorio.component';
+import { CustomDatePipe } from './relatorio/custom-data-pipe';
+
 
 
 
@@ -58,6 +60,7 @@ const icons = {
 @NgModule({
   declarations: [
     AppComponent,
+    CustomDatePipe,
     FornecedoresComponent,
     ContratoTransportadoraFormDialogComponent,
     AtualizarComponent,

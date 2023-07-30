@@ -65,6 +65,7 @@ export class CarregaJettaComponent implements OnInit {
         Destination: { destino: string; janelaDestino?: string ;passos:number}[];
         TotalDistance: string;
         Passos:number;
+        Volumes:number;
 
       }[];
     } = {
@@ -79,6 +80,7 @@ export class CarregaJettaComponent implements OnInit {
       this.IDJetta = currentItem._id;
       for (let j = 0; j < currentItem.routes.length; j++) {
         const currentRoute = currentItem.routes[j];
+        const volumes = currentRoute.result.itemsLoaded;
         passos = 0;
         for (let k = 0; k < currentRoute.result.transports.length; k++) {
           const currentTransport = currentRoute.result.transports[k];
@@ -123,6 +125,7 @@ export class CarregaJettaComponent implements OnInit {
             Destination: destinos,
             Passos:passos,
             TotalDistance: totalDistance,
+            Volumes:volumes,
           });
         }
       }
@@ -140,6 +143,7 @@ export class CarregaJettaComponent implements OnInit {
         'Total Cost': vehicle.totalCost,
         'Total Distance': vehicle.TotalDistance,
         'Passos':vehicle.Passos.toString(),
+        'Volumes':vehicle.Volumes.toString(),
       };
 
       // Adiciona as informações dos fornecedores e janelas ao objeto da linha de dados
