@@ -486,12 +486,14 @@ export class RelatorioComponent {
   }
 
 
-  deleteItem(ID: string, urlDeleta: string, query: string): void {
-    this.dynamodbService.deleteItem(ID, this.urlAtualiza, this.query).subscribe(
+  deleteItem(Item: any, urlDeleta: string, query: string): void {
+
+    const ID = Item.ID;
+    this.dynamodbService.deleteItem(ID, this.urlAtualiza, Item.tableName).subscribe(
       response => {
         setTimeout(() => {
-          this.getItemsFromDynamoDB();
-        }, 200); // Ajuste o tempo de atraso conforme necessário
+          this.ngOnInit();
+        }, 1200); // Ajuste o tempo de atraso conforme necessário
       },
       error => {
         // Lógica para lidar com erros durante a deleção do item
