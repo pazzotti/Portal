@@ -42,6 +42,9 @@ import { SharedModule } from './shared/shared.module';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { RelatorioComponent } from './relatorio/relatorio.component';
 import { CustomDatePipe } from './relatorio/custom-data-pipe';
+import { OperacaoVWComponent } from './operacao-vw/operacao-vw.component';
+import { AtualizaVWComponent } from './atualiza-vw/atualiza-vw.component';
+import { TrackingVWComponent } from './tracking-vw/tracking-vw.component';
 
 
 
@@ -83,7 +86,10 @@ const icons = {
     LocaisComponent,
     VeiculosLabComponent,
     TrackingComponent,
-    RelatorioComponent
+    RelatorioComponent,
+    OperacaoVWComponent,
+    AtualizaVWComponent,
+    TrackingVWComponent
 
   ],
   imports: [

@@ -20,6 +20,9 @@ import { AutenticacaoGuard } from './autenticacao/autenticacao.guard';
 import { LoginComponent } from './login/login.component';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { RelatorioComponent } from './relatorio/relatorio.component';
+import { OperacaoVWComponent } from './operacao-vw/operacao-vw.component';
+import { AtualizaVWComponent } from './atualiza-vw/atualiza-vw.component';
+import { TrackingVWComponent } from './tracking-vw/tracking-vw.component';
 
 
 const routes: Routes = [
@@ -43,6 +46,9 @@ const routes: Routes = [
   { path: 'extra', canActivate: [AutenticacaoGuard], component: ExtraFreightComponent },
   { path: 'cadastro', canActivate: [AutenticacaoGuard], component: CadastroComponent },
   { path: 'relatorio', canActivate: [AutenticacaoGuard], component: RelatorioComponent },
+  { path: 'operacaoVW', canActivate: [AutenticacaoGuard], component: OperacaoVWComponent },
+  { path: 'atualizaVW', canActivate: [AutenticacaoGuard], component: AtualizaVWComponent },
+  { path: 'trackingVW', canActivate: [AutenticacaoGuard], component: TrackingVWComponent },
 
 
 ];
