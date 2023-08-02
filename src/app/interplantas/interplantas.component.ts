@@ -185,9 +185,9 @@ export class InterplantasComponent {
 
 
 
-  getPlacesFromDynamoDB(): void {
+  async getPlacesFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -211,9 +211,9 @@ export class InterplantasComponent {
     );
   }
 
-  getCarriersFromDynamoDB(): void {
+  async getCarriersFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query4, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query4, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -370,16 +370,16 @@ export class InterplantasComponent {
 
   }
 
-  getProgramacaoFromDynamoDB(): void {
+  async getProgramacaoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
               this.programacao = items
-                .filter(item => item.ViagemCompleta !== true)
+                .filter(item => item.ViagemCompleta != true && item.ViagemCompleta != "True" && item.ViagemCompleta != "true")
                 .map(item => ({ ...item, checked: false }));
               // Filtra os itens por ViagemCompleta e adiciona a chave 'checked' a cada item, com valor inicial como false
             } else {
@@ -400,9 +400,9 @@ export class InterplantasComponent {
 
 
 
-  getPosicaoFromDynamoDB(): void {
+  async getPosicaoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {

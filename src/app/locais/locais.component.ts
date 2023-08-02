@@ -148,9 +148,9 @@ export class LocaisComponent {
     }
   }
 
-  getItemsFromDynamoDB(): void {
+  async getItemsFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {

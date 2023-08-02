@@ -23,6 +23,7 @@ export class ExtraRequestComponent {
   dataSource: any;
   urlAtualiza: string = 'https://uj88w4ga9i.execute-api.sa-east-1.amazonaws.com/dev12';
   urlConsulta: string = 'https://4i6nb2mb07.execute-api.sa-east-1.amazonaws.com/dev13';
+  urlNotify: string = 'https://29o5gcw81i.execute-api.sa-east-1.amazonaws.com/v1';
   queryOrigin: string = 'Locais_Origem_Inbound';
   queryDestiny: string = 'Locais_Destino_Inbound';
   queryCarrier: string = 'Carriers';
@@ -47,8 +48,10 @@ export class ExtraRequestComponent {
     { value: "Canceled", name: "Canceled", selected: false },
   ]  
   selectedValue = 0;
-  
-  status: string ='Requested';
+  contactCarrier: string = '';
+  contactTrasport: string = '+5511985507468';
+  status: string = 'Requested';
+  dataNotify: any;
   
 
   typesVehicles: string[] = [
@@ -163,9 +166,9 @@ export class ExtraRequestComponent {
     console.log(this.usuarioLogado)
   }
 
-  getItemsFromExtraReq(): void {
+  async getItemsFromExtraReq(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.tableName, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.tableName, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         console.log(response)
 
@@ -217,9 +220,9 @@ export class ExtraRequestComponent {
   // }
 
 
-  getItemsFromOrigin(): void {
+  async getItemsFromOrigin(): Promise<void> {
     const filtro = '';
-    this.dynamodbService.getItems(this.tableNameLocation, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.tableNameLocation, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -245,9 +248,9 @@ export class ExtraRequestComponent {
     );
   }
 
-  getItemsCarriers(): void {
+  async getItemsCarriers(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.queryCarrier, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.queryCarrier, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -349,12 +352,15 @@ export class ExtraRequestComponent {
           "dangerousProduct": this.formGroup.get('dangerousProduct')?.value,
           "status": this.formGroup.get('status')?.value ? this.formGroup.get('status')?.value : 'Requested'  ,
           // "status": this.status != 'Requested' ? this.status = this.status : this.status = 'Requested',
-          "dateRequest": this.dataCompleta
-          
-        }
+          "dateRequest": this.dataCompleta          
+        } 
+        this.dataNotify = {
+          "phone_number": this.contactTrasport,
+          "message": "Novo frete extra solicitado " + "ID: " + this.data.itemsData.ID
+        };
+        this.notify(this.dataNotify);  
       } else {
         console.log("passou a terceira condicao")
-
         this.data.itemsData = {
           "ID": this.data.itemsData.ID,
           "motive": this.formGroup.get('motive')?.value,
@@ -398,9 +404,14 @@ export class ExtraRequestComponent {
           // "status": this.formGroup.get('status')?.value ? this.formGroup.get('status')?.value : this.formGroup.get('status')?.setValue('Requested'),
           // "status": this.formGroup.get('status')?.value,
           "dateRequest": this.dataCompleta
-
         }
-        }
+        
+        this.dataNotify = {
+          "phone_number": this.contactTrasport,
+          "message": "Frete extra com ID: " + this.data.itemsData.ID + " foi atualizado."
+        };
+        this.notify(this.dataNotify); 
+      }
       console.log("passou as condicos para salvar")
       console.log("Status")
       console.log(this.status)
@@ -443,6 +454,39 @@ export class ExtraRequestComponent {
   cancel(): void {
     this.formGroup.reset()
     this.dialogRef.close();
+  }
+  
+  notify(data: any) {
+    console.log("entrou notify")
+    const body =
+    {
+      "Records": [
+        {
+          "eventName": "INSERT",
+          "dynamodb": {
+            "NewImage": {
+              "phone_number": {
+                "S": data.phone_number
+              },
+              "message": {
+                "S": data.message
+              }
+            }
+          }
+        }
+      ]
+    }    
+    this.dynamodbService.enviaNotificacao(body, this.urlNotify).subscribe({
+      next: response => {
+        console.log("success")
+        console.log(response)
+        // this.getItemsFromExtraReq(); // Atualiza os dados após o salvamento
+        // this.dialogRef.close();
+      }, error: error => {
+        console.log("error")
+        console.log(error);
+      }
+    });
   }
 
 }

@@ -24,7 +24,7 @@
                     <button type="button" label="reject"
                         (click)="formGroup.get('status')?.setValue('Reject')">REJECT</button>
                 </div>
-                <div class="camposLabels selectStatus" *ngIf="formGroup.get('status')?.value == 'Requested' && (usuarioLogado.role == '3' || usuarioLogado.role ==  '0' || usuarioLogado.role ==  '2')">
+                <div class="camposLabels selectStatus" *ngIf="(usuarioLogado.role ==  '0' || usuarioLogado.role ==  '2')">
                     <button type="button" label="cancel"
                         (click)="formGroup.get('status')?.setValue('Canceled')">CANCEL</button>
                 </div>

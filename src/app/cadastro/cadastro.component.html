@@ -2,8 +2,9 @@
     <nav class="navbar navbar-light">
         <div class="brand-title">Cadastro</div>
         <div class="contact">
-            <label class="align-right" for="reason">Contact: <abbr style="color: #3b82f6;">SSBUIF</abbr> Phone: 55
-                11 3190-3611 | Mobile: +55 11 98550-7468</label>
+            <!-- <label class="align-right" for="reason">Contact: <abbr style="color: #3b82f6;">SSBUIF</abbr> Phone: 55
+                11 3190-3611 | Mobile: +55 11 98550-7468</label> -->
+            <label class="align-right" for="reason">Contact: <abbr style="color: #3b82f6;">SSBUIF</abbr></label>
         </div>
     </nav>
 
@@ -17,9 +18,10 @@
                     <small class="text-danger" *ngIf="form?.get('nome')?.hasError('required')">Required</small>
                 </div>
             </div>
-            <div *ngIf="usuarioLogado?.role == '0'"  class="camposLabels">
+            <!-- <div *ngIf="usuarioLogado?.role == '0'"  class="camposLabels"> -->
+            <div class="camposLabels">
                 <label for="ID">Email*</label>
-                <input class="largeInput" id="ID" name="ID" type="text" formControlName="ID">
+                <input class="largeInput" id="ID" name="ID" type="email" formControlName="ID">
                 <div *ngIf="form?.get('ID')?.invalid && form?.get('ID')?.touched">
                     <small class="text-danger" *ngIf="form?.get('ID')?.hasError('required')">Required</small>
                     <small class="text-danger" *ngIf="form?.get('ID')?.hasError('email')">Email inválido</small>
@@ -58,10 +60,11 @@
             <div *ngIf="usuarioLogado?.role == '0'" class="camposLabels selectStatus">
                 <label for="role">Role</label>
                 <select class="selectVehicle" [value]="selectedRole" name="role" formControlName="role" appendTo="body">
-                    <option *ngFor="let type of roles" [value]="type.value" [selected]="type.selected">{{ type.name }}</option>
+                    <option *ngFor="let type of roles" [value]="type.value" [selected]="type.selected">{{ type.name }}
+                    </option>
                 </select>
             </div>
-            <div *ngIf="usuarioLogado?.role == '0'" class="camposLabels">
+            <div class="camposLabels">
                 <label for="company">Company</label>
                 <input class="largeInput" id="company" name="company" type="text" formControlName="company">
                 <div *ngIf="form?.get('company')?.invalid && form?.get('company')?.touched">
@@ -70,11 +73,9 @@
             </div>
             <div *ngIf="usuarioLogado?.role == '0'" class="camposLabels">
                 <label for="flowsAccess">Flows Access</label>
-                <input class="largeInput" id="flowsAccess" name="flowsAccess" type="text"
-                    formControlName="flowsAccess">
+                <input class="largeInput" id="flowsAccess" name="flowsAccess" type="text" formControlName="flowsAccess">
                 <div *ngIf="form?.get('flowsAccess')?.invalid && form?.get('flowsAccess')?.touched">
-                    <small class="text-danger"
-                        *ngIf="form?.get('flowsAccess')?.hasError('required')">Required</small>
+                    <small class="text-danger" *ngIf="form?.get('flowsAccess')?.hasError('required')">Required</small>
                 </div>
             </div>
             <div class="conteudoBotoes">

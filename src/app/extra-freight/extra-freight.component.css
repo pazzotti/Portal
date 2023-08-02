@@ -14,7 +14,7 @@ button {
     background-color: #292929;
     border: none;
     color: white;
-    padding: 10px 20px;
+    padding: 10px 0px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -29,7 +29,7 @@ input {
     background-color: #292929;
     border: none;
     color: white;
-    padding: 10px 20px;
+    padding: 10px 0px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -132,6 +132,7 @@ div {
 
 body {
     background-color: black;
+overflow-y: auto;
 }
 
 .black-row {
@@ -167,8 +168,8 @@ tr.header-row {
 }
 
 .chart-container {
-    width: 400px;
-    height: 300px;
+    width: 35%;
+    height: 20%;
     display: inline-block;
 }
 
@@ -179,8 +180,16 @@ tr.header-row {
 
 .align-left {
     /* Ajuste o alinhamento esquerdo conforme necessário */
-    margin-left: 10px;
+    margin-left: 0px;
     text-align: left;
+
+  &.search {
+      margin-left: 20px;
+    }
+}
+
+.input-maior {
+  flex: 2;
 }
 
 .align-right {
@@ -190,23 +199,23 @@ tr.header-row {
 }
 
 .planned {
-    background-color: rgb(4, 4, 150);
+    background-color: rgb(4, 4, 150) !important;
 }
 
 .executing {
-    background-color: rgb(179, 179, 2);
+    background-color: rgb(179, 179, 2) !important;
 }
 
 .completed {
-    background-color: dimgrey;
+    background-color: dimgrey !important;
 }
 
 .rejected {
-    background-color: orange;
+    background-color: orange !important;
 }
 
 .canceled {
-    background-color: rgb(231, 48, 48);
+    background-color: rgb(231, 48, 48) !important;
 }
 
 .table2 {
@@ -226,29 +235,48 @@ tr.header-row {
 
 }
 
+.subtitulo {
+  color: #fff;
+  font-size: 30px;
+}
+
 .dialog-container {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 10%;
+  left: 10%;
+  /* transform: translate(-50%, -50%); */
   background-color: black !important;
-  width: 1600px; /* Defina a largura desejada */
-  height: 1000px; /* Defina a altura desejada */
-
+  width: 80%; /* Defina a largura desejada */
+  height: 80%; /* Defina a altura desejada */
+  overflow-y: auto;
+  border: ridge;
 }
-.dialog-container .modal-body {
-  margin: 1%;
 
+.dialog-container .modal-body {
+  display: flex;
+  margin: 1%;
 }
 
 .dialog-container .modal-title {
   color: white;
   text-align: center;
-  margin: auto;
-  margin-top: 5px;
-  width: 50%;
+  margin: 0;
+  /* margin-top: 5px; */
+  width: 100%;
   background-color: black;
+  font-size: 30px;
 }
+
+.dialog-container .modal-contact {
+  color: white;
+  text-align: right;
+  margin: 0;
+  /* margin-top: 5px; */
+  width: 100%;
+  background-color: black;
+  font-size: 18px;
+}
+
 .modal-title2 {
   color: white;
   text-align: right;
@@ -260,17 +288,17 @@ tr.header-row {
 
 .dialog-container .modal-label {
   color: white;
-  width: 200px; /* Largura do rótulo */
+  width: 30%; /* Largura do rótulo */
   margin-left: 10px;
   background-color: black;
 }
 
 .dialog-container .modal-input0 {
   flex: 1; /* Ocupa todo o espaço disponível na linha */
-  margin-left: 10px; /* Adicione um espaço entre o rótulo e o input */
+  /* margin-left: 10px; Adicione um espaço entre o rótulo e o input */
   color: rgb(5, 5, 5);
   background-color: #f7f0f0;
-  width: 800px;
+  width: 100%;
 }
 
 .dialog-container .modal-input1 {
@@ -284,8 +312,8 @@ tr.header-row {
   vertical-align: middle;
   color: rgb(5, 5, 5);
   background-color: #f7f0f0;
-  margin-right: 70px;
-  width: 150px;
+  margin-right: 0px;
+  width: 100%;
   text-align: left;
 }
 .dialog-container .modal-input2 {
@@ -294,7 +322,7 @@ tr.header-row {
   color: rgb(5, 5, 5);
   background-color: #f7f0f0;
   margin-left: 10px;
-  width: 590px;
+  /* width: 30%; */
   text-align: left;
 }
 .dialog-container .modal-input3 {
@@ -303,7 +331,7 @@ tr.header-row {
   color: rgb(5, 5, 5);
   background-color: #f7f0f0;
   margin-right: 70px;
-  width: 150px;
+  /* width: 15%; */
   text-align: left;
 }
 .dialog-container .modal-input4 {
@@ -324,6 +352,7 @@ background-color: black;
 
 .dialog-container .modal-button {
   margin-right: 30px;
+  flex: 1;
 }
 .same-line-container {
   display: flex;
@@ -338,19 +367,19 @@ background-color: black;
   /* Adicione outros estilos desejados */
 }
 
-.button {
-  width: 100px;
+/*.button {
+  width: 20%;
   height: 40px;
   margin: 10px; /* Adicione margem para espaçamento entre os botões */
-  /* Adicione outros estilos desejados para os botões */
+  /* Adicione outros estilos desejados para os botões 
   margin-left: 260px;
 }
 .botao {
-  width: 100px;
+  width: 20%;
   height: 40px;
   margin: 10px; /* Adicione margem para espaçamento entre os botões */
-  /* Adicione outros estilos desejados para os botões */
-}
+  /* Adicione outros estilos desejados para os botões 
+} */
 
 /* Estilize a div com a classe 'modal-divfinal' para centralizar o conteúdo */
 .modal-divfinal {
@@ -362,6 +391,9 @@ background-color: black;
 
 /* Estiliza a tabela */
 .table2000 {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
   width: 100%; /* Define a largura da tabela como 100% da largura do contêiner */
   border-collapse: collapse; /* Combina as bordas das células adjacentes */
   font-size: 16px; /* Tamanho da fonte para o texto da tabela */
@@ -422,7 +454,8 @@ background-color: black;
 }
 
 /* Estiliza a linha que separa o cabeçalho das colunas (opcional) */
-.table2000 thead tr {
+.table2000 tr {
+  display: flex;
   border-bottom: 2px solid #404040; /* Borda inferior da linha do cabeçalho das colunas */
 }
 
@@ -444,5 +477,50 @@ background-color: black;
 }
 .table2000 td.align-left {
   text-align: left;
+}
+
+.container {
+  margin: auto;
+  margin-top: 30px;
+  width: 70%;
+  border-radius: 20px;
+  padding: 40px;
+  box-sizing: border-box;
+  background: #ecf0f3;
+}
+
+.inner-divs {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.conteudoTable {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+
+  &.selectButton {
+    align-items: center;
+  }
+}
+
+.text-danger {
+  color: red;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.camposLabels {
+  display: flex;
+  flex-direction: column;
+
+  bottom {
+    width: 20%;
+  }
+}
+
+.selectStatus {
+  flex: 1;
 }
 

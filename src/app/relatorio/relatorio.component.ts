@@ -129,7 +129,7 @@ export class RelatorioComponent {
   }
 
 
-  editField(item: any, fieldName: string) {
+  editPlaca(item: any, fieldName: string) {
     if (!this.isValorValido(item[fieldName])) {
       const newValue = prompt(`Insert a value for ${fieldName}:`);
       if (newValue !== null) {
@@ -138,6 +138,47 @@ export class RelatorioComponent {
       }
     }
   }
+
+  InsereComent(item: any, fieldName: string) {
+
+      const newValue = prompt(`Insert a value for ${fieldName}:`);
+      if (newValue !== null) {
+        item[fieldName] = newValue;
+        this.salvarField(item); // Call salvar function after editing the field
+      }
+
+  }
+
+  getPercentComentNotEmpty(): number {
+    const totalItems = this.filteredItems.length;
+    const itemsWithComent = this.filteredItems.filter(item => this.hasComent(item)).length;
+    return 100 - ((itemsWithComent / totalItems) * 100);
+  }
+
+  editField(item: any, fieldName: string) {
+    if (!this.isValorValido(item[fieldName])) {
+      let newValue = prompt(`Insert a value for ${fieldName}:`);
+
+      // Verifica se o valor é válido e não é nulo
+      if (newValue !== null && newValue.trim() !== '') {
+        // Remove as vírgulas do valor inserido
+        const cleanedValue = newValue.replace(',', '.');
+
+        // Converte o valor para o tipo number
+        const numericValue = parseFloat(cleanedValue);
+
+        // Verifica se é um número válido
+        if (!isNaN(numericValue)) {
+          item[fieldName] = numericValue;
+          this.salvarField(item); // Chama a função salvarField após editar o campo
+        } else {
+          alert(`Invalid value for ${fieldName}. Please enter a valid number.`);
+        }
+      }
+    }
+  }
+
+
   isValorValido(value: any): boolean {
     return value !== '' && value !== null && value !== undefined;
   }
@@ -158,6 +199,45 @@ export class RelatorioComponent {
     this.item.longitude = item.longitude;
     this.item.descarga = item.descarga;
     this.dialogOpen = true;
+  }
+
+  calcularMediaValoresValidos(): number {
+    let soma = 0;
+    let contador = 0;
+
+    for (const item of this.filteredItems) {
+      if (this.isValorValido(item['Weight Loaded'])) {
+        const veiculo = this.findVeiculoByModelo(item['Transport Type']);
+        if (veiculo && this.isValorValido(veiculo.peso)) {
+          soma += item['Weight Loaded'] / veiculo.peso;
+          contador++;
+        }
+      }
+    }
+
+    return contador > 0 ? (soma / contador) * 100 : 0;
+  }
+
+  calcularMaiorValor(item: any, veiculo: any): number {
+    const pesoLoaded = this.isValorValido(item['Weight Loaded']) ? ((item['Weight Loaded'] / veiculo.peso) * 100) : 0;
+    const cubage = this.isValorValido(item.Cubage) ? ((item.Cubage / veiculo.volume) * 100) : 0;
+    return Math.max(pesoLoaded, cubage);
+  }
+
+  calcularMediaMaiorValor(): number {
+    let soma = 0;
+    let contador = 0;
+
+    for (const item of this.filteredItems) {
+      const veiculo = this.findVeiculoByModelo(item['Transport Type']);
+      if (veiculo) {
+        const maiorValor = this.calcularMaiorValor(item, veiculo);
+        soma += maiorValor;
+        contador++;
+      }
+    }
+
+    return contador > 0 ? soma / contador : 0;
   }
 
   valorExisteNoModelo(transportType: string): boolean {
@@ -257,6 +337,92 @@ export class RelatorioComponent {
     }, 200);
   }
 
+  calcularSomaCustoViagem(): number {
+    let soma = 0;
+    for (const item of this.filteredItems) {
+      const totalCost = parseFloat(item['Total Cost']);
+      if (!isNaN(totalCost)) {
+        soma += totalCost;
+      }
+    }
+    return soma;
+  }
+
+  // Função auxiliar para somar as quantidades de '1' e '2' em todas as chaves específicas
+  isValorValidoEhUmOuDois(value: any): boolean {
+    return this.isValorValido(value) && (value === '1' || value === '2');
+  }
+
+  // Função auxiliar para somar as quantidades de '1' e '2' em todas as chaves específicas
+  somarQuantidades(): { valorUm: number, valorDois: number, totalItensValidos: number } {
+    const chavesEspecificas = [
+      'Passo Destino1',
+      'Passo Destino2',
+      'Passo Destino3', // Adicione aqui as outras chaves específicas
+      'Passo Destino4',
+      'Passo Fornecedor1',
+      'Passo Fornecedor2',
+      'Passo Fornecedor3',
+      'Passo Fornecedor4'
+    ];
+
+    let valorUmTotal = 0;
+    let valorDoisTotal = 0;
+    let totalItensValidos = 0;
+
+    for (const item of this.filteredItems) {
+      for (const chave of chavesEspecificas) {
+        if (this.isValorValidoEhUmOuDois(item[chave])) {
+          if (item[chave] === '1') {
+            valorUmTotal++;
+          } else if (item[chave] === '2') {
+            valorDoisTotal++;
+          }
+          totalItensValidos++;
+        }
+      }
+    }
+
+    return { valorUm: valorUmTotal, valorDois: valorDoisTotal, totalItensValidos: totalItensValidos };
+  }
+
+  isNumeroValido(value: any): boolean {
+    return typeof value === 'number' && !isNaN(value) && isFinite(value);
+  }
+
+  // Função auxiliar para somar os valores válidos da chave 'Total Distance'
+  somarTotalDistance(): number {
+    let somaTotalDistance = 0;
+
+    for (const item of this.filteredItems) {
+      if (this.isNumeroValido(item['Total Distance'])) {
+        somaTotalDistance += item['Total Distance'];
+      }
+    }
+
+    return somaTotalDistance;
+  }
+
+  somarWeightLoaded(): number {
+    let somaWeightLoaded = 0;
+
+    for (const item of this.filteredItems) {
+      if (this.isNumeroValido(item['Weight Loaded'])) {
+        somaWeightLoaded += item['Weight Loaded'];
+      }
+    }
+
+    return somaWeightLoaded / 1000;
+  }
+
+  calcularEmissaoCO2(distanciaTotal: number, pesoTotal: number): number {
+    const resultado = (distanciaTotal / 3.7) * 2.4 / pesoTotal;
+    return resultado;
+  }
+
+  hasComent(item: any): boolean {
+    return item.Coment !== '' && item.Coment !== null && item.Coment !== undefined;
+  }
 
 
   salvar() {
@@ -317,27 +483,55 @@ export class RelatorioComponent {
     this.dialogTiposOpen = false;
   }
 
+  findVeiculoByModelo(modelo: string): any {
+    return this.veiculos.find(veiculo => veiculo.modelo === modelo);
+  }
+
+  calcularPorcentagemVeiculosPequenos(): number {
+    const totalVeiculos = this.filteredItems.length;
+    const veiculosPequenos = this.filteredItems.filter(item => {
+      const veiculo = this.findVeiculoByModelo(item['Transport Type']);
+      return veiculo && veiculo.perfil === 'Pequeno';
+    }).length;
+    return (veiculosPequenos / totalVeiculos) * 100;
+  }
+
+  calcularPorcentagemVeiculosMedios(): number {
+    const totalVeiculos = this.filteredItems.length;
+    const veiculosMedios = this.filteredItems.filter(item => {
+      const veiculo = this.findVeiculoByModelo(item['Transport Type']);
+      return veiculo && veiculo.perfil === 'Medio';
+    }).length;
+    return (veiculosMedios / totalVeiculos) * 100;
+  }
+
+  calcularPorcentagemVeiculosGrandes(): number {
+    const totalVeiculos = this.filteredItems.length;
+    const veiculosGrandes = this.filteredItems.filter(item => {
+      const veiculo = this.findVeiculoByModelo(item['Transport Type']);
+      return veiculo && veiculo.perfil === 'Grande';
+    }).length;
+    return (veiculosGrandes / totalVeiculos) * 100;
+  }
+
 
   onNoClick(): void {
     this.dialogRef.close();
   }
-  ngOnInit(): void {
-    this.getItemsFromArgentina();
-    this.getItemsFromDynamoDB();
-    this.getCarriersFromDynamoDB();
-    this.getVeiculosFromDynamoDB();
+  async ngOnInit(): Promise<void> {
+    try {
+      await this.getItemsFromArgentina();
+      await this.getItemsFromDynamoDB();
+      await this.getCarriersFromDynamoDB();
+      await this.getVeiculosFromDynamoDB();
 
-    setTimeout(() =>
-      this.centerDialog()
-      , 0);
+      this.centerDialog();
 
-    setTimeout(() =>
-    this.filteredItems = this.items.concat(this.argentina)
-      , 1500);
-
-
+      this.filteredItems = this.items.concat(this.argentina);
+    } catch (error) {
+      console.error('Erro durante a execução do ngOnInit:', error);
+    }
   }
-
   centerDialog(): void {
     const dialogRefElement = this.dialogRef?.containerInstance?.hostElement;
     if (dialogRefElement) {
@@ -352,34 +546,37 @@ export class RelatorioComponent {
     }
   }
 
-  getItemsFromDynamoDB(): void {
-    this.dynamodbService.getItems(this.query, this.urlConsulta, 'all').subscribe(
-      (response: any) => {
-        if (response.statusCode === 200) {
-          try {
-            const items = JSON.parse(response.body);
-            if (Array.isArray(items)) {
-              this.items = items
-                .filter(item => this.shouldIncludeItem(item))
-                .map(item => ({ ...item, checked: false }));
-              // Adiciona a chave 'checked' a cada item, com valor inicial como false
-              // Forçar detecção de alterações após atualizar os dados
-              this.cdr.detectChanges();
-            } else {
-              console.error('Invalid items data:', items);
-            }
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
+  async getItemsFromDynamoDB(): Promise<void> {
+    try {
+      const response: any = await new Promise(async (resolve, reject) => {
+        (await this.dynamodbService.getItems(this.query, this.urlConsulta, 'all')).subscribe(
+          (res: any) => resolve(res),
+          (error: any) => reject(error)
+        );
+      });
+
+      if (response.statusCode === 200) {
+        try {
+          const items = JSON.parse(response.body);
+          if (Array.isArray(items)) {
+            this.items = items
+              .filter(item => this.shouldIncludeItem(item))
+              .map(item => ({ ...item, checked: false }));
+            this.cdr.detectChanges();
+          } else {
+            console.error('Invalid items data:', items);
           }
-        } else {
-          console.error('Invalid response:', response);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
         }
-      },
-      (error: any) => {
-        console.error(error);
+      } else {
+        console.error('Invalid response:', response);
       }
-    );
+    } catch (error) {
+      console.error(error);
+    }
   }
+
 
   shouldIncludeItem(item: any): boolean {
     const description = item.description ? item.description.toLowerCase() : '';
@@ -391,62 +588,69 @@ export class RelatorioComponent {
     }
     return false;
   }
-  getVeiculosFromDynamoDB(): void {
-    const filtro = 'all';
-    this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
-      (response: any) => {
-        if (response.statusCode === 200) {
-          try {
-            const items = JSON.parse(response.body);
-            if (Array.isArray(items)) {
-              this.veiculos = items.map(item => ({ ...item, checked: false }));
-              // Adiciona a chave 'checked' a cada item, com valor inicial como false
-              // Forçar detecção de alterações após atualizar os dados
-              this.cdr.detectChanges();
-            } else {
-              console.error('Invalid items data:', items);
-            }
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
+
+  async getVeiculosFromDynamoDB(): Promise<void> {
+    try {
+      const filtro = 'all';
+      const response: any = await new Promise(async (resolve, reject) => {
+        (await this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro)).subscribe(
+          (res: any) => resolve(res),
+          (error: any) => reject(error)
+        );
+      });
+
+      if (response.statusCode === 200) {
+        try {
+          const items = JSON.parse(response.body);
+          if (Array.isArray(items)) {
+            this.veiculos = items.map(item => ({ ...item, checked: false }));
+            this.cdr.detectChanges();
+          } else {
+            console.error('Invalid items data:', items);
           }
-        } else {
-          console.error('Invalid response:', response);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
         }
-      },
-      (error: any) => {
-        console.error(error);
+      } else {
+        console.error('Invalid response:', response);
       }
-    );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  getItemsFromArgentina(): void {
-    this.dynamodbService.getItems(this.query4, this.urlConsulta, 'all').subscribe(
-      (response: any) => {
-        if (response.statusCode === 200) {
-          try {
-            const items = JSON.parse(response.body);
-            if (Array.isArray(items)) {
-              this.argentina = items
-                .filter(item => this.shouldIncludeArgentina(item))
-                .map(item => ({ ...item, checked: false }));
-              // Adiciona a chave 'checked' a cada item, com valor inicial como false
-              // Forçar detecção de alterações após atualizar os dados
-              this.cdr.detectChanges();
-            } else {
-              console.error('Invalid items data:', items);
-            }
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
+
+  async getItemsFromArgentina(): Promise<void> {
+    try {
+      const response: any = await new Promise(async (resolve, reject) => {
+        (await this.dynamodbService.getItems(this.query4, this.urlConsulta, 'all')).subscribe(
+          (res: any) => resolve(res),
+          (error: any) => reject(error)
+        );
+      });
+
+      if (response.statusCode === 200) {
+        try {
+          const items = JSON.parse(response.body);
+          if (Array.isArray(items)) {
+            this.argentina = items
+              .filter(item => this.shouldIncludeArgentina(item))
+              .map(item => ({ ...item, checked: false }));
+            this.cdr.detectChanges();
+          } else {
+            console.error('Invalid items data:', items);
           }
-        } else {
-          console.error('Invalid response:', response);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
         }
-      },
-      (error: any) => {
-        console.error(error);
+      } else {
+        console.error('Invalid response:', response);
       }
-    );
+    } catch (error) {
+      console.error(error);
+    }
   }
+
 
   shouldIncludeArgentina(item: any): boolean {
     const description = item.description ? item.description.toLowerCase() : '';
@@ -457,9 +661,9 @@ export class RelatorioComponent {
   }
 
 
-  getCarriersFromDynamoDB(): void {
+  async getCarriersFromDynamoDB(): Promise<void>  {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {

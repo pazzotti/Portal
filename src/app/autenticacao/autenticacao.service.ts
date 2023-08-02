@@ -27,7 +27,7 @@ export class AutenticacaoService extends DevagramApiService{
     if (!respostaLogin.auth_token) {
       throw new Error('Login invalido!')
     }
-
+    console.log(respostaLogin)
     localStorage.setItem("token", respostaLogin.auth_token)
     localStorage.setItem("nome", respostaLogin.nome)
     localStorage.setItem("email", respostaLogin.Id)
@@ -35,9 +35,9 @@ export class AutenticacaoService extends DevagramApiService{
     localStorage.setItem("flows", respostaLogin.flowsAccess)
     localStorage.setItem("company", respostaLogin.company)
 
-    //pegar dados complementares do usuario logado
-    const dadosUsuario = await this.usuarioApiService.buscarDadosUsuarios();
-    localStorage.setItem("id", dadosUsuario._id);
+    // //pegar dados complementares do usuario logado
+    // const dadosUsuario = await this.usuarioApiService.buscarDadosUsuarios();
+    // localStorage.setItem("id", dadosUsuario._id);
 
     this.router.navigateByUrl('/');
   }

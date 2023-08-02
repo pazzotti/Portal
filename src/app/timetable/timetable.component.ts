@@ -234,9 +234,9 @@ if(item.ID===undefined || item.ID==='' ){
 
 
 
-  getProgramacaoFromDynamoDB(): void {
+  async getProgramacaoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -260,9 +260,9 @@ if(item.ID===undefined || item.ID==='' ){
     );
   }
 
-  getPlacesFromDynamoDB(): void {
+  async getPlacesFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -286,9 +286,9 @@ if(item.ID===undefined || item.ID==='' ){
     );
   }
 
-  getCarriersFromDynamoDB(): void {
+  async getCarriersFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {

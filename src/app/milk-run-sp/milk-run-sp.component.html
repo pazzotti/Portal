@@ -52,35 +52,35 @@
                 <td class="left-align auto-width">
                   <div class="button-container">
                     <button *ngIf="item.hasOwnProperty('Fornecedor 1') && item['Fornecedor 1'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado1 === false, 'background-blue': item.cadastrado1 === true, 'background-green': item['Passo Fornecedor1'] === 1 || item['Passo Fornecedor1'] === 2}"
+                      [ngClass]="{'background-red': item.cadastrado1 == false, 'background-blue': item.cadastrado1 == true, 'background-green': item['Passo Fornecedor1'] == 1 || item['Passo Fornecedor1'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Fornecedor1', 'cadastrado1','Fornecedor 1')">
                       {{ item['Fornecedor 1'] }}
                       <br>
-                      Janela - {{ item['Janela 1'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['Janela 1'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
 
                     <button *ngIf="item.hasOwnProperty('Fornecedor 2') && item['Fornecedor 2'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado2 === false, 'background-blue': item.cadastrado2 === true, 'background-green': item['Passo Fornecedor2'] === 1 || item['Passo Fornecedor2'] === 2}"
+                      [ngClass]="{'background-red': item.cadastrado2 == false, 'background-blue': item.cadastrado2 == true, 'background-green': item['Passo Fornecedor2'] == 1 || item['Passo Fornecedor2'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Fornecedor2', 'cadastrado2','Fornecedor 2')">
                       {{ item['Fornecedor 2'] }}
                       <br>
-                      Janela - {{ item['Janela 2'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['Janela 2'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
 
                     <button *ngIf="item.hasOwnProperty('Fornecedor 3') && item['Fornecedor 3'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado3 === false, 'background-blue': item.cadastrado3 === true, 'background-green': item['Passo Fornecedor3'] === 1 || item['Passo Fornecedor3'] === 2}"
+                      [ngClass]="{'background-red': item.cadastrado3 == false, 'background-blue': item.cadastrado3 == true, 'background-green': item['Passo Fornecedor3'] == 1 || item['Passo Fornecedor3'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Fornecedor3', 'cadastrado3','Fornecedor 3')">
                       {{ item['Fornecedor 3'] }}
                       <br>
-                      Janela - {{ item['Janela 3'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['Janela 3'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
 
                     <button *ngIf="item.hasOwnProperty('Fornecedor 4') && item['Fornecedor 4'] !== ''"
-                      [ngClass]="{'background-red': item.cadastrado4 === false, 'background-blue': item.cadastrado4 === true, 'background-green': item['Passo Fornecedor4'] === 1 || item['Passo Fornecedor4'] === 2}"
+                      [ngClass]="{'background-red': item.cadastrado4 == false, 'background-blue': item.cadastrado4 == true, 'background-green': item['Passo Fornecedor4'] == 1 || item['Passo Fornecedor4'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Fornecedor4', 'cadastrado4','Fornecedor 4')">
                       {{ item['Fornecedor 4'] }}
                       <br>
-                      Janela - {{ item['Janela 4'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['Janela 4'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
 
                     <!-- Outros botões de fornecedores -->
@@ -91,35 +91,35 @@
 
 
                     <button *ngIf="item.hasOwnProperty('Destino 1') && item['Destino 1'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino1 === false, 'background-blue': item.cadastradoDestino1 === true, 'background-green': item['Passo Destino1'] === 1 || item['Passo Destino1'] === 2}"
+                      [ngClass]="{'background-red': item.cadastradoDestino1 == false, 'background-blue': item.cadastradoDestino1 == true, 'background-green': item['Passo Destino1'] == 1 || item['Passo Destino1'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Destino1','cadastradoDestino1','Destino 1')">
                       {{ item['Destino 1'] }}
                       <br>
-                      Janela - {{ item['JanelaDestino 1'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['JanelaDestino 1'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
 
                     <button *ngIf="item.hasOwnProperty('Destino 2') && item['Destino 2'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino2 === false, 'background-blue': item.cadastradoDestino2 === true, 'background-green': item['Passo Destino2'] === 1 || item['Passo Destino2'] === 2}"
+                      [ngClass]="{'background-red': item.cadastradoDestino2 == false, 'background-blue': item.cadastradoDestino2 == true, 'background-green': item['Passo Destino2'] == 1 || item['Passo Destino2'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Destino2', 'cadastradoDestino2','Destino 2')">
                       {{ item['Destino 2'] }}
                       <br>
-                      Janela - {{ item['JanelaDestino 2'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['JanelaDestino 2'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
 
                     <button *ngIf="item.hasOwnProperty('Destino 3') && item['Destino 3'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino3 === false, 'background-blue': item.cadastradoDestino3 === true, 'background-green': item['Passo Destino3'] === 1 || item['Passo Destino3'] === 2}"
+                      [ngClass]="{'background-red': item.cadastradoDestino3 == false, 'background-blue': item.cadastradoDestino3 == true, 'background-green': item['Passo Destino3'] == 1 || item['Passo Destino3'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Destino3', 'cadastradoDestino3','Destino 3')">
                       {{ item['Destino 3'] }}
                       <br>
-                      Janela - {{ item['JanelaDestino 3'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['JanelaDestino 3'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
 
                     <button *ngIf="item.hasOwnProperty('Destino 4') && item['Destino 4'] !== ''"
-                      [ngClass]="{'background-red': item.cadastradoDestino4 === false, 'background-blue': item.cadastradoDestino4 === true, 'background-green': item['Passo Destino4'] === 1 || item['Passo Destino'] === 2}"
+                      [ngClass]="{'background-red': item.cadastradoDestino4 == false, 'background-blue': item.cadastradoDestino4 == true, 'background-green': item['Passo Destino4'] == 1 || item['Passo Destino'] == 2}"
                       (click)="acaoDeClique(item, 'Passo Destino4','cadastradoDestino4','Destino 4')">
                       {{ item['Destino 4'] }}
                       <br>
-                      Janela - {{ item['JanelaDestino 4'] | date: 'dd/MM/yyyy - HH:mm' }}
+                      Janela - {{ item['JanelaDestino 4'] | date: 'dd/MM/yyyy - HH:mm' : '+00:00'}}
                     </button>
                   </div>
                 </td>

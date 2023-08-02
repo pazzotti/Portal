@@ -10,11 +10,11 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  public getItems(tableName: string, urlConsulta: string, searchText: string): Observable<any> {
+  public async getItems(tableName: string, urlConsulta: string, searchText: string): Promise<Observable<any>> {
     const body = JSON.stringify({ tableName, searchText });
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-    return this.http.post<any>(urlConsulta, body);
+    return await this.http.post<any>(urlConsulta, body);
   }
 
   salvar(itemsData: any, tabela: string, apiUrl: string): Observable<any> {
@@ -28,6 +28,16 @@ export class ApiService {
 
     return this.http.post<any>(apiUrl, body, { headers: headers });
 
+  }
+  
+  enviaNotificacao(itemsData: any, apiUrl: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    const body = JSON.stringify(itemsData);
+    console.log("body")
+    console.log(body)
+    return this.http.post<any>(apiUrl, body, { headers: headers });
   }
 
   deleteItem(ID: string, urlDeleta: string, query: string): Observable<any> {

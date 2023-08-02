@@ -110,12 +110,12 @@ export class AtualizarComponent {
     return chunks;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
     const key = 'liner'; // Substitua 'propriedade' pelo nome da propriedade que você deseja obter
     const query = 'PowerMathDatabase2'
     const filtro = '';
-    this.items$ = this.dynamodbService.getItems(query, this.urlConsulta, filtro).pipe(
+    this.items$ = (await this.dynamodbService.getItems(query, this.urlConsulta, filtro)).pipe(
       map(data => {
         const parsedData = JSON.parse(data.body); // Parse a string JSON contida em data.body
         return parsedData; // Retorna o objeto JSON parseado

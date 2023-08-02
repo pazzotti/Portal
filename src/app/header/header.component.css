@@ -61,6 +61,7 @@ nav #navbarNav a:hover {
 .dropdown {
   position: relative;
   display: inline-block;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .dropbtn {
@@ -70,9 +71,11 @@ nav #navbarNav a:hover {
   font-size: 20px;
   border: none;
   cursor: pointer;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .dropdown-content {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   display: none;
   position: absolute;
   min-width: 160px;

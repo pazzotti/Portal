@@ -64,6 +64,11 @@ table {
   font-size: 20px;
 }
 
+.red-icon {
+  color: red;
+}
+
+
 .corlinha {
   background-color: black;
   border-bottom: 2px solid #404040;

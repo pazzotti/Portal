@@ -124,13 +124,12 @@ export class MilkRunSulComponent implements OnInit {
 
   }
 
-  ngOnInit() {
-
-    this.getItemsFromDynamoDB();
-    this.getFornecedoresFromDynamoDB();
-    this.getPosicaoFromDynamoDB();
-    this.getCarriersFromDynamoDB();
-    this.getTipoVeiculoFromDynamoDB();
+  async ngOnInit() {
+    await this.getItemsFromDynamoDB();
+    await this.getFornecedoresFromDynamoDB();
+    await this.getPosicaoFromDynamoDB();
+    await this.getCarriersFromDynamoDB();
+    await this.getTipoVeiculoFromDynamoDB();
     setTimeout(() => {
       this.armazenarLatitudeEmItems();
     }, 2000);
@@ -140,16 +139,15 @@ export class MilkRunSulComponent implements OnInit {
       this.filtra();
     }, 2000);
 
-
-    this.subscription = interval(3 * 60 * 1000).subscribe(() => {
+    this.subscription = interval(3 * 60 * 1000).subscribe(async () => {
       // Chame a função que deseja executar a cada 3 minutos aqui
-      this.getItemsFromDynamoDB();
-      this.getFornecedoresFromDynamoDB();
-      this.getPosicaoFromDynamoDB();
-      this.getCarriersFromDynamoDB();
-      this.getTipoVeiculoFromDynamoDB();
-      setTimeout(() => {
-        this.armazenarLatitudeEmItems();
+      await this.getItemsFromDynamoDB();
+      await this.getFornecedoresFromDynamoDB();
+      await this.getPosicaoFromDynamoDB();
+      await this.getCarriersFromDynamoDB();
+      await this.getTipoVeiculoFromDynamoDB();
+      setTimeout(async () => {
+        await this.armazenarLatitudeEmItems();
       }, 2000);
 
       // Aguardar 1 segundo antes de chamar this.filtra()
@@ -167,7 +165,6 @@ export class MilkRunSulComponent implements OnInit {
     if (Array.isArray(this.places)) {
       this.locais = this.places.map(places => places.local);
     }
-
     this.janela1 = '';
     this.janela2 = '';
     this.janela3 = '';
@@ -199,8 +196,6 @@ export class MilkRunSulComponent implements OnInit {
       const horaMinutoDestino3 = datePipe.transform(item['JanelaDestino 3'], 'HH:mm');
       const horaMinutoDestino4 = datePipe.transform(item['JanelaDestino 4'], 'HH:mm');
 
-
-
       this.janela1 = horaMinuto1 ?? this.janela1;
       this.janela2 = horaMinuto2 ?? this.janela2;
       this.janela3 = horaMinuto3 ?? this.janela3;
@@ -209,10 +204,6 @@ export class MilkRunSulComponent implements OnInit {
       this.janelaDestino2 = horaMinutoDestino2 ?? this.janelaDestino2;
       this.janelaDestino3 = horaMinutoDestino3 ?? this.janelaDestino3;
       this.janelaDestino4 = horaMinutoDestino4 ?? this.janelaDestino4;
-
-
-
-
     }
 
     this.item.ID = item.ID
@@ -237,7 +228,6 @@ export class MilkRunSulComponent implements OnInit {
     this.item.description = item.description;
     this.dialogAddViagem = true;
 
-
     let dateObject = new Date(item.date);
     let day = dateObject.getUTCDate();
     let month = dateObject.getUTCMonth() + 1; // Os meses em JavaScript começam em 0, então é necessário adicionar 1
@@ -253,13 +243,6 @@ export class MilkRunSulComponent implements OnInit {
     formattedDate = `${year.toString()}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     console.log('data entrega' + formattedDate); // Output: "30-06-2023"
     this.item.datadescarga = formattedDate;
-
-
-
-
-
-
-
 
     this.item['Total Distance'] = item['Total Distance'];
     this.item['Weight Loaded'] = item['Weight Loaded'];
@@ -284,14 +267,7 @@ export class MilkRunSulComponent implements OnInit {
     this.listaVeiculo1 = this.tipoVeiculo.map(item => item.modelo);
     this.listaVeiculo1 = [item['Transport Type'], ...this.listaVeiculo1];
 
-
-
-
     this.item['Transport Type'] = item['Transport Type'];
-
-
-
-
 
     this.fornecedoresDescarga1 = this.fornecedores
       .filter(fornecedor => fornecedor.descarga === true)
@@ -305,11 +281,6 @@ export class MilkRunSulComponent implements OnInit {
     this.fornecedoresDescarga4 = this.fornecedores
       .filter(fornecedor => fornecedor.descarga === true)
       .map(fornecedor => fornecedor.local);
-
-
-
-
-
   }
 
   deleteItem(ID: string): void {
@@ -328,14 +299,10 @@ export class MilkRunSulComponent implements OnInit {
   }
 
   salvar2() {
-
     this.dataInvertida = this.item.date;
-
     if (this.dataInvertida === '') {
       this.dataInvertida = '2006-04-04';
     }
-
-
     const janela1 = this.carregaService.adicionarHora(this.janela1, new Date(this.dataInvertida));
     const janela2 = this.carregaService.adicionarHora(this.janela2, new Date(this.dataInvertida));
     const janela3 = this.carregaService.adicionarHora(this.janela3, new Date(this.dataInvertida));
@@ -345,12 +312,10 @@ export class MilkRunSulComponent implements OnInit {
     const janelaDestino3 = this.carregaService.adicionarHora(this.janelaDestino3, new Date(this.dataInvertida));
     const janelaDestino4 = this.carregaService.adicionarHora(this.janelaDestino4, new Date(this.dataInvertida));
 
-
     if (this.item.ID === undefined) {
       const currentDate = new Date();
       const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
       console.log(formattedDate);
-
       this.item.ID = formattedDate.toString();
     }
 
@@ -375,15 +340,11 @@ export class MilkRunSulComponent implements OnInit {
     } else {
       delete this.item['Janela 4'];
     }
-
-
-
     if (!isNaN(janelaDestino1.getTime())) {
       this.item['JanelaDestino 1'] = janelaDestino1;
     } else {
       delete this.item['JanelaDestino 1'];
     }
-
     if (!isNaN(janelaDestino2.getTime())) {
       this.item['JanelaDestino 2'] = janelaDestino2;
     } else {
@@ -427,16 +388,11 @@ export class MilkRunSulComponent implements OnInit {
     if (this.item['Destino 4'] !== '' && this.item['Destino 4'] !== null && this.item['Destino 4'] !== undefined) {
       this.item.Passos = this.item.Passos + 1;
     }
-
-
-
     this.item.tableName = this.query
-
 
     // Remover as barras invertidas escapadas
     const itemsDataString = JSON.stringify(this.item); // Acessa a string desejada
     const modifiedString = itemsDataString.replace(/\\"/g, '"'); // Realiza a substituição na string
-
 
     // Converter a string JSON para um objeto JavaScript
     const jsonObject = JSON.parse(modifiedString) as { [key: string]: string };
@@ -464,11 +420,7 @@ export class MilkRunSulComponent implements OnInit {
   }
 
 
-
-
-
   salvarFornecedor() {
-
     if (this.item.ID === undefined || this.item.ID === '') {
       const currentDate = new Date();
       const formattedDate = format(currentDate, 'ddMMyyyyHHmmss');
@@ -482,8 +434,6 @@ export class MilkRunSulComponent implements OnInit {
         "latitude": this.item.latitude,
         "longitude": this.item.longitude
       }
-
-
     }
 
     this.item.tableName = this.query3
@@ -686,17 +636,17 @@ export class MilkRunSulComponent implements OnInit {
     }
   }
 
-  getItemsFromDynamoDB(): void {
+  async getItemsFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro).subscribe(
-      (response: any) => {
+    (await this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro)).subscribe(
+      async (response: any) => {
         if (response.statusCode === 200) {
           try {
             const items = JSON.parse(response.body);
             if (Array.isArray(items)) {
-              this.items = items
-                .filter(item => item.description && item.description.toLowerCase().includes('sul'))
-                .filter(item => item.Finalizada !== true) // Novo filtro adicionado
+              this.items = await items
+                .filter(item => (item.description && item.description.toLowerCase().includes('tcm')) || (item.description && item.description.toLowerCase().includes('sul')))
+                .filter(item => item.Finalizada != "True" && item.Finalizada != "true" && item.Finalizada != true) // Novo filtro adicionado
                 .map(item => {
 
                   const date = new Date(item.date);
@@ -855,6 +805,8 @@ export class MilkRunSulComponent implements OnInit {
                     checked: false
                   };
                 });
+              console.log("items filtrados")
+              console.log(this.items)
               // Filtra os itens que possuem a chave 'description' com a palavra 'sul'
               // (sem diferenciar maiúsculas de minúsculas), adiciona a chave 'checked' a cada item com valor inicial como false,
               // converte a chave 'date' em um objeto de data utilizando o construtor 'Date',
@@ -872,12 +824,12 @@ export class MilkRunSulComponent implements OnInit {
       (error: any) => {
         console.error(error);
       }
-    );
+    );  
   }
 
-  getCarriersFromDynamoDB(): void {
+  async getCarriersFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query4, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query4, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -901,9 +853,9 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
-  getFornecedoresFromDynamoDB(): void {
+  async getFornecedoresFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query3, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -927,9 +879,9 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
-  getTipoVeiculoFromDynamoDB(): void {
+  async getTipoVeiculoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query5, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query5, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -953,9 +905,9 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
-  getPosicaoFromDynamoDB(): void {
+  async getPosicaoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query2, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -982,25 +934,17 @@ export class MilkRunSulComponent implements OnInit {
     );
   }
 
-
-
   armazenarLatitudeEmItems() {
-
     for (let i = 0; i < this.items.length; i++) {
       let dataString = ''
       let formatoString = '';
       let matchingPosicao = [];
-
-
       const plate = this.items[i]['Plate'];
-
       if (plate !== '' || plate !== undefined) {
-
         matchingPosicao = this.posicao.find(obj => obj['ID'] === plate);
         if (matchingPosicao?.hasOwnProperty('DataBordo')) {
           dataString = matchingPosicao['DataBordo'];
         }
-
         formatoString = 'DD/MM/YYYY HH:mm:ss';
         const data = moment(dataString, formatoString).toDate();
         if (matchingPosicao) {
@@ -1008,10 +952,7 @@ export class MilkRunSulComponent implements OnInit {
           this.items[i]['Longitude'] = matchingPosicao['Longitude'];
           this.items[i]['Endereco'] = matchingPosicao['Endereco'];
           this.items[i]['DataBordo'] = new Date(data);
-
         }
-
-
         if (this.items[i]?.hasOwnProperty('DataBordo')) {
           if (this.items[i]['DataBordo'] === undefined || this.items[i]['DataBordo'] === '') {
             this.items[i]['Conexao'] = false;
@@ -1028,15 +969,9 @@ export class MilkRunSulComponent implements OnInit {
         } else {
           this.items[i]['Conexao'] = false;
         }
-
       } else {
         this.items[i]['Conexao'] = false;
       }
-
-
-
-
-
     }
   }
 
@@ -1050,17 +985,26 @@ export class MilkRunSulComponent implements OnInit {
     }
   }
 
+  // finalizaPasso(Passo: string, item: any) {
+  //   this.salvar(Passo, item);
+  //   setTimeout(() => {
+  //     this.ngOnInit();
+  //   }, 1500);
+  // }
+  
   finalizaPasso(Passo: string, item: any) {
-    this.salvar(Passo, item);
-
-
+    // Exibe a caixa de diálogo de confirmação
+    const confirmacao = window.confirm("Tem certeza que deseja confirmar a coleta neste ponto?");
+    // Verifica se o usuário confirmou a ação
+    if (confirmacao) {
+      this.salvar(Passo, item);
+      // Adicione aqui qualquer outra lógica que você deseja executar após salvar o item
+    }
     setTimeout(() => {
       this.ngOnInit();
     }, 1500);
-
-
   }
-
+  
   salvar(Passo: String, item: any): void {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -1071,10 +1015,8 @@ export class MilkRunSulComponent implements OnInit {
         ...item, // Mantém as chaves existentes
         "ID": item.ID,
         "Plate": item.Plate,
-
         // Adicione outros campos conforme necessário
       }];
-
     } else {
       let ValorPasso = 0;
       let ContadorPasso = 0;
@@ -1143,10 +1085,7 @@ export class MilkRunSulComponent implements OnInit {
             ValorPasso = 2;
           }
           break;
-
       }
-
-
       if (item['Passo Fornecedor1'] > 0) {
         ContadorPasso = ContadorPasso + 1;
       }
@@ -1171,17 +1110,12 @@ export class MilkRunSulComponent implements OnInit {
       if (item['Passo Destino4'] > 0) {
         ContadorPasso = ContadorPasso + 1;
       }
-
-
-      if (parseInt(item['Passos'], 10) === ContadorPasso) {
+      if (parseInt(item['Passos'], 10) == ContadorPasso) {
         body = [{
           ...item, // Mantém as chaves existentes
           "ID": item.ID,
           "Finalizada": true,
-
-
           [Passo.toString()]: ValorPasso,
-
           // Adicione outros campos conforme necessário
         }];
 
@@ -1189,17 +1123,11 @@ export class MilkRunSulComponent implements OnInit {
         body = [{
           ...item, // Mantém as chaves existentes
           "ID": item.ID,
-
-
           [Passo.toString()]: ValorPasso,
-
           // Adicione outros campos conforme necessário
         }];
       }
-
-
     }
-
     this.dynamoDBService.salvar(body, this.query2, this.urlSalva).subscribe(response => {
       // Atualiza o item no banco de dados com sucesso
     }, error => {

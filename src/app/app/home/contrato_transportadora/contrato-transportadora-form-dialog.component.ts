@@ -73,9 +73,9 @@ export class ContratoTransportadoraFormDialogComponent {
     this.getItemsCarriers();
   }
 
-  getItemsFromDestiny(): void {
+  async getItemsFromDestiny(): Promise<void> {
     const filtro = '';
-    this.apiService.getItems(this.queryDestiny, this.urlConsulta, filtro).subscribe(
+    (await this.apiService.getItems(this.queryDestiny, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -101,9 +101,9 @@ export class ContratoTransportadoraFormDialogComponent {
     );
   }
 
-  getItemsFromOrigin(): void {
+  async getItemsFromOrigin(): Promise<void> {
     const filtro = '';
-    this.apiService.getItems(this.queryOrigin, this.urlConsulta, filtro).subscribe(
+    (await this.apiService.getItems(this.queryOrigin, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -129,9 +129,9 @@ export class ContratoTransportadoraFormDialogComponent {
     );
   }
 
-  getItemsCarriers(): void {
+  async getItemsCarriers(): Promise<void> {
     const filtro = '';
-    this.apiService.getItems(this.queryCarrier, this.urlConsulta, filtro).subscribe(
+    (await this.apiService.getItems(this.queryCarrier, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {

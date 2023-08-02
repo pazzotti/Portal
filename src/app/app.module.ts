@@ -21,7 +21,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FornecedoresComponent } from './fornecedores/fornecedores.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FeatherModule } from 'angular-feather';
-import { Camera, ZapOff, Zap, Edit, Delete, PlusCircle, Settings } from 'angular-feather/icons';
+import { Camera, ZapOff, Zap, Edit, Delete, PlusCircle, Settings, MessageCircle, AlertTriangle } from 'angular-feather/icons';
 import { MilkRunSPComponent } from './milk-run-sp/milk-run-sp.component';
 import { MilkRunARGComponent } from './milk-run-arg/milk-run-arg.component';
 import { InterplantasComponent } from './interplantas/interplantas.component';
@@ -40,13 +40,15 @@ import { ExtraFreightComponent } from './extra-freight/extra-freight.component';
 import { LoginComponent } from './login/login.component';
 import { SharedModule } from './shared/shared.module';
 import { CadastroComponent } from './cadastro/cadastro.component';
-import { RelatorioComponent } from './relatorio/relatorio.component';
+import { CadastroCarriersComponent } from './cadastro-carriers/cadastro-carriers.component';
+import { CadastroContratosComponent } from './cadastro-contratos/cadastro-contratos.component';
+import { CadastroUsersComponent } from './cadastro-users/cadastro-users.component';
 import { CustomDatePipe } from './relatorio/custom-data-pipe';
-import { OperacaoVWComponent } from './operacao-vw/operacao-vw.component';
-import { AtualizaVWComponent } from './atualiza-vw/atualiza-vw.component';
-import { TrackingVWComponent } from './tracking-vw/tracking-vw.component';
-
-
+import { RelatorioComponent } from './relatorio/relatorio.component';
+import { VwAtualizaComponent } from './vw-atualiza/vw-atualiza.component';
+import { VwOperacaoComponent } from './vw-operacao/vw-operacao.component';
+import { VwTrackingComponent } from './vw-tracking/vw-tracking.component';
+import { TipoVeiculoComponent } from './tipo-veiculo/tipo-veiculo.component';
 
 
 const icons = {
@@ -56,14 +58,15 @@ const icons = {
   Edit,
   Delete,
   PlusCircle,
-  Settings
+  Settings,
+  MessageCircle,
+  AlertTriangle
 };
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    CustomDatePipe,
     FornecedoresComponent,
     ContratoTransportadoraFormDialogComponent,
     AtualizarComponent,
@@ -87,9 +90,15 @@ const icons = {
     VeiculosLabComponent,
     TrackingComponent,
     RelatorioComponent,
-    OperacaoVWComponent,
-    AtualizaVWComponent,
-    TrackingVWComponent
+    CadastroCarriersComponent,
+    CadastroContratosComponent,
+    CadastroUsersComponent,
+    CustomDatePipe,
+    VwAtualizaComponent,
+    VwOperacaoComponent,
+    VwTrackingComponent,
+    TipoVeiculoComponent
+
 
   ],
   imports: [
@@ -110,7 +119,10 @@ const icons = {
     HighchartsChartModule,
     MatDialogModule,
     MatInputModule,
-    ProgressbarModule.forRoot()
+    BrowserModule,
+    ProgressbarModule.forRoot(),
+    FormsModule
+
 
   ],
   providers: [DatePipe,{provide:MatDialogRef,useValue:{}}

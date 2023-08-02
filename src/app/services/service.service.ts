@@ -26,6 +26,18 @@ export class ApiService {
 
         return this.http.post<any>(apiUrl, body, { headers: headers });
     }
+    
+    enviaNotificacao(itemsData: any, tabela: string, apiUrl: string): Observable<any> {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json'
+        });
+
+        // Adicione o parâmetro 'tableName' ao objeto 'itemsData'
+
+        const body = JSON.stringify(itemsData);
+
+        return this.http.post<any>(apiUrl, body, { headers: headers });
+    }
 
     deleteItem(ID: string, urlDeleta: string, query: string): Observable<any> {
         const headers = new HttpHeaders({

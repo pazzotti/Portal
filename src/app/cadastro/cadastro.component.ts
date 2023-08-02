@@ -58,15 +58,16 @@ export class CadastroComponent {
     this.createForm(new Cadastro())
     this.getItemsFromExtraReq();
     this.getUserLogado();
+    this.enableFields();
   }
 
   createForm(cadastro: Cadastro) {
     this.form = this.formBuilder.group({
       nome: [cadastro.nome, Validators.required],
-      ID: [cadastro.ID, [Validators.required, Validators.email]],
+      ID: [{ value: cadastro.ID, disabled: true }, [Validators.required, Validators.email]],
       senha: [cadastro.senha, [Validators.required, Validators.minLength(4)]],
       confirmacaoSenha: [cadastro.confirmacaoSenha, [Validators.required, confirmacaoSenha()]],
-      role: [cadastro.role, Validators.required],
+      role: [cadastro.role],
       flowsAccess: [cadastro.flowsAccess],
       company: [cadastro.company],
     })
@@ -105,7 +106,7 @@ export class CadastroComponent {
           ID: this.form.get('ID')?.value,
           senha: this.form.get('senha')?.value,
           confirmacaoSenha: this.form.get('confirmacaoSenha')?.value,
-          role: this.form.get('role')?.value,
+          role: this.form.get('role')?.value ? this.form.get('role')?.value : '1',
           flowsAccess: this.form.get('flowsAccess')?.value,
           company: this.form.get('company')?.value,
           tableName: this.tableName
@@ -135,13 +136,13 @@ export class CadastroComponent {
           console.log(error);
         }
       });
-      if (isNewIDIncluded) {
-        this.router.navigateByUrl('/login');
-      }
+      // if (isNewIDIncluded) {
+      this.router.navigateByUrl('/login');
+      // }
     } else {
       alert("Verifique o preenchimento do formulario.")
     }
-    
+
   }
 
   cancel(): void {
@@ -153,14 +154,25 @@ export class CadastroComponent {
     console.log("logado")
     // console.log(this.autenticacaoService?.obterUsuarioLogado())
     this.usuarioLogado = this.autenticacaoService.obterUsuarioLogado()
-    // console.log(this.usuarioLogado)
+    console.log(this.usuarioLogado)
+  }
+
+  enableFields() {
+    if (this.usuarioLogado.role === '3' || this.usuarioLogado.role === '0') {
+      this.form.get('ID')?.enable();
+      // this.form.get('vehicleType')?.enable();
+    } else if (this.usuarioLogado.role == null) {
+      this.form.get('ID')?.enable();
+    } else {
+      this.form.get('ID')?.setValue(this.usuarioLogado.id)
+      // this.form.get('ID')?.enable();
+    }
   }
 
 
-
-  getItemsFromExtraReq(): void {
+  async getItemsFromExtraReq(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.tableName, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.tableName, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
 
         if (response.statusCode === 200) {

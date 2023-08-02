@@ -74,6 +74,7 @@ label {
 input[type=text],
 [type=date],
 [type=password],
+[type=email],
 .selectVehicle,
 .select-input,
 .fixed-width,

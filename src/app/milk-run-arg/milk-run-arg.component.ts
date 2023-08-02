@@ -99,13 +99,13 @@ export class MilkRunARGComponent implements OnInit {
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
 
-    this.getItemsFromDynamoDB();
-    this.getFornecedoresFromDynamoDB();
-    this.getPosicaoFromDynamoDB();
-    this.getCarriersFromDynamoDB();
-    this.getTipoVeiculoFromDynamoDB();
+    await this.getItemsFromDynamoDB();
+    await this.getFornecedoresFromDynamoDB();
+    await this.getPosicaoFromDynamoDB();
+    await this.getCarriersFromDynamoDB();
+    await this.getTipoVeiculoFromDynamoDB();
 
     setTimeout(() => {
       this.armazenarLatitudeEmItems();
@@ -659,9 +659,9 @@ export class MilkRunARGComponent implements OnInit {
     }
   }
 
-  getItemsFromDynamoDB(): void {
+  async getItemsFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+    await (await this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -669,7 +669,7 @@ export class MilkRunARGComponent implements OnInit {
             if (Array.isArray(items)) {
               this.items = items
                 .filter(item => item.description && item.description.toLowerCase().includes('arg'))
-                .filter(item => item.Finalizada !== true)
+                .filter(item => item.Finalizada != "True" && item.Finalizada != "true" && item.Finalizada != true)
                 .map(item => {
                   const date = new Date(item.date);
                   let janela1Date = null;
@@ -706,9 +706,9 @@ export class MilkRunARGComponent implements OnInit {
   }
 
 
-  getFornecedoresFromDynamoDB(): void {
+  async getFornecedoresFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query3, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -732,9 +732,9 @@ export class MilkRunARGComponent implements OnInit {
     );
   }
 
-  getPosicaoFromDynamoDB(): void {
+  async getPosicaoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query2, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -758,9 +758,9 @@ export class MilkRunARGComponent implements OnInit {
     );
   }
 
-  getCarriersFromDynamoDB(): void {
+  async getCarriersFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query4, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query4, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -785,9 +785,9 @@ export class MilkRunARGComponent implements OnInit {
   }
 
 
-  getTipoVeiculoFromDynamoDB(): void {
+  async getTipoVeiculoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query5, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query5, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -853,17 +853,28 @@ export class MilkRunARGComponent implements OnInit {
     }
   }
 
-  finalizaPasso(Passo: string, item: any) {
-    this.salvar(Passo, item);
+  // finalizaPasso(Passo: string, item: any) {
+  //   this.salvar(Passo, item);
+  //   setTimeout(() => {
+  //     this.ngOnInit();
+  //   }, 1500);
+  // }
 
+  finalizaPasso(Passo: string, item: any) {
+    // Exibe a caixa de diálogo de confirmação
+    const confirmacao = window.confirm("Tem certeza que deseja confirmar a coleta neste ponto?");
+
+    // Verifica se o usuário confirmou a ação
+    if (confirmacao) {
+      this.salvar(Passo, item);
+      // Adicione aqui qualquer outra lógica que você deseja executar após salvar o item
+    }
 
     setTimeout(() => {
       this.ngOnInit();
     }, 1500);
-
-
   }
-
+  
   salvar(Passo: String, item: any): void {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'

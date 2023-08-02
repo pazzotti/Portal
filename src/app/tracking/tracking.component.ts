@@ -29,6 +29,7 @@ export class TrackingComponent {
   query2: string = 'veiculos_lab_Karrara';
   query3: string = 'Itens_Jetta';
   query4: string = 'Porta_Rastreando_JSL';
+  query5: string = 'items_Excel_Karrara';
   placaFiltrada!: string;
   posicaoSul!: any[];
   posicaoSulRastreio!: any[];
@@ -36,6 +37,8 @@ export class TrackingComponent {
   subscription: any;
   private placaFiltradaSubject = new Subject<string>();
   posicaoLOTS!: any[];
+  posicaoArg!: any[];
+  posicaoArgRastreio!: any[];
   constructor(
     private dynamodbService: ApiService,
 
@@ -56,6 +59,7 @@ export class TrackingComponent {
     await this.getPosicaoMilkSulFromDynamoDB();
     await this.getPosicaoMilkRastreioFromDynamoDB();
     await this.getPosicaoLOTSFromDynamoDB();
+    await this.getPosicaoMilkArgFromDynamoDB();
 
 
 
@@ -63,6 +67,7 @@ export class TrackingComponent {
     setTimeout(() => {
 
       this.compareAndMergePlates();
+      this.compareAndMergePlatesArg();
       this.compareAndMergePlatesLOTS();
       if (this.posicao !== undefined) {
         this.markerCoordinates = this.posicao
@@ -72,7 +77,14 @@ export class TrackingComponent {
             this.posicaoSul
               .filter((item: any) => item.Longitude !== undefined && item.Latitude !== undefined && item.Latitude !== null && item.Latitude !== 'None' && item.Latitude !== "")
               .map((item: any) => [item.Longitude, item.Latitude] as [number, number])
-          );
+        )
+          .concat(
+            this.posicaoArg
+              .filter((item: any) => item.Longitude !== undefined && item.Latitude !== undefined && item.Latitude !== null && item.Latitude !== 'None' && item.Latitude !== "")
+              .map((item: any) => [item.Longitude, item.Latitude] as [number, number])
+        );
+        console.log("makecoor")
+        console.log(this.markerCoordinates)
       }
 
       this.inicia();
@@ -85,17 +97,24 @@ export class TrackingComponent {
       this.getPosicaoMilkSulFromDynamoDB();
       this.getPosicaoMilkRastreioFromDynamoDB();
       this.getPosicaoLOTSFromDynamoDB();
+      this.getPosicaoMilkArgFromDynamoDB();
 
 
       setTimeout(() => {
         this.compareAndMergePlatesLOTS();
         this.compareAndMergePlates();
+        this.compareAndMergePlatesArg();
         if (this.posicao !== undefined) {
           this.markerCoordinates = this.posicao
             .filter((item: any) => item.Longitude !== undefined && item.Latitude !== undefined && item.Latitude !== null && item.Latitude !== 'None' && item.Latitude !== "")
             .map((item: any) => [item.Longitude, item.Latitude] as [number, number])
             .concat(
               this.posicaoSul
+                .filter((item: any) => item.Longitude !== undefined && item.Latitude !== undefined && item.Latitude !== null && item.Latitude !== 'None' && item.Latitude !== "")
+                .map((item: any) => [item.Longitude, item.Latitude] as [number, number])
+          )
+            .concat(
+              this.posicaoArg
                 .filter((item: any) => item.Longitude !== undefined && item.Latitude !== undefined && item.Latitude !== null && item.Latitude !== 'None' && item.Latitude !== "")
                 .map((item: any) => [item.Longitude, item.Latitude] as [number, number])
             );
@@ -224,7 +243,7 @@ export class TrackingComponent {
       });
 
       cluster.load(pointFeatures);
-      console.log(pointFeatures);
+      // console.log(pointFeatures);
     };
 
     const ocultarMarcadores = () => {
@@ -277,6 +296,7 @@ export class TrackingComponent {
   private getPosicaoEndereco(coordinates: [number, number]): string {
     const posicao = this.posicao.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
     const posicaoSul = this.posicaoSul.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
+    const posicaoArg = this.posicaoArg.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
 
     let plate = "";
 
@@ -287,6 +307,10 @@ export class TrackingComponent {
     if (posicaoSul && posicaoSul.Endereco) {
       plate += posicaoSul.Endereco;
     }
+    
+    if (posicaoArg && posicaoArg.Endereco) {
+      plate += posicaoArg.Endereco;
+    }
 
     return plate;
   }
@@ -295,6 +319,7 @@ export class TrackingComponent {
   private getPosicaoPlaca(coordinates: [number, number]): string {
     const posicao = this.posicao.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
     const posicaoSul = this.posicaoSul.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
+    const posicaoArg = this.posicaoArg.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
 
     let plate = "";
 
@@ -305,6 +330,10 @@ export class TrackingComponent {
     if (posicaoSul && posicaoSul.Plate) {
       plate += posicaoSul.Plate;
     }
+    
+    if (posicaoArg && posicaoArg.Plate) {
+      plate += posicaoArg.Plate;
+    }
 
     return plate;
   }
@@ -312,6 +341,7 @@ export class TrackingComponent {
   private getPosicaoFornecedores(coordinates: [number, number]): string {
     const posicao = this.posicao.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
     const posicaoSul = this.posicaoSul.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
+    const posicaoArg = this.posicaoArg.find(item => item.Longitude === coordinates[0] && item.Latitude === coordinates[1]);
 
     let fornecedor = "";
 
@@ -341,6 +371,19 @@ export class TrackingComponent {
     if (posicaoSul && posicaoSul['Fornecedor 4']) {
       fornecedor += (" - " + posicaoSul['Fornecedor 4']);
     }
+    
+    if (posicaoArg && posicaoArg['Fornecedor 1']) {
+      fornecedor += (" - " + posicaoArg['Fornecedor 1']);
+    }
+    if (posicaoArg && posicaoArg['Fornecedor 2']) {
+      fornecedor += (" - " + posicaoArg['Fornecedor 2']);
+    }
+    if (posicaoArg && posicaoArg['Fornecedor 3']) {
+      fornecedor += (" - " + posicaoArg['Fornecedor 3']);
+    }
+    if (posicaoArg && posicaoArg['Fornecedor 4']) {
+      fornecedor += (" - " + posicaoArg['Fornecedor 4']);
+    }
 
     return fornecedor;
   }
@@ -349,7 +392,7 @@ export class TrackingComponent {
 
   async getPosicaoFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -378,7 +421,7 @@ export class TrackingComponent {
 
   async getPosicaoLOTSFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query2, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -406,7 +449,7 @@ export class TrackingComponent {
 
   async getPosicaoMilkSulFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query3, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -433,9 +476,38 @@ export class TrackingComponent {
     );
   }
 
+  async getPosicaoMilkArgFromDynamoDB(): Promise<void> {
+    const filtro = 'all';
+    (await this.dynamodbService.getItems(this.query5, this.urlConsulta, filtro)).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          try {
+            const items = JSON.parse(response.body);
+            if (Array.isArray(items)) {
+              this.posicaoArg = items
+                .map(item => ({ ...item, checked: false }))
+                .filter(item => item.Finalizada !== true);
+              // Adiciona a chave 'checked' a cada item, com valor inicial como false
+              // Filtra os itens com chave 'DataBordo' indefinida e item.Finalizada !== true
+            } else {
+              console.error('Invalid items data:', items);
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        } else {
+          console.error('Invalid response:', response);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+  }
+
   async getPosicaoMilkRastreioFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamodbService.getItems(this.query4, this.urlConsulta, filtro).subscribe(
+    (await this.dynamodbService.getItems(this.query4, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -478,6 +550,24 @@ export class TrackingComponent {
       }
     }
     console.log(this.posicaoSul);
+  }
+  
+  compareAndMergePlatesArg(): void {
+    if (this.posicaoArg && this.posicaoSulRastreio) {
+      for (let i = 0; i < this.posicaoArg.length; i++) {
+        const plate = this.posicaoArg[i].Plate;
+        const matchingPlate = this.posicaoSulRastreio.find(item => item.Plate === plate);
+        if (matchingPlate) {
+          // Copiar as demais chaves de matchingPlate para this.posicaoSul[i]
+          Object.keys(matchingPlate).forEach(key => {
+            if (key !== 'Plate') {
+              this.posicaoArg[i][key] = matchingPlate[key];
+            }
+          });
+        }
+      }
+    }
+    console.log(this.posicaoArg);
   }
 
   compareAndMergePlatesLOTS(): void {

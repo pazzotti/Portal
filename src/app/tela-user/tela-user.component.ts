@@ -123,9 +123,9 @@ export class TelaUserComponent implements OnInit {
     }
   }
 
-  getItemsFromDynamoDB(): void {
+  async getItemsFromDynamoDB(): Promise<void> {
     const filtro = 'all';
-    this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro).subscribe(
+    (await this.dynamoDBService.getItems(this.query, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {

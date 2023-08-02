@@ -91,9 +91,9 @@ export class ContratoTerrestreFormDialogComponent {
     this.getItemsCarriers();
   }
 
-  getItemsFromContratos(): void {
+  async getItemsFromContratos(): Promise<void> {
     const filtro = '';
-    this.apiService.getItems(this.tableName, this.urlConsulta, filtro).subscribe(
+    (await this.apiService.getItems(this.tableName, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         console.log(response)
 
@@ -123,9 +123,9 @@ export class ContratoTerrestreFormDialogComponent {
   
 
 
-  getItemsFromOrigin(): void {
+  async getItemsFromOrigin(): Promise<void> {
     const filtro = '';
-    this.apiService.getItems(this.queryOrigin, this.urlConsulta, filtro).subscribe(
+    (await this.apiService.getItems(this.queryOrigin, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
@@ -151,9 +151,9 @@ export class ContratoTerrestreFormDialogComponent {
     );
   }
 
-  getItemsCarriers(): void {
+  async getItemsCarriers(): Promise<void> {
     const filtro = '';
-    this.apiService.getItems(this.queryCarrier, this.urlConsulta, filtro).subscribe(
+    (await this.apiService.getItems(this.queryCarrier, this.urlConsulta, filtro)).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
           try {
